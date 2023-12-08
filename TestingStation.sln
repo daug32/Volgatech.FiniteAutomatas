@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingStation", "TestingStation\TestingStation.csproj", "{E5A7F5D8-C386-49E2-8BB7-E51F327F36FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapGenerator", "MapGenerator\MapGenerator.csproj", "{A6334E82-3C2A-40F5-9399-A45FF489F3E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudoku", "Sudoku\Sudoku.csproj", "{A24A9D28-A610-426C-841F-B2B29041EF29}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E5A7F5D8-C386-49E2-8BB7-E51F327F36FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5A7F5D8-C386-49E2-8BB7-E51F327F36FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5A7F5D8-C386-49E2-8BB7-E51F327F36FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5A7F5D8-C386-49E2-8BB7-E51F327F36FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6334E82-3C2A-40F5-9399-A45FF489F3E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6334E82-3C2A-40F5-9399-A45FF489F3E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6334E82-3C2A-40F5-9399-A45FF489F3E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6334E82-3C2A-40F5-9399-A45FF489F3E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A24A9D28-A610-426C-841F-B2B29041EF29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A24A9D28-A610-426C-841F-B2B29041EF29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A24A9D28-A610-426C-841F-B2B29041EF29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A24A9D28-A610-426C-841F-B2B29041EF29}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
