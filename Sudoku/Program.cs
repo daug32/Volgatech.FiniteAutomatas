@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Libs;
 
 namespace Sudoku;
 
@@ -65,6 +66,33 @@ public class Program
                 new[] { 4, 0, 0,    6, 0, 0,    0, 0, 0 },
                 new[] { 0, 0, 0,    9, 0, 0,    0, 0, 0 },
             } );
+        
+        CheckPerformance(
+            new[]
+            {   
+                new[] { 0, 0, 0,    0, 7, 0,    1, 0, 0 },
+                new[] { 5, 0, 9,    0, 0, 0,    0, 0, 0 },
+                new[] { 6, 0, 0,    0, 0, 0,    0, 0, 0 },
+                
+                new[] { 0, 7, 0,    0, 2, 0,    0, 0, 4 },
+                new[] { 0, 0, 8,    0, 0, 0,    0, 6, 0 },
+                new[] { 0, 0, 0,    0, 0, 0,    0, 5, 9 },
+                
+                new[] { 0, 3, 0,    0, 0, 0,    8, 0, 0 },
+                new[] { 4, 0, 0,    6, 0, 0,    0, 0, 0 },
+                new[] { 0, 0, 0,    9, 0, 0,    0, 0, 0 },
+            } );
+    }
+
+    public static void CheckPerformance( int[][] sudoku )
+    {
+        using ( TimeTracker.Track() )
+        {
+            for ( int i = 0; i < 10; i++ )
+            {
+                SudokuSimpleSolver.Solve( sudoku );
+            }
+        }
     }
 
     private static void Test( int[][] sudoku, int[][] expected )

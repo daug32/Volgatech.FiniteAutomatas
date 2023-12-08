@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapGenerator", "MapGenerato
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudoku", "Sudoku\Sudoku.csproj", "{A24A9D28-A610-426C-841F-B2B29041EF29}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libs", "Libs\Libs.csproj", "{4212BDEA-C2D4-4F4D-B989-D7C38475BCCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{A24A9D28-A610-426C-841F-B2B29041EF29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A24A9D28-A610-426C-841F-B2B29041EF29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A24A9D28-A610-426C-841F-B2B29041EF29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4212BDEA-C2D4-4F4D-B989-D7C38475BCCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4212BDEA-C2D4-4F4D-B989-D7C38475BCCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4212BDEA-C2D4-4F4D-B989-D7C38475BCCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4212BDEA-C2D4-4F4D-B989-D7C38475BCCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
