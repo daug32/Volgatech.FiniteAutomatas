@@ -55,6 +55,7 @@ public static class SudokuSimpleSolver
                     continue;
                 }
 
+                // Break on value that is not a hint and can be switched to the next value
                 break;
             }
 
