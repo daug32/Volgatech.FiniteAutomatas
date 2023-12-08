@@ -1,10 +1,12 @@
-﻿namespace Sudoku;
+﻿using System.Text;
+
+namespace Sudoku;
 
 public class Program
 {
     public static void Main( string[] args )
     {
-        int[][] result = Solve( new[]
+        int[][] result = SudokuSimpleSolver.Solve( new[]
         {   
             new[] { 0, 0, 0,   0, 0, 0,    0, 5, 0 },
             new[] { 0, 0, 4,   0, 0, 8,    6, 0, 0 },
@@ -34,168 +36,45 @@ public class Program
             new[] { 7, 4, 5,    2, 9, 6,    3, 1, 8 },
         };
 
-        Print( result );
-    }
-
-    public static int[][] Solve( int[][] sudoku )
-    {
-        var result = new int[9][];
-        for ( int y = 0; y < 9; y++ )
+        for ( var y = 0; y < 9; y++ )
         {
-            result[y] = new int[9];
-            for ( int x = 0; x < 9; x++ )
+            for ( var x = 0; x < 9; x++ )
             {
-                result[y][x] = sudoku[y][x];
-            }
-        }
-
-        for ( int index = 0; index < 9 * 9; index++ )
-        {
-            int x = index % 9;
-            int y = index / 9;
-
-            // Если в оригинальном судоку стоит значение, мы не имеем права его менять, пропускаем
-            if ( sudoku[y][x] != 0 )
-            {
-                continue;
-            }
-
-            int initialValue = result[y][x] + 1;
-            
-            bool setValue = false;
-            for ( int z = initialValue; z <= 9; z++ )
-            {
-                bool valueAlreadyExists =
-                    ColumnContains( result, x, z ) ||
-                    RowContains( result, y, z ) ||
-                    HasInSquare( result, x, y, z );
-
-                // Если можем, ставим значение и говорим, что так и надо
-                if ( !valueAlreadyExists )
+                if ( result[y][x] != expected[y][x] )
                 {
-                    result[y][x] = z;
-                    setValue = true;
-                    break;
-                }
-            }
-
-            // Если мы не смогли поставить значение, значит, надо вернуть назад и попробовать другое
-            if ( !setValue )
-            {
-                result[y][x] = 0;
-                index--;
-                x = index % 9;
-                y = index / 9;
-
-                while ( true )
-                {
-                    if ( sudoku[y][x] != 0 )
-                    {
-                        index--;
-                        x = index % 9;
-                        y = index / 9;
-                        continue;
-                    }
-
-                    if ( result[y][x] + 1 > 9 )
-                    {
-                        result[y][x] = 0;
-                        index--;
-                        x = index % 9;
-                        y = index / 9;
-                        continue;
-                    }
-
-                    break;
-                }
-
-                index--;
-            }
-        }
-
-        return result;
-    }
-
-    private static bool ColumnContains( int[][] sudoku, int x, int valueToSearch )
-    {
-        for ( int y = 0; y < 9; y++ )
-        {
-            int existentValue = sudoku[y][x];
-            if ( existentValue == valueToSearch )
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static bool RowContains( int[][] sudoku, int y, int valueToSearch )
-    {
-        for ( int x = 0; x < 9; x++ )
-        {
-            int existentValue = sudoku[y][x];
-            if ( existentValue == valueToSearch )
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static bool HasInSquare(
-        int[][] sudoku,
-        int columnIndex,
-        int rowIndex,
-        int valueToSearch )
-    {
-        int startX = ( columnIndex / 3 ) * 3;
-        int endX = startX + 3;
-        
-        int startY = ( rowIndex / 3 ) * 3;
-        int endY = startY + 3;
-
-        for ( int x = startX; x < endX; x++ )
-        {
-            for ( int y = startY; y < endY; y++ )
-            {
-                int existentValue = sudoku[y][x];
-                if ( existentValue == 0 )
-                {
-                    continue;
-                }
-                
-                if ( existentValue == valueToSearch )
-                {
-                    return true;
+                    Console.WriteLine( $"f({x}, {y}) = {result[y][x]} != {expected[y][x]}" );
+                    return;
                 }
             }
         }
-        
-        return false;
+
+        Print2dMap( result );
     }
 
-    private static void Print( int[][] sudoku )
+    private static void Print2dMap( int[][] map )
     {
-        for ( int y = 0; y < 9; y++ )
+        var message = new StringBuilder();
+
+        for ( var y = 0; y < map.Length; y++ )
         {
             if ( y % 3 == 0 )
             {
-                Console.WriteLine();
+                message.AppendLine();
             }
-
-            for ( int x = 0; x < 9; x++ )
+            
+            for ( int x = 0; x < map[y].Length; x++ )
             {
                 if ( x % 3 == 0 )
                 {
-                    Console.Write( " " );
+                    message.Append( " " );
                 }
-
-                Console.Write( sudoku[y][x] );
+                
+                message.Append( map[y][x] );
             }
-
-            Console.WriteLine();
+            
+            message.AppendLine();
         }
+
+        Console.WriteLine( message.ToString() );
     }
 }
