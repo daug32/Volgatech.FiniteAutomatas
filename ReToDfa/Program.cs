@@ -1,6 +1,7 @@
 ﻿using ReToDfa.FiniteAutomatas;
 using ReToDfa.FiniteAutomatas.ToDfaExtensions;
 using ReToDfa.FiniteAutomatas.ValueObjects;
+using ReToDfa.Regexes;
 
 namespace ReToDfa;
 
