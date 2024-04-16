@@ -1,4 +1,7 @@
-﻿namespace ReToDfa.Regexes.Models;
+﻿using Microsoft.VisualBasic;
+using Microsoft.VisualBasic.CompilerServices;
+
+namespace ReToDfa.Regexes.Models;
 
 public class RegexNode
 {
@@ -52,7 +55,9 @@ public class RegexNode
             bool wedgeFound =
                 !braces.Any()
                 && regex[i].Type is 
-                    not RegexSymbolType.Symbol; 
+                    not RegexSymbolType.Symbol and
+                    not RegexSymbolType.OneOrMore and
+                    not RegexSymbolType.ZeroOrMore; 
             if ( wedgeFound )
             {
                 symbolIndex = i;
@@ -63,6 +68,24 @@ public class RegexNode
         // No operators were found
         if ( symbolIndex == -1 )
         {
+            if ( regex.Last().Type is 
+                    RegexSymbolType.OneOrMore or 
+                    RegexSymbolType.ZeroOrMore && 
+                 regex.First().Type is
+                     RegexSymbolType.OpenBrace or 
+                     RegexSymbolType.Symbol)
+            {
+                Value = regex.Last();
+            
+                Console.WriteLine( $"\tLeft: {String.Join( "_", regex.GetRange( 0, regex.Count - 1 ) )}" );
+                Console.WriteLine( $"\tCurrentOperator: {Value}" );
+                Console.WriteLine( $"\tRight:" );
+            
+                LeftOperand = new RegexNode( regex.GetRange( 0, regex.Count - 1 ) );
+                
+                return;
+            }
+
             Value = regex.First();
         
             Console.WriteLine( $"\tLeft:" );
