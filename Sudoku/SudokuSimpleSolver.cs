@@ -1,27 +1,15 @@
 ﻿namespace Sudoku;
 
-public static class SudokuSimpleSolver
+public class SudokuSimpleSolver
 {
-    private static readonly int _sudokuSize = 9;
-    private static readonly int _sudokuSmallSquareSize = 3;
-    
-    private static readonly int _sudokuMaxValue = 9;
-    private static readonly int _sudokuMeaninglessValue = 0;
-
-    public static int[][] Solve( int[][] sudoku )
+    public static Sudoku Solve( Sudoku sudoku )
     {
-        return Solve( ArrayHandler.Convert2dArrayMapToArray( sudoku ) );
-    }
-    
-    public static int[][] Solve( int[] singleArraySudoku )
-    {
-        var result = new int[_sudokuSize * _sudokuSize];
-        Array.Copy( singleArraySudoku, result, _sudokuSize * _sudokuSize );
+        Sudoku result = sudoku.Copy();
 
-        for ( var index = 0; index < _sudokuSize * _sudokuSize; index++ )
+        for ( var index = 0; index < sudoku.NumberOfItems; index++ )
         {
             // If hint, skip it
-            if ( singleArraySudoku[index] != _sudokuMeaninglessValue )
+            if ( sudoku.IsSet( index ) )
             {
                 continue;
             }
@@ -29,28 +17,28 @@ public static class SudokuSimpleSolver
             // If value was suggested, then use it
             if ( TryToSuggestValue( result, index, out int? suggestedValue ) )
             {
-                result[index] = suggestedValue!.Value;
+                result.SetValue( index, suggestedValue!.Value );
                 continue;
             }
 
             // If value wasn't suggested, then go back to previous steps
             // Clean suggested values to avoid collision when suggesting a new one
-            result[index] = _sudokuMeaninglessValue;
+            result.RemoveValue( index );
             index--;
 
             while ( true )
             {
                 // If hint, skip it
-                if ( singleArraySudoku[index] != _sudokuMeaninglessValue )
+                if ( sudoku.IsSet( index ) )
                 {
                     index--;
                     continue;
                 }
 
                 // If we can't use a next value for that item, then skip it
-                if ( result[index] + 1 > _sudokuSize )
+                if ( result.GetValue( index ) + 1 > sudoku.MaxValue )
                 {
-                    result[index] = _sudokuMeaninglessValue;
+                    result.RemoveValue( index );
                     index--;
                     continue;
                 }
@@ -63,19 +51,19 @@ public static class SudokuSimpleSolver
             index--;
         }
 
-        return ArrayHandler.ConvertArrayTo2dArrayMap( result, _sudokuSize, _sudokuSize );
+        return result;
     }
 
-    private static bool TryToSuggestValue( int[] singleArraySudoku, int index, out int? suggestedValue )
+    private static bool TryToSuggestValue( Sudoku sudoku, int index, out int? suggestedValue )
     {
-        int initialValue = singleArraySudoku[index] + 1;
+        int initialValue = sudoku.GetValue( index ) + 1;
         
-        for ( int possibleValue = initialValue; possibleValue <= _sudokuMaxValue; possibleValue++ )
+        for ( int possibleValue = initialValue; possibleValue <= sudoku.MaxValue; possibleValue++ )
         {
             bool isAlreadyInUse =
-                DoesColumnContains( singleArraySudoku, index, possibleValue ) || 
-                DoesRowContains( singleArraySudoku, index, possibleValue ) || 
-                HasValueInCurrentSquare( singleArraySudoku, index, possibleValue );
+                sudoku.DoesColumnContains( index, possibleValue ) || 
+                sudoku.DoesRowContains( index, possibleValue ) || 
+                sudoku.HasValueInCurrentSquare( index, possibleValue );
 
             // Skip if the value is not free
             if ( isAlreadyInUse )
@@ -88,68 +76,6 @@ public static class SudokuSimpleSolver
         }
 
         suggestedValue = null;
-        return false;
-    }
-
-    private static bool DoesColumnContains( int[] singleArraySudoku, int index, int valueToSearch )
-    {
-        int offset = index % _sudokuSize;
-        for ( var y = 0; y < _sudokuSize; y++ )
-        {
-            int existentValue = singleArraySudoku[y * _sudokuSize + offset];
-            if ( existentValue == valueToSearch )
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static bool DoesRowContains( 
-        IReadOnlyList<int> singleArraySudoku,
-        int index, 
-        int valueToSearch )
-    {
-        int offset = index / _sudokuSize * _sudokuSize;
-        for ( var x = 0; x < _sudokuSize; x++ )
-        {
-            int existentValue = singleArraySudoku[offset + x];
-            if ( existentValue == valueToSearch )
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static bool HasValueInCurrentSquare(
-        IReadOnlyList<int> singleArraySudoku,
-        int index,
-        int valueToSearch )
-    {
-        int posX = index % _sudokuSize;
-        int startX = posX / _sudokuSmallSquareSize * _sudokuSmallSquareSize;
-        int endX = startX + _sudokuSmallSquareSize;
-
-        int posY = index / _sudokuSize;
-        int startY = posY / _sudokuSmallSquareSize * _sudokuSmallSquareSize;
-        int endY = startY + _sudokuSmallSquareSize;
-
-        for ( int y = startY; y < endY; y++ )
-        {
-            int offset = y * _sudokuSize;
-            for ( int x = startX; x < endX; x++ )
-            {
-                int existentValue = singleArraySudoku[offset + x];
-                if ( existentValue == valueToSearch )
-                {
-                    return true;
-                }
-            }
-        }
-
         return false;
     }
 }

@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudoku", "Sudoku\Sudoku.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libs", "Libs\Libs.csproj", "{4212BDEA-C2D4-4F4D-B989-D7C38475BCCC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingStation.Api", "TestingStation.Api\TestingStation.Api.csproj", "{B363DC05-526A-4B44-940F-EE0917B0E320}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReToDfa", "ReToDfa\ReToDfa.csproj", "{71293CCF-3DFA-421C-854D-C5C3D76A1CFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{4212BDEA-C2D4-4F4D-B989-D7C38475BCCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4212BDEA-C2D4-4F4D-B989-D7C38475BCCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4212BDEA-C2D4-4F4D-B989-D7C38475BCCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B363DC05-526A-4B44-940F-EE0917B0E320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B363DC05-526A-4B44-940F-EE0917B0E320}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B363DC05-526A-4B44-940F-EE0917B0E320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B363DC05-526A-4B44-940F-EE0917B0E320}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71293CCF-3DFA-421C-854D-C5C3D76A1CFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71293CCF-3DFA-421C-854D-C5C3D76A1CFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71293CCF-3DFA-421C-854D-C5C3D76A1CFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71293CCF-3DFA-421C-854D-C5C3D76A1CFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

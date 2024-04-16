@@ -84,8 +84,10 @@ public class Program
             } );
     }
 
-    public static void CheckPerformance( int[][] sudoku )
+    public static void CheckPerformance( int[][] rawSudoku )
     {
+        var sudoku = new Sudoku( rawSudoku );
+        
         using ( TimeTracker.Track() )
         {
             for ( int i = 0; i < 10; i++ )
@@ -97,7 +99,7 @@ public class Program
 
     private static void Test( int[][] sudoku, int[][] expected )
     {
-        int[][] result = SudokuSimpleSolver.Solve( sudoku );
+        int[][] result = SudokuSimpleSolver.Solve( new Sudoku( sudoku ) ).To2dArray();
 
         for ( var y = 0; y < 9; y++ )
         {
