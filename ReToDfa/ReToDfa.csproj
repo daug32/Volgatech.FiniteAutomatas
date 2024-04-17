@@ -20,4 +20,8 @@
       <ProjectReference Include="..\FiniteAutomatas.Domain\FiniteAutomatas.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Models\Convertors\" />
+    </ItemGroup>
+
 </Project>

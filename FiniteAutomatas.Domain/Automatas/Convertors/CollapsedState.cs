@@ -1,6 +1,6 @@
 ﻿using FiniteAutomatas.Domain.ValueObjects;
 
-namespace ReToDfa.Models.Convertors;
+namespace FiniteAutomatas.Domain.Automatas.Convertors;
 
 public class CollapsedState
 {

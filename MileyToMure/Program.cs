@@ -1,7 +1,7 @@
 ﻿using FiniteAutomatas.Domain.Automatas;
+using FiniteAutomatas.Domain.Automatas.Convertors;
 using FiniteAutomatas.Domain.ValueObjects;
-using MileyToMure.Models.Convertors;
-using MileyToMure.Models.Displays;
+using MileyToMure.Displays;
 
 namespace MileyToMure;
 

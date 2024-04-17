@@ -1,13 +1,12 @@
-﻿using FiniteAutomatas.Domain.Automatas;
-using FiniteAutomatas.Domain.ValueObjects;
+﻿using FiniteAutomatas.Domain.ValueObjects;
 
-namespace MileyToMure.Models.Convertors;
+namespace FiniteAutomatas.Domain.Automatas.Convertors;
 
 public class MileyToMureConvertor
 {
-    public Mure ToMure( Miley fa ) => new(
-        overrides: BuildStateOverrides(fa), 
-        transitions: BuildTransitions(fa) );
+    public Mure ToMure(Miley fa) => new(
+        overrides: BuildStateOverrides(fa),
+        transitions: BuildTransitions(fa));
 
     private static HashSet<Transition> BuildTransitions(Miley fa)
     {
