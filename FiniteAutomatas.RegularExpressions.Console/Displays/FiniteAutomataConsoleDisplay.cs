@@ -2,7 +2,7 @@
 using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.ValueObjects;
 
-namespace ReToDfa.Displays;
+namespace FiniteAutomatas.RegularExpressions.Console.Displays;
 
 public static class FiniteAutomataConsoleDisplay
 {

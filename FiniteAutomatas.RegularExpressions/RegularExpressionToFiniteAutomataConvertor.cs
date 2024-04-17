@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.ValueObjects;
-using FiniteAutomatas.RegularExpressions.Models;
-using FiniteAutomatas.RegularExpressions.Models.Utils;
+using FiniteAutomatas.RegularExpressions.Implementation;
+using FiniteAutomatas.RegularExpressions.Implementation.Utils;
 
-namespace FiniteAutomatas.RegularExpressions.Convertors;
+namespace FiniteAutomatas.RegularExpressions;
 
 public class RegularExpressionToFiniteAutomataConvertor
 {

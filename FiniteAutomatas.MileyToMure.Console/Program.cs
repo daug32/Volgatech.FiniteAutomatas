@@ -1,9 +1,9 @@
 ﻿using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.Automatas.Convertors;
 using FiniteAutomatas.Domain.ValueObjects;
-using MileyToMure.Displays;
+using FiniteAutomatas.MileyToMure.Console.Displays;
 
-namespace MileyToMure;
+namespace FiniteAutomatas.MileyToMure.Console;
 
 public class Program
 {
@@ -60,6 +60,6 @@ public class Program
             new State(from),
             to: new State(to),
             argument: new Argument(arg),
-            outputSymbol: output);
+            additionalData: output);
     }
 }

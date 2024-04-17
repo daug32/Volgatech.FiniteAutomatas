@@ -2,21 +2,21 @@
 
 public class Transition
 {
-    public State From;
-    public Argument Argument;
-    public State To;
+    public State From { get; set; }
+    public Argument Argument { get; }
+    public State To { get; set; }
     
-    public string? OutputSymbol;
+    public string? AdditionalData { get; }
 
     public Transition(
         State from,
         Argument argument,
         State to,
-        string? outputSymbol = null)
+        string? additionalData = null)
     {
         From = from;
         Argument = argument;
         To = to;
-        OutputSymbol = outputSymbol;
+        AdditionalData = additionalData;
     }
 }

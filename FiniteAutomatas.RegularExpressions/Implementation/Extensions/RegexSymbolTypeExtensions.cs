@@ -1,6 +1,6 @@
-﻿namespace FiniteAutomatas.RegularExpressions.Models.Extensions;
+﻿namespace FiniteAutomatas.RegularExpressions.Implementation.Extensions;
 
-public static class RegexSymbolTypeExtensions
+internal static class RegexSymbolTypeExtensions
 {
     public static string ToSymbol( this RegexSymbolType type ) => type switch
     {

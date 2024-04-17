@@ -1,6 +1,6 @@
-﻿namespace FiniteAutomatas.RegularExpressions.Models;
+﻿namespace FiniteAutomatas.RegularExpressions.Implementation;
 
-public enum RegexSymbolType
+internal enum RegexSymbolType
 {
     // a, 3, -...
     Symbol = 0,

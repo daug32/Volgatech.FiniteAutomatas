@@ -1,10 +1,9 @@
 ﻿using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.Automatas.Convertors;
 using FiniteAutomatas.Domain.ValueObjects;
-using FiniteAutomatas.RegularExpressions.Convertors;
-using ReToDfa.Displays;
+using FiniteAutomatas.RegularExpressions.Console.Displays;
 
-namespace ReToDfa;
+namespace FiniteAutomatas.RegularExpressions.Console;
 
 public class Program
 {
@@ -12,24 +11,24 @@ public class Program
     {
         while ( true )
         {
-            Console.Write( "Write a regex: " );
-            string regex = Console.ReadLine()!;
+            System.Console.Write( "Write a regex: " );
+            string regex = System.Console.ReadLine()!;
 
-            Console.WriteLine( "Creating an NFA..." );
+            System.Console.WriteLine( "Creating an NFA..." );
             if ( !new RegularExpressionToFiniteAutomataConvertor().TryCreateFromRegex( regex, out FiniteAutomata? nfa ) )
             {
-                Console.WriteLine( "Couldn't create an NFA" );
+                System.Console.WriteLine( "Couldn't create an NFA" );
                 continue;
             }
 
-            Console.WriteLine( "Converting into DFA..." );
+            System.Console.WriteLine( "Converting into DFA..." );
             FiniteAutomata dfa = nfa!.ToDfa();
             
             dfa.Print();
         }
 
-        Console.WriteLine( "Press any key..." );
-        Console.ReadKey();
+        System.Console.WriteLine( "Press any key..." );
+        System.Console.ReadKey();
     }
 
     private static void ReToNfaTest()

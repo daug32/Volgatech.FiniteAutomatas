@@ -1,6 +1,6 @@
-﻿namespace FiniteAutomatas.RegularExpressions.Models;
+﻿namespace FiniteAutomatas.RegularExpressions.Implementation;
 
-public class RegexNode
+internal class RegexNode
 {
     public readonly RegexNode? LeftOperand;
     public readonly RegexNode? RightOperand;

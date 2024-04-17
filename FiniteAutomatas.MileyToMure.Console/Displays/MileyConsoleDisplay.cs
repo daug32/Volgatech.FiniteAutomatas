@@ -2,7 +2,7 @@
 using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.ValueObjects;
 
-namespace MileyToMure.Displays;
+namespace FiniteAutomatas.MileyToMure.Console.Displays;
 
 public static class MileyConsoleDisplay
 {
@@ -30,7 +30,7 @@ public static class MileyConsoleDisplay
             foreach (State state in fa.AllStates.OrderBy(x => x.Name))
             {
                 var transition = fa.Transitions.Single(x => x.From.Equals(state) && x.Argument.Equals(argument));
-                result.Add( $"{transition.To.Name}/{transition.OutputSymbol}" );
+                result.Add( $"{transition.To.Name}/{transition.AdditionalData}" );
             }
             
             yield return result.ToArray();

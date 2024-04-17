@@ -1,8 +1,8 @@
-﻿using FiniteAutomatas.RegularExpressions.Models.Extensions;
+﻿using FiniteAutomatas.RegularExpressions.Implementation.Extensions;
 
-namespace FiniteAutomatas.RegularExpressions.Models;
+namespace FiniteAutomatas.RegularExpressions.Implementation;
 
-public class RegexSymbol
+internal class RegexSymbol
 {
     public readonly char? Value;
     public readonly RegexSymbolType Type;

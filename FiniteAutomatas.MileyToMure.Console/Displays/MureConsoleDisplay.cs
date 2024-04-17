@@ -2,7 +2,7 @@
 using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.ValueObjects;
 
-namespace MileyToMure.Displays;
+namespace FiniteAutomatas.MileyToMure.Console.Displays;
 
 public static class MureConsoleDisplay
 {

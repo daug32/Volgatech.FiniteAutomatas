@@ -36,7 +36,7 @@ public class MileyToMureConvertor
         {
             IEnumerable<Transition> stateTransitions =
                 fa.Transitions.Where(x => x.From.Equals(state)).OrderBy(x => x.Argument);
-            stateToOutputs.Add(state, stateTransitions.Select(x => x.OutputSymbol).ToList()!);
+            stateToOutputs.Add(state, stateTransitions.Select(x => x.AdditionalData).ToList()!);
         }
 
         var outputsToGroup = new Dictionary<List<string>, State>();
