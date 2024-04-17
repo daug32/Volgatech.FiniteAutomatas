@@ -8,6 +8,20 @@ namespace ReToDfa.Regexes;
 
 public class FiniteAutomataCreator
 {
+    public bool TryCreateFromRegex( string regex, out FiniteAutomata? automata )
+    {
+        try
+        {
+            automata = CreateFromRegex( regex );
+            return true;
+        }
+        catch
+        {
+            automata = null;
+            return false;
+        }
+    }
+    
     public FiniteAutomata CreateFromRegex( string regex )
     {
         var alphabet = new HashSet<AlphabetSymbol>( regex.Select( x => new AlphabetSymbol( x.ToString() ) ) );

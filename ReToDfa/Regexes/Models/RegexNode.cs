@@ -89,7 +89,35 @@ public class RegexNode
     {
         while ( expression.First() == '(' && expression.Last() == ')' )
         {
-            expression = expression.Substring( 1, expression.Length - 2 );
+            bool needToRemove = true;
+            
+            int bracesLevel = 0;
+            for ( int i = 0; i < expression.Length && needToRemove; i++ )
+            {
+                if ( expression[i] == '(' )
+                {
+                    bracesLevel += 1;
+                    continue;
+                }
+
+                if ( expression[i] == ')' )
+                {
+                    bracesLevel -= 1;
+                    if ( bracesLevel == 0 && i + 1 < expression.Length - 1 )
+                    {
+                        needToRemove = false;
+                    }
+                }
+            }
+
+            if ( needToRemove )
+            {
+                expression = expression.Substring( 1, expression.Length - 2 );
+            }
+            else
+            {
+                break;
+            }
         }
 
         return expression;
@@ -99,8 +127,36 @@ public class RegexNode
     {
         while ( regex.First().Type == RegexSymbolType.OpenBrace && regex.Last().Type == RegexSymbolType.CloseBrace )
         {
-            regex.RemoveAt( 0 );
-            regex.RemoveAt( regex.Count - 1 );
+            bool needToRemove = true;
+            
+            int bracesLevel = 0;
+            for ( int i = 0; i < regex.Count && needToRemove; i++ )
+            {
+                if ( regex[i].Type == RegexSymbolType.OpenBrace )
+                {
+                    bracesLevel += 1;
+                    continue;
+                }
+
+                if ( regex[i].Type == RegexSymbolType.CloseBrace )
+                {
+                    bracesLevel -= 1;
+                    if ( bracesLevel == 0 && i + 1 < regex.Count - 1 )
+                    {
+                        needToRemove = false;
+                    }
+                }
+            }
+
+            if ( needToRemove )
+            {
+                regex.RemoveAt( 0 );
+                regex.RemoveAt( regex.Count - 1 );
+            }
+            else
+            {
+                break;
+            }
         }
 
         return regex;

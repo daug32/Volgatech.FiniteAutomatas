@@ -54,6 +54,12 @@ public class RegexSymbol
                          RegexSymbolType.Symbol )
                 {
                     result.Add( new RegexSymbol( RegexSymbolType.And ) );
+                    continue;
+                }
+
+                if ( currentSymbolType is RegexSymbolType.CloseBrace && nextSymbolType is RegexSymbolType.OpenBrace )
+                {
+                    result.Add( new RegexSymbol( RegexSymbolType.And ) );
                 }
             }
         }
