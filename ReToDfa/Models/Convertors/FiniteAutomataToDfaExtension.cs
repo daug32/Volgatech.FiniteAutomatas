@@ -1,4 +1,5 @@
-﻿using FiniteAutomatas.Domain.ValueObjects;
+﻿using FiniteAutomatas.Domain.Automatas;
+using FiniteAutomatas.Domain.ValueObjects;
 
 namespace ReToDfa.Models.Convertors;
 

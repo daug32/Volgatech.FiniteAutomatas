@@ -1,5 +1,5 @@
-﻿using FiniteAutomatas.Domain.ValueObjects;
-using MileyToMure.Models;
+﻿using FiniteAutomatas.Domain.Automatas;
+using FiniteAutomatas.Domain.ValueObjects;
 using MileyToMure.Models.Convertors;
 using MileyToMure.Models.Displays;
 

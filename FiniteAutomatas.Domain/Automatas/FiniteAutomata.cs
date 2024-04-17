@@ -1,7 +1,6 @@
 ﻿using FiniteAutomatas.Domain.ValueObjects;
-using ReToDfa.Models.Displays;
 
-namespace ReToDfa.Models;
+namespace FiniteAutomatas.Domain.Automatas;
 
 public class FiniteAutomata
 {
@@ -68,8 +67,6 @@ public class FiniteAutomata
 
         return result;
     }
-
-    public void Print() => FiniteAutomataConsoleDisplay.Print( this );
 
     public FiniteAutomata Copy() => new(
         alphabet: Alphabet.ToHashSet(),

@@ -1,6 +1,7 @@
-﻿using FiniteAutomatas.Domain.ValueObjects;
-using ReToDfa.Models;
+﻿using FiniteAutomatas.Domain.Automatas;
+using FiniteAutomatas.Domain.ValueObjects;
 using ReToDfa.Models.Convertors;
+using ReToDfa.Models.Displays;
 using ReToDfa.Regexes;
 
 namespace ReToDfa;

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
+using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.ValueObjects;
-using ReToDfa.Models;
 using ReToDfa.Regexes.Models;
 using ReToDfa.Regexes.Models.Extensions;
 

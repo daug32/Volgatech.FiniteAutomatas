@@ -1,6 +1,6 @@
 ﻿using FiniteAutomatas.Domain.ValueObjects;
 
-namespace MileyToMure.Models;
+namespace FiniteAutomatas.Domain.Automatas;
 
 public class Mure
 {

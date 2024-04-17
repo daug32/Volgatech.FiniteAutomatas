@@ -1,11 +1,12 @@
 ﻿using ConsoleTables;
+using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.ValueObjects;
 
 namespace ReToDfa.Models.Displays;
 
 public static class FiniteAutomataConsoleDisplay
 {
-    public static void Print( FiniteAutomata automata )
+    public static void Print( this FiniteAutomata automata )
     {
         // Create columns
         string[] columns = BuildColumns( automata ).ToArray();
