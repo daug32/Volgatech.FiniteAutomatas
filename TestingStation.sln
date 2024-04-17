@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReToDfa", "ReToDfa\ReToDfa.csproj", "{71293CCF-3DFA-421C-854D-C5C3D76A1CFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MileyToMure", "MileyToMure\MileyToMure.csproj", "{54368EE3-A038-4F8C-A9AD-CC74B0A36CDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiniteAutomata.Libs", "FiniteAutomata.Libs\FiniteAutomata.Libs.csproj", "{2B9ADAD3-2665-40F4-AE36-24EC434A387A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{71293CCF-3DFA-421C-854D-C5C3D76A1CFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71293CCF-3DFA-421C-854D-C5C3D76A1CFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71293CCF-3DFA-421C-854D-C5C3D76A1CFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54368EE3-A038-4F8C-A9AD-CC74B0A36CDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54368EE3-A038-4F8C-A9AD-CC74B0A36CDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54368EE3-A038-4F8C-A9AD-CC74B0A36CDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54368EE3-A038-4F8C-A9AD-CC74B0A36CDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B9ADAD3-2665-40F4-AE36-24EC434A387A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B9ADAD3-2665-40F4-AE36-24EC434A387A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B9ADAD3-2665-40F4-AE36-24EC434A387A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B9ADAD3-2665-40F4-AE36-24EC434A387A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

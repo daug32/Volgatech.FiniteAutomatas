@@ -1,6 +1,6 @@
 ﻿using ReToDfa.FiniteAutomatas.ValueObjects;
 
-namespace ReToDfa.FiniteAutomatas.ToDfaExtensions;
+namespace ReToDfa.FiniteAutomatas.Convertors;
 
 public static class FiniteAutomataToDfaExtension
 {
