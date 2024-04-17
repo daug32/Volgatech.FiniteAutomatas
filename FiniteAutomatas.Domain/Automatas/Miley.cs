@@ -16,7 +16,10 @@ public class Miley
     public Miley(IEnumerable<Transition> transitions)
     {
         Transitions = transitions.ToHashSet();
-        if (Transitions.Any(x => x.AdditionalData == null)) throw new ArgumentException(nameof(Transitions));
+        if (Transitions.Any(x => x.AdditionalData == null))
+        {
+            throw new ArgumentException(nameof(Transitions));
+        }
 
         AllStates = Transitions.SelectMany(x => new[] { x.From, x.To }).ToHashSet();
         Alphabet = Transitions.Select(x => x.Argument).ToHashSet();
