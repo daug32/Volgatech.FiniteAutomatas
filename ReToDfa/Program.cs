@@ -9,19 +9,17 @@ public class Program
 {
     public static void Main( string[] args )
     {
-        var finiteAutomataCreator = new FiniteAutomataCreator();
         while ( true )
         {
             Console.Write( "Write a regex: " );
             string regex = Console.ReadLine()!;
 
             Console.WriteLine( "Creating an NFA..." );
-            // if ( !finiteAutomataCreator.TryCreateFromRegex( regex, out FiniteAutomata? nfa ) )
-            // {
-            //     Console.WriteLine( "Couldn't create an NFA" );
-            //     continue;
-            // }
-            FiniteAutomata nfa = finiteAutomataCreator.CreateFromRegex( regex );
+            if ( !new FiniteAutomataCreator().TryCreateFromRegex( regex, out FiniteAutomata? nfa ) )
+            {
+                Console.WriteLine( "Couldn't create an NFA" );
+                continue;
+            }
 
             Console.WriteLine( "Converting into DFA..." );
             FiniteAutomata dfa = nfa!.ToDfa();
