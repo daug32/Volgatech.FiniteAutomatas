@@ -10,4 +10,8 @@
       <ProjectReference Include="..\FiniteAutomatas.Domain\FiniteAutomatas.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="GraphML.Core" Version="1.1.2" />
+    </ItemGroup>
+
 </Project>

@@ -2,6 +2,7 @@
 using FiniteAutomatas.Domain.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors;
 using FiniteAutomatas.RegularExpressions.Console.Displays;
+using FiniteAutomatas.Visualizations;
 
 namespace FiniteAutomatas.RegularExpressions.Console;
 
@@ -24,6 +25,8 @@ public class Program
                 System.Console.WriteLine( "Converting into DFA..." );
                 FiniteAutomata dfa = nfa.Convert( new FiniteAutomataToDfaConvertor() );
                 dfa.Print();
+                
+                new Visualizer( dfa ).ToXml( @"D:\Development\Projects\TestingStation\image.png" );
             }
             catch ( Exception ex )
             {

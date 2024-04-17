@@ -19,6 +19,7 @@
     <ItemGroup>
       <ProjectReference Include="..\FiniteAutomatas.Domain\FiniteAutomatas.Domain.csproj" />
       <ProjectReference Include="..\FiniteAutomatas.RegularExpressions\FiniteAutomatas.RegularExpressions.csproj" />
+      <ProjectReference Include="..\FiniteAutomatas.Visualizations\FiniteAutomatas.Visualizations.csproj" />
     </ItemGroup>
 
 </Project>
