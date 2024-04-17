@@ -1,5 +1,5 @@
 ﻿using ReToDfa.FiniteAutomatas;
-using ReToDfa.FiniteAutomatas.ToDfaExtensions;
+using ReToDfa.FiniteAutomatas.Convertors;
 using ReToDfa.FiniteAutomatas.ValueObjects;
 using ReToDfa.Regexes;
 
