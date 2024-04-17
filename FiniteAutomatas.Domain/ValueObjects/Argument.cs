@@ -1,8 +1,10 @@
-﻿namespace FiniteAutomata.Libs;
+﻿namespace FiniteAutomatas.Domain.ValueObjects;
 
 public class Argument : IComparable
 {
     public readonly string Value;
+
+    public static Argument Epsilon => new("");
 
     public Argument(string value)
     {
@@ -38,4 +40,8 @@ public class Argument : IComparable
 
         return String.CompareOrdinal(Value, other.Value);
     }
+
+    public static bool operator ==( Argument a, Argument b ) => a.Equals( b );
+
+    public static bool operator !=( Argument a, Argument b ) => !a.Equals( b );
 }

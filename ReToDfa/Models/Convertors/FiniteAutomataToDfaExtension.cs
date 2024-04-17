@@ -1,6 +1,6 @@
-﻿using ReToDfa.FiniteAutomatas.ValueObjects;
+﻿using FiniteAutomatas.Domain.ValueObjects;
 
-namespace ReToDfa.FiniteAutomatas.Convertors;
+namespace ReToDfa.Models.Convertors;
 
 public static class FiniteAutomataToDfaExtension
 {
@@ -9,7 +9,7 @@ public static class FiniteAutomataToDfaExtension
         var dfaTransitions = new HashSet<Transition>();
         var dfaStart = new CollapsedState( automata.AllStates.First( x => x.IsStart ) );
 
-        var alphabet = automata.Alphabet.Where( x => x != AlphabetSymbol.Epsilon );
+        var alphabet = automata.Alphabet.Where( x => x != Argument.Epsilon );
         var queue = new Queue<CollapsedState>();
         var processedStates = new HashSet<CollapsedState>();
         queue.Enqueue( dfaStart );
@@ -20,7 +20,7 @@ public static class FiniteAutomataToDfaExtension
 
             processedStates.Add( fromState );
 
-            foreach ( AlphabetSymbol argument in alphabet )
+            foreach ( Argument argument in alphabet )
             {
                 var achievableStates = fromState.States
                     .SelectMany( state => automata.Move( state, argument ) )
@@ -66,7 +66,7 @@ public static class FiniteAutomataToDfaExtension
             state.Name = newName;
         }
 
-        var alphabet = new HashSet<AlphabetSymbol>();
+        var alphabet = new HashSet<Argument>();
         foreach ( Transition transition in transitions )
         {
             transition.From.Name = nameOverrides[transition.From.Name];

@@ -1,6 +1,6 @@
-﻿using ReToDfa.FiniteAutomatas;
-using ReToDfa.FiniteAutomatas.Convertors;
-using ReToDfa.FiniteAutomatas.ValueObjects;
+﻿using FiniteAutomatas.Domain.ValueObjects;
+using ReToDfa.Models;
+using ReToDfa.Models.Convertors;
 using ReToDfa.Regexes;
 
 namespace ReToDfa;
@@ -57,12 +57,12 @@ public class Program
 
     private static void NfaToDfaTest()
     {
-        var alphabet = new List<AlphabetSymbol>()
+        var alphabet = new List<Argument>()
         {
             new( "a" ),
             new( "b" ),
             new( "c" ),
-            AlphabetSymbol.Epsilon
+            Argument.Epsilon
         }.ToDictionary( x => x.Value, x => x );
 
         var allStates = new List<State>()

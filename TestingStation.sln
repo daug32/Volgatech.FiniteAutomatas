@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReToDfa", "ReToDfa\ReToDfa.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MileyToMure", "MileyToMure\MileyToMure.csproj", "{54368EE3-A038-4F8C-A9AD-CC74B0A36CDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiniteAutomata.Libs", "FiniteAutomata.Libs\FiniteAutomata.Libs.csproj", "{2B9ADAD3-2665-40F4-AE36-24EC434A387A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiniteAutomatas.Domain", "FiniteAutomatas.Domain\FiniteAutomatas.Domain.csproj", "{2B9ADAD3-2665-40F4-AE36-24EC434A387A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

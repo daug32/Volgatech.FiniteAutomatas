@@ -1,4 +1,4 @@
-﻿namespace FiniteAutomata.Libs;
+﻿namespace FiniteAutomatas.Domain.ValueObjects;
 
 public class Transition
 {

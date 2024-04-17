@@ -1,6 +1,6 @@
-﻿using ReToDfa.FiniteAutomatas.ValueObjects;
+﻿using FiniteAutomatas.Domain.ValueObjects;
 
-namespace ReToDfa.FiniteAutomatas.Convertors;
+namespace ReToDfa.Models.Convertors;
 
 public class CollapsedState
 {

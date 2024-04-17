@@ -1,12 +1,16 @@
-﻿namespace FiniteAutomata.Libs;
+﻿namespace FiniteAutomatas.Domain.ValueObjects;
 
 public class State : IComparable
 {
-    public readonly string Name;
+    public string Name { get; set; }
+    public bool IsEnd;
+    public bool IsStart;
 
-    public State(string name)
+    public State(string name, bool isStart = false, bool isEnd = false)
     {
         Name = name;
+        IsStart = isStart;
+        IsEnd = isEnd;
     }
 
     public override bool Equals(object? obj)

@@ -16,4 +16,8 @@
       <PackageReference Include="ConsoleTables" Version="2.6.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\FiniteAutomatas.Domain\FiniteAutomatas.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -1,4 +1,4 @@
-﻿using FiniteAutomata.Libs;
+﻿using FiniteAutomatas.Domain.ValueObjects;
 
 namespace MileyToMure.Models;
 

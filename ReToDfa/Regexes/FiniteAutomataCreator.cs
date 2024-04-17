@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using ReToDfa.FiniteAutomatas;
-using ReToDfa.FiniteAutomatas.ValueObjects;
+using FiniteAutomatas.Domain.ValueObjects;
+using ReToDfa.Models;
 using ReToDfa.Regexes.Models;
 using ReToDfa.Regexes.Models.Extensions;
 
@@ -24,9 +24,9 @@ public class FiniteAutomataCreator
     
     public FiniteAutomata CreateFromRegex( string regex )
     {
-        var alphabet = new HashSet<AlphabetSymbol>( regex.Select( x => new AlphabetSymbol( x.ToString() ) ) );
-        alphabet.Add( AlphabetSymbol.Epsilon );
-        alphabet.ExceptWith( RegexSymbolTypeHelper.SpecialSymbols.Select( x => new AlphabetSymbol( x.ToString() ) ) );
+        var alphabet = new HashSet<Argument>( regex.Select( x => new Argument( x.ToString() ) ) );
+        alphabet.Add( Argument.Epsilon );
+        alphabet.ExceptWith( RegexSymbolTypeHelper.SpecialSymbols.Select( x => new Argument( x.ToString() ) ) );
 
         RegexNode node = RegexNode.Parse( regex );
 
@@ -55,7 +55,7 @@ public class FiniteAutomataCreator
         RegexNode current,
         FiniteAutomata? left,
         FiniteAutomata? right,
-        HashSet<AlphabetSymbol> alphabet )
+        HashSet<Argument> alphabet )
     {
         RegexSymbol regexSymbol = current.Value;
 
@@ -66,7 +66,7 @@ public class FiniteAutomataCreator
                 new Transition(
                     from: new State( "0", isStart: true ),
                     to: new State( "1", isEnd: true ),
-                    argument: new AlphabetSymbol( regexSymbol.ToString() ) )
+                    argument: new Argument( regexSymbol.ToString() ) )
             } );
         }
 
@@ -79,17 +79,17 @@ public class FiniteAutomataCreator
 
             State oldStart = left.AllStates.First( x => x.IsStart );
             oldStart.IsStart = false;
-            left.Transitions.Add( new Transition( from: newStart, to: oldStart, argument: AlphabetSymbol.Epsilon ) );
+            left.Transitions.Add( new Transition( from: newStart, to: oldStart, argument: Argument.Epsilon ) );
 
             var newEnd = new State( endStateName.ToString(), isEnd: true );
             left.AllStates.Add( newEnd );
 
             State oldEnd = left.AllStates.First( x => x.IsEnd );
             oldEnd.IsEnd = false;
-            left.Transitions.Add( new Transition( from: newEnd, to: oldEnd, argument: AlphabetSymbol.Epsilon ) );
+            left.Transitions.Add( new Transition( from: newEnd, to: oldEnd, argument: Argument.Epsilon ) );
 
-            left.Transitions.Add( new Transition( from: oldEnd, to: oldStart, argument: AlphabetSymbol.Epsilon ) );
-            left.Transitions.Add( new Transition( from: newStart, to: newEnd, argument: AlphabetSymbol.Epsilon ) );
+            left.Transitions.Add( new Transition( from: oldEnd, to: oldStart, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( from: newStart, to: newEnd, argument: Argument.Epsilon ) );
 
             return left;
         }
@@ -103,16 +103,16 @@ public class FiniteAutomataCreator
 
             State oldStart = left.AllStates.First( x => x.IsStart );
             oldStart.IsStart = false;
-            left.Transitions.Add( new Transition( from: newStart, to: oldStart, argument: AlphabetSymbol.Epsilon ) );
+            left.Transitions.Add( new Transition( from: newStart, to: oldStart, argument: Argument.Epsilon ) );
 
             var newEnd = new State( endStateName.ToString(), isEnd: true );
             left.AllStates.Add( newEnd );
 
             State oldEnd = left.AllStates.First( x => x.IsEnd );
             oldEnd.IsEnd = false;
-            left.Transitions.Add( new Transition( from: newEnd, to: oldEnd, argument: AlphabetSymbol.Epsilon ) );
+            left.Transitions.Add( new Transition( from: newEnd, to: oldEnd, argument: Argument.Epsilon ) );
 
-            left.Transitions.Add( new Transition( from: oldEnd, to: oldStart, argument: AlphabetSymbol.Epsilon ) );
+            left.Transitions.Add( new Transition( from: oldEnd, to: oldStart, argument: Argument.Epsilon ) );
 
             return left;
         }
@@ -142,19 +142,19 @@ public class FiniteAutomataCreator
 
             State leftOldStart = left.AllStates.First( x => x.IsStart );
             leftOldStart.IsStart = false;
-            left.Transitions.Add( new Transition( from: newStart, to: leftOldStart, argument: AlphabetSymbol.Epsilon ) );
+            left.Transitions.Add( new Transition( from: newStart, to: leftOldStart, argument: Argument.Epsilon ) );
 
             State rightOldStart = right.AllStates.First( x => x.IsStart );
             rightOldStart.IsStart = false;
-            right.Transitions.Add( new Transition( from: newStart, to: rightOldStart, argument: AlphabetSymbol.Epsilon ) );
+            right.Transitions.Add( new Transition( from: newStart, to: rightOldStart, argument: Argument.Epsilon ) );
 
             State leftOldEnd = left.AllStates.First( x => x.IsEnd );
             leftOldEnd.IsEnd = false;
-            left.Transitions.Add( new Transition( from: leftOldEnd, to: newEnd, argument: AlphabetSymbol.Epsilon ) );
+            left.Transitions.Add( new Transition( from: leftOldEnd, to: newEnd, argument: Argument.Epsilon ) );
 
             State rightOldEnd = right.AllStates.First( x => x.IsEnd );
             rightOldEnd.IsEnd = false;
-            right.Transitions.Add( new Transition( from: rightOldEnd, to: newEnd, argument: AlphabetSymbol.Epsilon ) );
+            right.Transitions.Add( new Transition( from: rightOldEnd, to: newEnd, argument: Argument.Epsilon ) );
 
             return new FiniteAutomata(
                 allStates: left.AllStates.Union( right.AllStates ),

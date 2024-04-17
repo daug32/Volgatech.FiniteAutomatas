@@ -1,17 +1,17 @@
-﻿using ReToDfa.FiniteAutomatas.Displays;
-using ReToDfa.FiniteAutomatas.ValueObjects;
+﻿using FiniteAutomatas.Domain.ValueObjects;
+using ReToDfa.Models.Displays;
 
-namespace ReToDfa.FiniteAutomatas;
+namespace ReToDfa.Models;
 
 public class FiniteAutomata
 {
-    public readonly HashSet<AlphabetSymbol> Alphabet;
+    public readonly HashSet<Argument> Alphabet;
     public readonly HashSet<Transition> Transitions;
 
     public readonly HashSet<State> AllStates;
 
     public FiniteAutomata( 
-        IEnumerable<AlphabetSymbol> alphabet,
+        IEnumerable<Argument> alphabet,
         IEnumerable<Transition> transitions, 
         IEnumerable<State> allStates )
     {
@@ -35,7 +35,7 @@ public class FiniteAutomata
     {
     }
 
-    public IEnumerable<State> Move( State from, AlphabetSymbol argument )
+    public IEnumerable<State> Move( State from, Argument argument )
     {
         var result = new List<State>();
         
@@ -58,7 +58,7 @@ public class FiniteAutomata
                     continue;
                 }
 
-                if ( transition.Argument == AlphabetSymbol.Epsilon )
+                if ( transition.Argument == Argument.Epsilon )
                 {
                     statesToProcess.Enqueue( transition.To );
                     continue;

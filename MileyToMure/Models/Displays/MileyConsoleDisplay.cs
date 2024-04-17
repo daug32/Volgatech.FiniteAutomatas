@@ -1,5 +1,5 @@
 ﻿using ConsoleTables;
-using FiniteAutomata.Libs;
+using FiniteAutomatas.Domain.ValueObjects;
 
 namespace MileyToMure.Models.Displays;
 

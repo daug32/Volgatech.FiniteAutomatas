@@ -1,7 +1,7 @@
 ﻿using ConsoleTables;
-using ReToDfa.FiniteAutomatas.ValueObjects;
+using FiniteAutomatas.Domain.ValueObjects;
 
-namespace ReToDfa.FiniteAutomatas.Displays;
+namespace ReToDfa.Models.Displays;
 
 public static class FiniteAutomataConsoleDisplay
 {
@@ -38,7 +38,7 @@ public static class FiniteAutomataConsoleDisplay
                 List<string> transitions = automata.Transitions
                     .Where( x =>
                         x.From.Equals( state ) &&
-                        x.Argument == new AlphabetSymbol( column ) )
+                        x.Argument == new Argument( column ) )
                     .Select( x => x.To.Name )
                     .ToList();
                 

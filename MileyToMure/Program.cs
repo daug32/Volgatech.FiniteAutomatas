@@ -1,4 +1,4 @@
-﻿using FiniteAutomata.Libs;
+﻿using FiniteAutomatas.Domain.ValueObjects;
 using MileyToMure.Models;
 using MileyToMure.Models.Convertors;
 using MileyToMure.Models.Displays;

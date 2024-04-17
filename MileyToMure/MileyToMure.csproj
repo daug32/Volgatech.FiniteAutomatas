@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FiniteAutomata.Libs\FiniteAutomata.Libs.csproj" />
+      <ProjectReference Include="..\FiniteAutomatas.Domain\FiniteAutomatas.Domain.csproj" />
     </ItemGroup>
 
 </Project>
