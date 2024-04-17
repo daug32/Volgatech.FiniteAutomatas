@@ -1,18 +1,18 @@
 ﻿using System.Diagnostics;
 using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.ValueObjects;
-using FiniteAutomatas.RegularExpressions.Implementation;
+using FiniteAutomatas.RegularExpressions.Implementation.Models;
 using FiniteAutomatas.RegularExpressions.Implementation.Utils;
 
 namespace FiniteAutomatas.RegularExpressions;
 
-public class RegularExpressionToFiniteAutomataConvertor
+public class RegexToFiniteAutomataParser
 {
-    public bool TryCreateFromRegex( string regex, out FiniteAutomata? automata )
+    public bool TryParse( string regex, out FiniteAutomata? automata )
     {
         try
         {
-            automata = CreateFromRegex( regex );
+            automata = Parse( regex );
             return true;
         }
         catch
@@ -21,8 +21,8 @@ public class RegularExpressionToFiniteAutomataConvertor
             return false;
         }
     }
-    
-    public FiniteAutomata CreateFromRegex( string regex )
+
+    public FiniteAutomata Parse( string regex )
     {
         var alphabet = new HashSet<Argument>( regex.Select( x => new Argument( x.ToString() ) ) );
         alphabet.Add( Argument.Epsilon );
@@ -36,14 +36,14 @@ public class RegularExpressionToFiniteAutomataConvertor
         {
             RegexNode curr = stack.Pop();
             FiniteAutomata automata = ConvertNodeToAutomata(
-                current: curr,
-                left: curr.LeftOperand != null
+                curr,
+                curr.LeftOperand != null
                     ? nodesAutomatas[curr.LeftOperand]
                     : null,
-                right: curr.RightOperand != null
+                curr.RightOperand != null
                     ? nodesAutomatas[curr.RightOperand]
                     : null,
-                alphabet: alphabet.ToHashSet() );
+                alphabet.ToHashSet() );
 
             nodesAutomatas[curr] = automata;
         }
@@ -64,7 +64,7 @@ public class RegularExpressionToFiniteAutomataConvertor
             return new FiniteAutomata( new[]
             {
                 new Transition(
-                    from: new State( "0", isStart: true ),
+                    new State( "0", true ),
                     to: new State( "1", isEnd: true ),
                     argument: new Argument( regexSymbol.ToString() ) )
             } );
@@ -74,22 +74,22 @@ public class RegularExpressionToFiniteAutomataConvertor
         {
             int endStateName = UpdateNamesAndGetBiggest( 1, left!.AllStates ) + 1;
 
-            var newStart = new State( "0", isStart: true );
+            var newStart = new State( "0", true );
             left.AllStates.Add( newStart );
 
             State oldStart = left.AllStates.First( x => x.IsStart );
             oldStart.IsStart = false;
-            left.Transitions.Add( new Transition( from: newStart, to: oldStart, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( newStart, to: oldStart, argument: Argument.Epsilon ) );
 
             var newEnd = new State( endStateName.ToString(), isEnd: true );
             left.AllStates.Add( newEnd );
 
             State oldEnd = left.AllStates.First( x => x.IsEnd );
             oldEnd.IsEnd = false;
-            left.Transitions.Add( new Transition( from: newEnd, to: oldEnd, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( newEnd, to: oldEnd, argument: Argument.Epsilon ) );
 
-            left.Transitions.Add( new Transition( from: oldEnd, to: oldStart, argument: Argument.Epsilon ) );
-            left.Transitions.Add( new Transition( from: newStart, to: newEnd, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( oldEnd, to: oldStart, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( newStart, to: newEnd, argument: Argument.Epsilon ) );
 
             return left;
         }
@@ -98,21 +98,21 @@ public class RegularExpressionToFiniteAutomataConvertor
         {
             int endStateName = UpdateNamesAndGetBiggest( 1, left!.AllStates ) + 1;
 
-            var newStart = new State( "0", isStart: true );
+            var newStart = new State( "0", true );
             left.AllStates.Add( newStart );
 
             State oldStart = left.AllStates.First( x => x.IsStart );
             oldStart.IsStart = false;
-            left.Transitions.Add( new Transition( from: newStart, to: oldStart, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( newStart, to: oldStart, argument: Argument.Epsilon ) );
 
             var newEnd = new State( endStateName.ToString(), isEnd: true );
             left.AllStates.Add( newEnd );
 
             State oldEnd = left.AllStates.First( x => x.IsEnd );
             oldEnd.IsEnd = false;
-            left.Transitions.Add( new Transition( from: newEnd, to: oldEnd, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( newEnd, to: oldEnd, argument: Argument.Epsilon ) );
 
-            left.Transitions.Add( new Transition( from: oldEnd, to: oldStart, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( oldEnd, to: oldStart, argument: Argument.Epsilon ) );
 
             return left;
         }
@@ -121,8 +121,8 @@ public class RegularExpressionToFiniteAutomataConvertor
         {
             int biggestLeft = FindMaxName( left!.AllStates );
             int biggestRight = FindMaxName( right!.AllStates );
-            
-            int endStateName = 0;
+
+            int endStateName;
             if ( biggestLeft > biggestRight )
             {
                 endStateName = UpdateNamesAndGetBiggest( biggestLeft + 2, right!.AllStates ) + 1;
@@ -134,7 +134,7 @@ public class RegularExpressionToFiniteAutomataConvertor
                 UpdateNamesAndGetBiggest( 1, right!.AllStates );
             }
 
-            var newStart = new State( "0", isStart: true );
+            var newStart = new State( "0", true );
             left.AllStates.Add( newStart );
 
             var newEnd = new State( endStateName.ToString(), isEnd: true );
@@ -142,19 +142,19 @@ public class RegularExpressionToFiniteAutomataConvertor
 
             State leftOldStart = left.AllStates.First( x => x.IsStart );
             leftOldStart.IsStart = false;
-            left.Transitions.Add( new Transition( from: newStart, to: leftOldStart, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( newStart, to: leftOldStart, argument: Argument.Epsilon ) );
 
             State rightOldStart = right.AllStates.First( x => x.IsStart );
             rightOldStart.IsStart = false;
-            right.Transitions.Add( new Transition( from: newStart, to: rightOldStart, argument: Argument.Epsilon ) );
+            right.Transitions.Add( new Transition( newStart, to: rightOldStart, argument: Argument.Epsilon ) );
 
             State leftOldEnd = left.AllStates.First( x => x.IsEnd );
             leftOldEnd.IsEnd = false;
-            left.Transitions.Add( new Transition( from: leftOldEnd, to: newEnd, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( leftOldEnd, to: newEnd, argument: Argument.Epsilon ) );
 
             State rightOldEnd = right.AllStates.First( x => x.IsEnd );
             rightOldEnd.IsEnd = false;
-            right.Transitions.Add( new Transition( from: rightOldEnd, to: newEnd, argument: Argument.Epsilon ) );
+            right.Transitions.Add( new Transition( rightOldEnd, to: newEnd, argument: Argument.Epsilon ) );
 
             return new FiniteAutomata(
                 allStates: left.AllStates.Union( right.AllStates ),
@@ -197,9 +197,9 @@ public class RegularExpressionToFiniteAutomataConvertor
             right.AllStates.Remove( rightOldStart );
 
             return new FiniteAutomata(
-                alphabet: alphabet,
-                transitions: left.Transitions.Union( right.Transitions ),
-                allStates: left.AllStates.Union( right.AllStates ) );
+                alphabet,
+                left.Transitions.Union( right.Transitions ),
+                left.AllStates.Union( right.AllStates ) );
         }
 
         throw new UnreachableException();
@@ -247,5 +247,8 @@ public class RegularExpressionToFiniteAutomataConvertor
         return max;
     }
 
-    private int FindMaxName( IEnumerable<State> states ) => states.Select( x => Int32.Parse( x.Name ) ).Max();
+    private int FindMaxName( IEnumerable<State> states )
+    {
+        return states.Select( x => Int32.Parse( x.Name ) ).Max();
+    }
 }

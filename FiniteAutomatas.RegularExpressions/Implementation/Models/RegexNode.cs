@@ -1,4 +1,4 @@
-﻿namespace FiniteAutomatas.RegularExpressions.Implementation;
+﻿namespace FiniteAutomatas.RegularExpressions.Implementation.Models;
 
 internal class RegexNode
 {

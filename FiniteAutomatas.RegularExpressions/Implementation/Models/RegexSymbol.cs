@@ -1,6 +1,6 @@
 ﻿using FiniteAutomatas.RegularExpressions.Implementation.Extensions;
 
-namespace FiniteAutomatas.RegularExpressions.Implementation;
+namespace FiniteAutomatas.RegularExpressions.Implementation.Models;
 
 internal class RegexSymbol
 {

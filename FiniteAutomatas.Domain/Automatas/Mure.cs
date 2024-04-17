@@ -2,17 +2,16 @@
 
 namespace FiniteAutomatas.Domain.Automatas;
 
-public class Mure
+public class Mure : FiniteAutomata
 {
     // q1:A1, q2:A1...
     public readonly Dictionary<State, State> Overrides;
-    public readonly HashSet<Transition> Transitions;
-    public readonly HashSet<Argument> Alphabet;
 
-    public Mure(Dictionary<State, State> overrides, IEnumerable<Transition> transitions)
+    public Mure(
+        Dictionary<State, State> overrides, 
+        ICollection<Transition> transitions)
+        : base( transitions: transitions )
     {
         Overrides = overrides;
-        Transitions = transitions.ToHashSet();
-        Alphabet = Transitions.Select(x => x.Argument).ToHashSet();
     }
 }

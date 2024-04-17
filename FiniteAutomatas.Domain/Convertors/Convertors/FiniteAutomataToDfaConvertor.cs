@@ -1,15 +1,16 @@
-﻿using FiniteAutomatas.Domain.ValueObjects;
+﻿using FiniteAutomatas.Domain.Automatas;
+using FiniteAutomatas.Domain.ValueObjects;
 
-namespace FiniteAutomatas.Domain.Automatas.Convertors;
+namespace FiniteAutomatas.Domain.Convertors.Convertors;
 
-public static class FiniteAutomataToDfaExtension
+public class FiniteAutomataToDfaConvertor : IAutomataConvertor<FiniteAutomata>
 {
     private class CollapsedState
     {
-        public string Name { get; set; }
-        public bool IsStart { get; set; }
-        public bool IsEnd { get; set; }
-    
+        public string Name { get; }
+        public bool IsStart { get; }
+        public bool IsEnd { get; }
+
         public readonly HashSet<State> States = new();
 
         public CollapsedState( State state )
@@ -34,16 +35,28 @@ public static class FiniteAutomataToDfaExtension
             }
         }
 
-        public State ToState() => new( name: Name, isStart: IsStart, isEnd: IsEnd );
+        public State ToState()
+        {
+            return new State( Name, IsStart, IsEnd );
+        }
 
-        public override bool Equals( object? obj ) => obj is CollapsedState other && Equals( other );
+        public override bool Equals( object? obj )
+        {
+            return obj is CollapsedState other && Equals( other );
+        }
 
-        public bool Equals( CollapsedState? other ) => Name == other?.Name;
+        public bool Equals( CollapsedState? other )
+        {
+            return Name == other?.Name;
+        }
 
-        public override int GetHashCode() => Name.GetHashCode();
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
     }
-    
-    public static FiniteAutomata ToDfa( this FiniteAutomata automata )
+
+    public FiniteAutomata Convert( FiniteAutomata automata )
     {
         var dfaTransitions = new HashSet<Transition>();
         var dfaStart = new CollapsedState( automata.AllStates.First( x => x.IsStart ) );
@@ -92,15 +105,15 @@ public static class FiniteAutomataToDfaExtension
     {
         // oldName, newName
         var statesList = states.ToList();
-        
+
         var nameOverrides = new Dictionary<string, string>();
-        for ( int i = 0; i < statesList.Count; i++ )
-        {   
+        for ( var i = 0; i < statesList.Count; i++ )
+        {
             State state = statesList[i];
 
             string oldName = state.Name;
             string newName = $"S{i}";
-            
+
             nameOverrides.Add( oldName, newName );
             state.Name = newName;
         }
@@ -114,8 +127,8 @@ public static class FiniteAutomataToDfaExtension
         }
 
         return new FiniteAutomata(
-            alphabet: alphabet,
-            transitions: transitions,
-            allStates: statesList );
-    } 
+            alphabet,
+            transitions,
+            statesList );
+    }
 }

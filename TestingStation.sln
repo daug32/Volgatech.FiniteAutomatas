@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{83C9DF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{B003DC11-C771-487F-AB8D-DBFC3E3AD264}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiniteAutomatas.Visualizations", "FiniteAutomatas.Visualizations\FiniteAutomatas.Visualizations.csproj", "{6139F3F9-ED06-41ED-9795-683F3D3E2631}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{7553AB68-9442-4F43-BA8C-088F8B3D1E8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7553AB68-9442-4F43-BA8C-088F8B3D1E8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7553AB68-9442-4F43-BA8C-088F8B3D1E8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6139F3F9-ED06-41ED-9795-683F3D3E2631}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6139F3F9-ED06-41ED-9795-683F3D3E2631}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6139F3F9-ED06-41ED-9795-683F3D3E2631}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6139F3F9-ED06-41ED-9795-683F3D3E2631}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2B9ADAD3-2665-40F4-AE36-24EC434A387A} = {83C9DF32-EA18-4C7D-AE35-99BAF6D7CC0C}

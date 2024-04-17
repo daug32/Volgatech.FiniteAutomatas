@@ -1,5 +1,6 @@
 ﻿using FiniteAutomatas.Domain.Automatas;
-using FiniteAutomatas.Domain.Automatas.Convertors;
+using FiniteAutomatas.Domain.Convertors;
+using FiniteAutomatas.Domain.Convertors.Convertors;
 using FiniteAutomatas.Domain.ValueObjects;
 using FiniteAutomatas.MileyToMure.Console.Displays;
 
@@ -50,7 +51,7 @@ public class Program
         });
         miley.Print();
 
-        Mure mure = new MileyToMureConvertor().ToMure(miley);
+        Mure mure = miley.Convert( new MileyToMureConvertor() );
         mure.Print();
     }
 
