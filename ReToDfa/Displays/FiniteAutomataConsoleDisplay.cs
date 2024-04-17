@@ -2,7 +2,7 @@
 using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.ValueObjects;
 
-namespace ReToDfa.Models.Displays;
+namespace ReToDfa.Displays;
 
 public static class FiniteAutomataConsoleDisplay
 {
@@ -19,6 +19,7 @@ public static class FiniteAutomataConsoleDisplay
         {
             table.AddRow( row.ToArray() );
         }
+
         table.Write();
     }
 

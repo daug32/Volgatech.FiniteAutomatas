@@ -1,8 +1,8 @@
 ﻿using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.Automatas.Convertors;
 using FiniteAutomatas.Domain.ValueObjects;
-using ReToDfa.Models.Displays;
-using ReToDfa.Regexes;
+using FiniteAutomatas.RegularExpressions.Convertors;
+using ReToDfa.Displays;
 
 namespace ReToDfa;
 
@@ -16,7 +16,7 @@ public class Program
             string regex = Console.ReadLine()!;
 
             Console.WriteLine( "Creating an NFA..." );
-            if ( !new FiniteAutomataCreator().TryCreateFromRegex( regex, out FiniteAutomata? nfa ) )
+            if ( !new RegularExpressionToFiniteAutomataConvertor().TryCreateFromRegex( regex, out FiniteAutomata? nfa ) )
             {
                 Console.WriteLine( "Couldn't create an NFA" );
                 continue;
@@ -36,7 +36,7 @@ public class Program
     {
         void Test( string expression )
         {
-            FiniteAutomata nfa = new FiniteAutomataCreator().CreateFromRegex( expression );
+            FiniteAutomata nfa = new RegularExpressionToFiniteAutomataConvertor().CreateFromRegex( expression );
             nfa.Print();
             
             FiniteAutomata dfa = nfa.ToDfa();

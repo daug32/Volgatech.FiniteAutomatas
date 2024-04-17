@@ -1,4 +1,4 @@
-﻿namespace ReToDfa.Regexes.Models;
+﻿namespace FiniteAutomatas.RegularExpressions.Models;
 
 public enum RegexSymbolType
 {

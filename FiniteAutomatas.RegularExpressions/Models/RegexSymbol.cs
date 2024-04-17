@@ -1,6 +1,6 @@
-﻿using ReToDfa.Regexes.Models.Extensions;
+﻿using FiniteAutomatas.RegularExpressions.Models.Extensions;
 
-namespace ReToDfa.Regexes.Models;
+namespace FiniteAutomatas.RegularExpressions.Models;
 
 public class RegexSymbol
 {

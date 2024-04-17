@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.ValueObjects;
-using ReToDfa.Regexes.Models;
-using ReToDfa.Regexes.Models.Extensions;
+using FiniteAutomatas.RegularExpressions.Models;
+using FiniteAutomatas.RegularExpressions.Models.Utils;
 
-namespace ReToDfa.Regexes;
+namespace FiniteAutomatas.RegularExpressions.Convertors;
 
-public class FiniteAutomataCreator
+public class RegularExpressionToFiniteAutomataConvertor
 {
     public bool TryCreateFromRegex( string regex, out FiniteAutomata? automata )
     {

@@ -1,9 +1,7 @@
-﻿namespace ReToDfa.Regexes.Models.Extensions;
+﻿namespace FiniteAutomatas.RegularExpressions.Models.Extensions;
 
-public static class RegexSymbolTypeHelper
+public static class RegexSymbolTypeExtensions
 {
-    public static readonly HashSet<char> SpecialSymbols = new( "()|+*" );
-
     public static string ToSymbol( this RegexSymbolType type ) => type switch
     {
         RegexSymbolType.And => "&",
