@@ -4,8 +4,13 @@ namespace FiniteAutomatas.Domain.Automatas;
 
 public class Miley
 {
+    /// <summary> a, b, c, ... </summary>
     public readonly HashSet<Argument> Alphabet;
+    
+    /// <summary> q0, q1, q2, ... </summary>
     public readonly HashSet<State> AllStates;
+    
+    /// <summary> q0->q1: a, q1->q0:Eps, ... </summary>
     public readonly HashSet<Transition> Transitions;
 
     public Miley(IEnumerable<Transition> transitions)
