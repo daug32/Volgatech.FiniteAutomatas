@@ -2,10 +2,12 @@
 
 internal class RegexNode
 {
-    public readonly RegexNode? LeftOperand;
-    public readonly RegexNode? RightOperand;
+    private RegexNode? _parent;
     
-    public readonly RegexSymbol Value;
+    public RegexNode? LeftOperand;
+    public RegexNode? RightOperand;
+    
+    public RegexSymbol Value;
 
     public static RegexNode Parse( string expression )
     {
@@ -20,11 +22,12 @@ internal class RegexNode
             expression = $"{expression}|{expression}";
         }
         
-        return new RegexNode( RegexSymbol.Parse( expression ) );
+        return new RegexNode( RegexSymbol.Parse( expression ), null );
     }
     
-    private RegexNode( List<RegexSymbol> regex )
+    private RegexNode( List<RegexSymbol> regex, RegexNode? parent )
     {
+        _parent = parent;
         regex = SimplifyBracesIfNeed( regex );
 
         int symbolIndex = -1;
@@ -67,7 +70,7 @@ internal class RegexNode
                      RegexSymbolType.Symbol)
             {
                 Value = regex.Last();
-                LeftOperand = new RegexNode( regex.GetRange( 0, regex.Count - 1 ) );
+                LeftOperand = new RegexNode( regex.GetRange( 0, regex.Count - 1 ), this );
                 return;
             }
 
@@ -75,12 +78,35 @@ internal class RegexNode
             return;
         }
 
-        var left = regex.GetRange( 0, symbolIndex );
-        var right = regex.GetRange( symbolIndex + 1, regex.Count - symbolIndex - 1 );
-        
-        LeftOperand = left.Count > 0 ? new RegexNode( left ) : null;
         Value = regex[symbolIndex];
-        RightOperand = right.Count > 0 ? new RegexNode( right ) : null;
+        
+        var left = regex.GetRange( 0, symbolIndex );
+        LeftOperand = left.Count > 0 ? new RegexNode( left, this ) : null;
+        
+        var right = regex.GetRange( symbolIndex + 1, regex.Count - symbolIndex - 1 );
+        RightOperand = right.Count > 0 ? new RegexNode( right, this ) : null;
+    }
+
+    public RegexNode( RegexSymbol value, RegexNode? leftOperand, RegexNode? rightOperand )
+    {
+        Value = value;
+        LeftOperand = leftOperand;
+        RightOperand = rightOperand;
+    }
+    
+    public RegexNode DeepCopy()
+    {
+        RegexNode? left = null;
+        if ( LeftOperand != null) {
+            left = LeftOperand.DeepCopy();
+        }
+        
+        RegexNode? right = null;
+        if ( RightOperand != null) {
+            right = RightOperand.DeepCopy();
+        }
+        
+        return new RegexNode( Value.Copy(), left, right);
     }
 
     public override string ToString() => $"(V={Value}, L={LeftOperand}, R={RightOperand})";

@@ -97,7 +97,7 @@ public static class Tests
 
     private static void TestRegexToAutomataConversion( string expression )
     {
-        FiniteAutomata nfa = new RegexToFiniteAutomataParser().Parse( expression );
+        FiniteAutomata nfa = new RegexToNfaParser().Parse( expression );
         FiniteAutomata dfa = nfa.Convert( new FiniteAutomataToDfaConvertor() );
         dfa.Print();
     }

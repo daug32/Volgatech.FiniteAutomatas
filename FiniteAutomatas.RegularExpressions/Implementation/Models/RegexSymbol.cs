@@ -7,13 +7,13 @@ internal class RegexSymbol
     public readonly char? Value;
     public readonly RegexSymbolType Type;
 
-    private RegexSymbol( char value )
+    public RegexSymbol( char value )
     {
         Value = value;
         Type = RegexSymbolType.Symbol;
     }
 
-    private RegexSymbol( RegexSymbolType symbolType )
+    public RegexSymbol( RegexSymbolType symbolType )
     {
         Type = symbolType == RegexSymbolType.Symbol
             ? throw new InvalidOperationException()
@@ -30,37 +30,21 @@ internal class RegexSymbol
             RegexSymbolType? nextSymbolType = i + 1 < regex.Length
                 ? ParseRegexSymbolType( regex[i + 1] )
                 : null;
-            
-            if ( currentSymbolType is RegexSymbolType.Symbol )
+
+            result.Add( currentSymbolType is RegexSymbolType.Symbol
+                ? new RegexSymbol( regex[i] )
+                : new RegexSymbol( currentSymbolType ) );
+
+            if ( currentSymbolType is
+                     RegexSymbolType.Symbol or
+                     RegexSymbolType.CloseBrace or
+                     RegexSymbolType.OneOrMore or 
+                     RegexSymbolType.ZeroOrMore &&
+                 nextSymbolType is
+                     RegexSymbolType.Symbol or 
+                     RegexSymbolType.OpenBrace )
             {
-                result.Add( new RegexSymbol( regex[i] ) );
-
-                if ( nextSymbolType is 
-                    RegexSymbolType.Symbol or 
-                    RegexSymbolType.OpenBrace )
-                {
-                    result.Add( new RegexSymbol( RegexSymbolType.And ) );
-                }
-            }
-            else
-            {
-                result.Add( new RegexSymbol( currentSymbolType ) );
-
-                if ( currentSymbolType is
-                         RegexSymbolType.CloseBrace or 
-                         RegexSymbolType.OneOrMore or 
-                         RegexSymbolType.ZeroOrMore &&
-                     nextSymbolType is
-                         RegexSymbolType.Symbol )
-                {
-                    result.Add( new RegexSymbol( RegexSymbolType.And ) );
-                    continue;
-                }
-
-                if ( currentSymbolType is RegexSymbolType.CloseBrace && nextSymbolType is RegexSymbolType.OpenBrace )
-                {
-                    result.Add( new RegexSymbol( RegexSymbolType.And ) );
-                }
+                result.Add( new RegexSymbol( RegexSymbolType.And ) );
             }
         }
 
@@ -72,6 +56,13 @@ internal class RegexSymbol
         return Type == RegexSymbolType.Symbol
             ? Value!.ToString()!
             : Type.ToSymbol();
+    }
+
+    public RegexSymbol Copy()
+    {
+        return Type == RegexSymbolType.Symbol
+            ? new RegexSymbol( Value!.Value )
+            : new RegexSymbol( Type );
     }
 
     private static RegexSymbolType ParseRegexSymbolType( char c )

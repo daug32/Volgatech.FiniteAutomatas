@@ -6,7 +6,7 @@ using FiniteAutomatas.RegularExpressions.Implementation.Utils;
 
 namespace FiniteAutomatas.RegularExpressions;
 
-public class RegexToFiniteAutomataParser
+public class RegexToNfaParser
 {
     public bool TryParse( string regex, out FiniteAutomata? automata )
     {
@@ -90,29 +90,6 @@ public class RegexToFiniteAutomataParser
 
             left.Transitions.Add( new Transition( oldEnd, to: oldStart, argument: Argument.Epsilon ) );
             left.Transitions.Add( new Transition( newStart, to: newEnd, argument: Argument.Epsilon ) );
-
-            return left;
-        }
-
-        if ( regexSymbol.Type == RegexSymbolType.OneOrMore )
-        {
-            int endStateName = UpdateNamesAndGetBiggest( 1, left!.AllStates ) + 1;
-
-            var newStart = new State( "0", true );
-            left.AllStates.Add( newStart );
-
-            State oldStart = left.AllStates.First( x => x.IsStart );
-            oldStart.IsStart = false;
-            left.Transitions.Add( new Transition( newStart, to: oldStart, argument: Argument.Epsilon ) );
-
-            var newEnd = new State( endStateName.ToString(), isEnd: true );
-            left.AllStates.Add( newEnd );
-
-            State oldEnd = left.AllStates.First( x => x.IsEnd );
-            oldEnd.IsEnd = false;
-            left.Transitions.Add( new Transition( newEnd, to: oldEnd, argument: Argument.Epsilon ) );
-
-            left.Transitions.Add( new Transition( oldEnd, to: oldStart, argument: Argument.Epsilon ) );
 
             return left;
         }
@@ -216,6 +193,16 @@ public class RegexToFiniteAutomataParser
         {
             RegexNode curr = queue.Dequeue();
 
+            if ( curr.Value.Type == RegexSymbolType.OneOrMore )
+            {
+                curr.RightOperand = 
+                    new RegexNode(
+                        value: new RegexSymbol( RegexSymbolType.ZeroOrMore ),
+                        leftOperand: curr.LeftOperand!.DeepCopy(),
+                        rightOperand: null );
+                curr.Value = new RegexSymbol( RegexSymbolType.And );
+            }
+
             if ( curr.LeftOperand is not null )
             {
                 queue.Enqueue( curr.LeftOperand );
@@ -225,7 +212,7 @@ public class RegexToFiniteAutomataParser
             {
                 queue.Enqueue( curr.RightOperand );
             }
-
+            
             stack.Push( curr );
         }
 

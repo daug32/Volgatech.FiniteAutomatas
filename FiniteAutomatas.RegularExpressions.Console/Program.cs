@@ -7,7 +7,7 @@ namespace FiniteAutomatas.RegularExpressions.Console;
 
 public class Program
 {
-    private static readonly RegexToFiniteAutomataParser _regexToFiniteAutomataParser = new();
+    private static readonly RegexToNfaParser _regexToNfaParser = new();
 
     public static void Main( string[] args )
     {
@@ -15,18 +15,21 @@ public class Program
         {
             System.Console.Write( "Write a regex: " );
             string regex = System.Console.ReadLine()!;
-        
-            System.Console.WriteLine( "Creating an NFA..." );
-            if ( !_regexToFiniteAutomataParser.TryParse( regex, out FiniteAutomata? nfa ) )
+            
+            try
             {
-                System.Console.WriteLine( "Couldn't create an NFA" );
-                continue;
+                System.Console.WriteLine( "Creating an NFA..." );
+                FiniteAutomata nfa = new RegexToNfaParser().Parse( regex );
+
+                System.Console.WriteLine( "Converting into DFA..." );
+                FiniteAutomata dfa = nfa.Convert( new FiniteAutomataToDfaConvertor() );
+                dfa.Print();
             }
-        
-            System.Console.WriteLine( "Converting into DFA..." );
-            FiniteAutomata dfa = nfa!.Convert( new FiniteAutomataToDfaConvertor() );
-        
-            dfa.Print();
+            catch ( Exception ex )
+            {
+                System.Console.WriteLine( $"Couldn't create an NFA for regex. Regex: {regex}" );
+                System.Console.WriteLine( ex );
+            }
         }
         
         System.Console.WriteLine( "Press any key..." );
