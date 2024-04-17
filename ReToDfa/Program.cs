@@ -9,9 +9,20 @@ public class Program
 {
     public static void Main( string[] args )
     {
-        ReToNfaTest();
+        while ( true )
+        {
+            Console.WriteLine( "Write a regex:" );
+            string regex = Console.ReadLine()!;
 
-        Console.WriteLine( "Success" );
+            Console.WriteLine( "Creating an NFA" );
+            FiniteAutomata nfa = new FiniteAutomataCreator().CreateFromRegex( regex );
+
+            Console.WriteLine( "Converting into DFA" );
+            FiniteAutomata dfa = nfa.ToDfa();
+            dfa.Print();
+        }
+
+        Console.WriteLine( "Press any key..." );
         Console.ReadKey();
     }
 
@@ -19,26 +30,23 @@ public class Program
     {
         void Test( string expression )
         {
-            var a = new FiniteAutomataCreator().CreateFromRegex( expression );
-            a.Print();
-            a.ToDfa().Print();
+            FiniteAutomata nfa = new FiniteAutomataCreator().CreateFromRegex( expression );
+            nfa.Print();
+            
+            FiniteAutomata dfa = nfa.ToDfa();
+            dfa.Print();
         }
         
-        // Test( "a" );
-        // Test( "(a)" );
-        // Test( "((a))" );
-        
-        // Test( "a(b)" );
-        
-        // Test( "a*" );
-        // Test( "a+" );
-        
-        // Test( "a|b" );
-        // Test( "(a)|b" );
-        // Test( "a|(b)" );
-        
-        // Test( "(abc)+" );
-        
+        Test( "a" );
+        Test( "(a)" );
+        Test( "((a))" );
+        Test( "a(b)" );
+        Test( "a*" );
+        Test( "a+" );
+        Test( "a|b" );
+        Test( "(a)|b" );
+        Test( "a|(b)" );
+        Test( "(abc)+" );
         Test( "a*|b(c*|a*)" );
     }
 
@@ -103,8 +111,8 @@ public class Program
             alphabet.Values,
             transitions,
             allStates.Values );
-
         nfa.Print();
+
         FiniteAutomata dfa = nfa.ToDfa();
         dfa.Print();
     }

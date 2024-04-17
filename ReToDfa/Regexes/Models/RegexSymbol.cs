@@ -54,7 +54,6 @@ public class RegexSymbol
                          RegexSymbolType.Symbol )
                 {
                     result.Add( new RegexSymbol( RegexSymbolType.And ) );
-                    continue;
                 }
             }
         }

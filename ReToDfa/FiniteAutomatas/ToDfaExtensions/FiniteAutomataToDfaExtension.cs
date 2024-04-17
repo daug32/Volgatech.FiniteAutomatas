@@ -14,27 +14,20 @@ public static class FiniteAutomataToDfaExtension
         var processedStates = new HashSet<CollapsedState>();
         queue.Enqueue( dfaStart );
 
-        Print( "Generating DFA" );
-
         while ( queue.Any() )
         {
             CollapsedState fromState = queue.Dequeue();
-            Print( $"{nameof( CollapsedState )}: {fromState.Name}" );
 
             processedStates.Add( fromState );
 
             foreach ( AlphabetSymbol argument in alphabet )
             {
-                Print( $"\t{nameof( AlphabetSymbol )}: {argument.Value}" );
-
                 var achievableStates = fromState.States
                     .SelectMany( state => automata.Move( state, argument ) )
                     .ToHashSet();
 
                 if ( !achievableStates.Any() )
                 {
-                    Print( $"\t{nameof( achievableStates )} are empty" );
-                    Print();
                     continue;
                 }
 
@@ -43,7 +36,6 @@ public static class FiniteAutomataToDfaExtension
                 // If we didn't process the state yet
                 if ( !processedStates.Contains( toState ) )
                 {
-                    Print( $"\t{nameof( processedStates )}: enqueueing" );
                     queue.Enqueue( toState );
                 }
 
@@ -51,9 +43,6 @@ public static class FiniteAutomataToDfaExtension
                     fromState.ToState(),
                     argument,
                     toState.ToState() ) );
-
-                Print( $"\t{nameof( Transition )}: From: {fromState.Name}, Arg: {argument.Value}, To: {toState.Name}" );
-                Print();
             }
         }
 
@@ -90,10 +79,4 @@ public static class FiniteAutomataToDfaExtension
             transitions: transitions,
             allStates: statesList );
     } 
-
-    private static void Print( string message = "" )
-    {
-        return;
-        Console.WriteLine( message );
-    }
 }

@@ -2,16 +2,13 @@
 
 public class RegexNode
 {
-    public RegexNode? Parent;
-    public RegexNode? LeftOperand;
-    public RegexNode? RightOperand;
+    public readonly RegexNode? LeftOperand;
+    public readonly RegexNode? RightOperand;
     
     public readonly RegexSymbol Value;
 
     public static RegexNode Parse( string expression )
     {
-        Console.WriteLine( $"Creating a node. Expression: {expression}" );
-
         if ( expression.Length == 0 )
         {
             throw new Exception();
@@ -23,10 +20,7 @@ public class RegexNode
             expression = $"{expression}|{expression}";
         }
         
-        var regex = RegexSymbol.Parse( expression );
-        Console.WriteLine( $"\t{String.Join( "_", regex )}" );
-
-        return new RegexNode( regex );
+        return new RegexNode( RegexSymbol.Parse( expression ) );
     }
     
     private RegexNode( List<RegexSymbol> regex )
@@ -73,35 +67,20 @@ public class RegexNode
                      RegexSymbolType.Symbol)
             {
                 Value = regex.Last();
-            
-                Console.WriteLine( $"\tLeft: {String.Join( "_", regex.GetRange( 0, regex.Count - 1 ) )}" );
-                Console.WriteLine( $"\tCurrentOperator: {Value}" );
-                Console.WriteLine( $"\tRight:" );
-            
-                LeftOperand = new RegexNode( regex.GetRange( 0, regex.Count - 1 ) ).WithParent( this );
-                
+                LeftOperand = new RegexNode( regex.GetRange( 0, regex.Count - 1 ) );
                 return;
             }
 
             Value = regex.First();
-        
-            Console.WriteLine( $"\tLeft:" );
-            Console.WriteLine( $"\tCurrentOperator: {Value}" );
-            Console.WriteLine( $"\tRight:" );
-            
             return;
         }
 
         var left = regex.GetRange( 0, symbolIndex );
         var right = regex.GetRange( symbolIndex + 1, regex.Count - symbolIndex - 1 );
+        
+        LeftOperand = left.Count > 0 ? new RegexNode( left ) : null;
         Value = regex[symbolIndex];
-        
-        Console.WriteLine( $"\tLeft: {String.Join( "_", left)}" );
-        Console.WriteLine( $"\tCurrentOperator: {Value}" );
-        Console.WriteLine( $"\tRight: {String.Join( "_", right)}" );
-        
-        LeftOperand = left.Count > 0 ? new RegexNode( left ).WithParent( this ) : null;
-        RightOperand = right.Count > 0 ? new RegexNode( right ).WithParent( this ) : null;
+        RightOperand = right.Count > 0 ? new RegexNode( right ) : null;
     }
 
     public override string ToString() => $"(V={Value}, L={LeftOperand}, R={RightOperand})";
@@ -111,7 +90,6 @@ public class RegexNode
         while ( expression.First() == '(' && expression.Last() == ')' )
         {
             expression = expression.Substring( 1, expression.Length - 2 );
-            Console.WriteLine( $"\tBraces were removed. New expression: {expression}" );
         }
 
         return expression;
@@ -123,22 +101,8 @@ public class RegexNode
         {
             regex.RemoveAt( 0 );
             regex.RemoveAt( regex.Count - 1 );
-            Console.WriteLine( $"\tBraces were removed. New expression: {String.Join( "_", regex )}" );
         }
 
         return regex;
-    }
-}
-
-public static class RegexNodeExtensions
-{
-    public static RegexNode? WithParent( this RegexNode? node, RegexNode parent )
-    {
-        if ( node is not null )
-        {
-            node.Parent = parent ?? throw new ArgumentException( nameof( parent ) );
-        }
-
-        return node;
     }
 }
