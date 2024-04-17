@@ -19,20 +19,27 @@ public class Program
     {
         void Test( string expression )
         {
-            new FiniteAutomataCreator().CreateFromRegex( expression )?.Print();
+            var a = new FiniteAutomataCreator().CreateFromRegex( expression );
+            a.Print();
+            a.ToDfa().Print();
         }
         
-        Test( "(bac*)*|(ab)+|bc*" );
-        Test( "a" );
-        Test( "(a)" );
-        Test( "((a))" );
-        Test( "(a)|b" );
-        Test( "a(b)" );
-        Test( "a|(b)" );
-        Test( "a|b" );
-        Test( "a*" );
-        Test( "a+" );
-        Test( "(abc)+" );
+        // Test( "a" );
+        // Test( "(a)" );
+        // Test( "((a))" );
+        
+        // Test( "a(b)" );
+        
+        // Test( "a*" );
+        // Test( "a+" );
+        
+        // Test( "a|b" );
+        // Test( "(a)|b" );
+        // Test( "a|(b)" );
+        
+        // Test( "(abc)+" );
+        
+        Test( "a*|b(c*|a*)" );
     }
 
     private static void NfaToDfaTest()

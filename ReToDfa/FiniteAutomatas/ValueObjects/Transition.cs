@@ -1,10 +1,10 @@
 ﻿namespace ReToDfa.FiniteAutomatas.ValueObjects;
 
-public struct Transition
+public class Transition
 {
-    public readonly State From;
-    public readonly AlphabetSymbol Argument;
-    public readonly State To;
+    public State From;
+    public AlphabetSymbol Argument;
+    public State To;
 
     public Transition( State from, AlphabetSymbol argument, State to )
     {
@@ -12,4 +12,6 @@ public struct Transition
         Argument = argument;
         To = to;
     }
+
+    public override string ToString() => $"(f={From}, t={To}, arg: {Argument})";
 }

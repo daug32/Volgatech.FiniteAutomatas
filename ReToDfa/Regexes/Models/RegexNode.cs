@@ -1,7 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
-
-namespace ReToDfa.Regexes.Models;
+﻿namespace ReToDfa.Regexes.Models;
 
 public class RegexNode
 {
@@ -81,7 +78,7 @@ public class RegexNode
                 Console.WriteLine( $"\tCurrentOperator: {Value}" );
                 Console.WriteLine( $"\tRight:" );
             
-                LeftOperand = new RegexNode( regex.GetRange( 0, regex.Count - 1 ) );
+                LeftOperand = new RegexNode( regex.GetRange( 0, regex.Count - 1 ) ).WithParent( this );
                 
                 return;
             }
@@ -106,6 +103,8 @@ public class RegexNode
         LeftOperand = left.Count > 0 ? new RegexNode( left ).WithParent( this ) : null;
         RightOperand = right.Count > 0 ? new RegexNode( right ).WithParent( this ) : null;
     }
+
+    public override string ToString() => $"(V={Value}, L={LeftOperand}, R={RightOperand})";
 
     private static string SimplifyBracesIfNeed( string expression )
     {

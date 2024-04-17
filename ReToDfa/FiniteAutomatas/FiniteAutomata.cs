@@ -25,8 +25,14 @@ public class FiniteAutomata
                 Alphabet.Contains( x.Argument ) )
             ? transitions.ToHashSet()
             : throw new ArgumentException( "Not all From and To states of the transitions are presented in the AllStates" );
-        
-        AllStates.Where( x => x.IsEnd ).ToHashSet();
+    }
+
+    public FiniteAutomata( ICollection<Transition> transitions )
+        : this(
+            transitions.Select( x => x.Argument ).Distinct(),
+            transitions, 
+            transitions.SelectMany( x => new[] { x.From, x.To } ) )
+    {
     }
 
     public IEnumerable<State> Move( State from, AlphabetSymbol argument )

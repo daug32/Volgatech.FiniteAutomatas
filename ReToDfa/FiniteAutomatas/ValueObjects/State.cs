@@ -3,8 +3,8 @@
 public class State
 {
     public string Name { get; set; }
-    public readonly bool IsEnd;
-    public readonly bool IsStart;
+    public bool IsEnd;
+    public bool IsStart;
 
     public State( string name, bool isStart = false, bool isEnd = false )
     {
@@ -12,6 +12,8 @@ public class State
         IsStart = isStart;
         IsEnd = isEnd;
     }
+
+    public override string ToString() => Name;
 
     public override bool Equals( object? obj ) => obj is State other && Equals( other );
 

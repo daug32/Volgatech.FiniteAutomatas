@@ -11,6 +11,8 @@ public class AlphabetSymbol
         Value = value;
     }
 
+    public override string ToString() => Value;
+
     public override bool Equals( object? obj )
     {
         return obj is AlphabetSymbol other && Equals( other );
