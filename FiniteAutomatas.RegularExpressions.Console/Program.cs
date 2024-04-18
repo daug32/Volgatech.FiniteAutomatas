@@ -21,12 +21,14 @@ public class Program
             {
                 System.Console.WriteLine( "Creating an NFA..." );
                 FiniteAutomata nfa = new RegexToNfaParser().Parse( regex );
+                nfa.Print();
+                new Visualizer( nfa ).ToImage( @"D:\Development\Projects\TestingStation\nfa.png" );
 
                 System.Console.WriteLine( "Converting into DFA..." );
                 FiniteAutomata dfa = nfa.Convert( new NfaToDfaConvertor() );
                 dfa.Print();
                 
-                new Visualizer( dfa ).ToImage( @"D:\Development\Projects\TestingStation\image.png" );
+                new Visualizer( dfa ).ToImage( @"D:\Development\Projects\TestingStation\dfa.png" );
             }
             catch ( Exception ex )
             {

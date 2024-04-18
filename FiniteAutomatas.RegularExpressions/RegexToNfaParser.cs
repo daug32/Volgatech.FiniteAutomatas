@@ -79,17 +79,17 @@ public class RegexToNfaParser
 
             State oldStart = left.AllStates.First( x => x.IsStart );
             oldStart.IsStart = false;
-            left.Transitions.Add( new Transition( newStart, to: oldStart, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( from: newStart, to: oldStart, argument: Argument.Epsilon ) );
 
             var newEnd = new State( endStateName.ToString(), isEnd: true );
             left.AllStates.Add( newEnd );
 
             State oldEnd = left.AllStates.First( x => x.IsEnd );
             oldEnd.IsEnd = false;
-            left.Transitions.Add( new Transition( newEnd, to: oldEnd, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( from: oldEnd, to: newEnd, argument: Argument.Epsilon ) );
 
-            left.Transitions.Add( new Transition( oldEnd, to: oldStart, argument: Argument.Epsilon ) );
-            left.Transitions.Add( new Transition( newStart, to: newEnd, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( from: oldEnd, to: oldStart, argument: Argument.Epsilon ) );
+            left.Transitions.Add( new Transition( from: newStart, to: newEnd, argument: Argument.Epsilon ) );
 
             return left;
         }

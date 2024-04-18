@@ -21,16 +21,16 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
             States.Add( state );
         }
 
-        public CollapsedState( HashSet<State> states )
+        public CollapsedState( HashSet<State> states, bool isStart, bool isEnd )
         {
             Name = String.Join( "_", states.Select( x => x.Name ).OrderBy( x => x ) );
-            IsEnd = false;
-            IsStart = false;
+            IsEnd = isEnd;
+            IsStart = isStart;
 
             foreach ( State state in states )
             {
-                IsStart = IsStart || state.IsStart;
                 IsEnd = IsEnd || state.IsEnd;
+                IsStart = IsStart || state.IsStart;
                 States.Add( state );
             }
         }
@@ -66,11 +66,27 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
         var processedStates = new HashSet<CollapsedState>();
         queue.Enqueue( dfaStart );
 
+        var stateToEpsClosures = new Dictionary<State, HashSet<State>>(
+            automata.AllStates.Select( 
+                state => new KeyValuePair<State, HashSet<State>>( 
+                    key: state,
+                    value: automata.EpsClosure( state ).ToHashSet() ) ) );
+        
         while ( queue.Any() )
         {
             CollapsedState fromState = queue.Dequeue();
 
             processedStates.Add( fromState );
+
+            bool isEnd = false;
+            foreach ( State state in fromState.States )
+            {
+                var epsClosures = stateToEpsClosures[state];
+                foreach ( State epsClosure in epsClosures )
+                {
+                    isEnd = isEnd || epsClosure.IsEnd;
+                }
+            } 
 
             foreach ( Argument argument in alphabet )
             {
@@ -83,7 +99,10 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
                     continue;
                 }
 
-                var toState = new CollapsedState( achievableStates );
+                var toState = new CollapsedState(
+                    achievableStates,
+                    isStart: false,
+                    isEnd: isEnd );
 
                 // If we didn't process the state yet
                 if ( !processedStates.Contains( toState ) )

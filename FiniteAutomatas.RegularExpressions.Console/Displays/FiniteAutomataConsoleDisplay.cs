@@ -25,7 +25,9 @@ public static class FiniteAutomataConsoleDisplay
 
     private static IEnumerable<List<string>> BuildRows( FiniteAutomata automata, string[] columns )
     {
-        foreach ( State state in GetOrderedStates( automata.AllStates ) )
+        foreach ( State state in automata.AllStates.OrderBy( x => Int32.TryParse( x.Name, out int value )
+                     ? value
+                     : -1 ) )
         {
             var items = new List<string>();
             
@@ -34,6 +36,18 @@ public static class FiniteAutomataConsoleDisplay
                 if ( column == "Id" )
                 {
                     items.Add( state.Name );
+                    continue;
+                }
+
+                if ( column == "IsStart" )
+                {
+                    items.Add( state.IsStart.ToString() );
+                    continue;
+                }
+
+                if ( column == "IsEnd" )
+                {
+                    items.Add( state.IsEnd.ToString() );
                     continue;
                 }
 
@@ -55,39 +69,10 @@ public static class FiniteAutomataConsoleDisplay
     {
         var result = new List<string>();
         result.Add( "Id" );
+        result.Add( "IsStart" );
+        result.Add( "IsEnd" );
         result.AddRange( automata.Alphabet.Select( x => x.Value ) );
 
         return result;
-    }
-
-    private static List<State> GetOrderedStates( IEnumerable<State> allStates )
-    {
-        var states = allStates.ToList();
-        states.Sort( ( a, b ) =>
-        {
-            if ( a.IsStart )
-            {
-                return -1;
-            }
-
-            if ( b.IsStart )
-            {
-                return 1;
-            }
-
-            if ( a.IsEnd )
-            {
-                return 1;
-            }
-
-            if ( b.IsEnd )
-            {
-                return -1;
-            }
-
-            return 0;
-        } );
-
-        return states;
     }
 }

@@ -19,7 +19,7 @@ public class Visualizer
     public void ToImage( string path )
     {
         var nodes = _automata.AllStates.Select( x => $"{x.Name} [style=\"filled\" fillcolor=\"{BuildColor( x )}\" label=\"{x.Name}\"];" );
-        var transitions = _automata.Transitions.Select( x => $"{x.From.Name} -> {x.To.Name} [label=\"{x.Argument.Value}\"];" );
+        var transitions = _automata.Transitions.Select( x => $"{x.From.Name} -> {x.To.Name} [label=\"{BuildTransitionLabel( x )}\"];" );
 
         string data = $@"
             digraph {_graphName} {{
@@ -49,6 +49,13 @@ public class Visualizer
         process.WaitForExit();
 
         File.Delete( tempDataPath );
+    }
+
+    private static string BuildTransitionLabel( Transition transition )
+    {
+        return transition.Argument == Argument.Epsilon
+            ? "Eps"
+            : transition.Argument.Value;
     }
 
     private static string BuildColor( State x )

@@ -1,4 +1,5 @@
-﻿using FiniteAutomatas.Domain.ValueObjects;
+﻿using System.Reflection.Metadata;
+using FiniteAutomatas.Domain.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Automatas;
 
@@ -66,6 +67,41 @@ public class FiniteAutomata
         }
 
         return result;
+    }
+
+    public IEnumerable<State> EpsClosure( State from )
+    {
+        yield return from;
+        
+        var statesToProcess = new Queue<State>();
+        statesToProcess.Enqueue( from );
+        var processedStates = new HashSet<State>();
+
+        while ( statesToProcess.Any() )
+        {
+            State state = statesToProcess.Dequeue();
+            if ( processedStates.Contains( state ) )
+            {
+                continue;
+            }
+
+            processedStates.Add( state );
+            
+            var stateTransitions = new Queue<Transition>( Transitions.Where( transition => transition.From == state ) );
+
+            while ( stateTransitions.Any() )
+            {
+                Transition transition = stateTransitions.Dequeue();
+
+                if ( transition.Argument != Argument.Epsilon )
+                {
+                    continue;
+                }
+
+                yield return transition.To;
+                statesToProcess.Enqueue( transition.To );
+            }
+        }
     }
 
     public FiniteAutomata Copy() => new(
