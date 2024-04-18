@@ -72,7 +72,7 @@ public static class Tests
 
         nfa.Print();
 
-        FiniteAutomata dfa = nfa.Convert( new FiniteAutomataToDfaConvertor() );
+        FiniteAutomata dfa = nfa.Convert( new NfaToDfaConvertor() );
         dfa.Print();
     }
 
@@ -98,7 +98,7 @@ public static class Tests
     private static void TestRegexToAutomataConversion( string expression )
     {
         FiniteAutomata nfa = new RegexToNfaParser().Parse( expression );
-        FiniteAutomata dfa = nfa.Convert( new FiniteAutomataToDfaConvertor() );
+        FiniteAutomata dfa = nfa.Convert( new NfaToDfaConvertor() );
         dfa.Print();
     }
 }

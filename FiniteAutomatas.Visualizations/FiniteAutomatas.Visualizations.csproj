@@ -13,5 +13,11 @@
     <ItemGroup>
       <PackageReference Include="GraphML.Core" Version="1.1.2" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <Content Include="Graphviz\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
 </Project>

@@ -23,10 +23,10 @@ public class Program
                 FiniteAutomata nfa = new RegexToNfaParser().Parse( regex );
 
                 System.Console.WriteLine( "Converting into DFA..." );
-                FiniteAutomata dfa = nfa.Convert( new FiniteAutomataToDfaConvertor() );
+                FiniteAutomata dfa = nfa.Convert( new NfaToDfaConvertor() );
                 dfa.Print();
                 
-                new Visualizer( dfa ).ToXml( @"D:\Development\Projects\TestingStation\image.png" );
+                new Visualizer( dfa ).ToImage( @"D:\Development\Projects\TestingStation\image.png" );
             }
             catch ( Exception ex )
             {

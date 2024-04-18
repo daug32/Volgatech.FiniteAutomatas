@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
 using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.ValueObjects;
 
@@ -6,6 +6,9 @@ namespace FiniteAutomatas.Visualizations;
 
 public class Visualizer
 {
+    private readonly string _graphvizPath = "./Graphviz/bin/dot.exe";
+    private readonly string _graphName = "graphName";
+
     private readonly FiniteAutomata _automata;
 
     public Visualizer( FiniteAutomata automata )
@@ -13,47 +16,54 @@ public class Visualizer
         _automata = automata;
     }
 
-    public void ToXml( string path )
+    public void ToImage( string path )
     {
-        var file = new StreamWriter( $"{path}.graphml" );
-        
-        file.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        file.WriteLine("<graphml>");
-        file.WriteLine("<graph id=\"Graph\" uidGraph=\"3\" uidEdge=\"10010\">");
+        var nodes = _automata.AllStates.Select( x => $"{x.Name} [style=\"filled\" fillcolor=\"{BuildColor( x )}\" label=\"{x.Name}\"];" );
+        var transitions = _automata.Transitions.Select( x => $"{x.From.Name} -> {x.To.Name} [label=\"{x.Argument.Value}\"];" );
 
-        var lastNodeId = 0;
-        var stateToNodeId = new Dictionary<State, int>();
-        foreach ( State state in _automata.AllStates )
+        string data = $@"
+            digraph {_graphName} {{
+                {{ {String.Join( "", nodes )} }}
+                {{ {String.Join( "", transitions )} }}
+            }}
+        ";
+
+        var tempDataPath = $"{path}.dot";
+        File.WriteAllText( tempDataPath, data );
+
+        var startInfo = new ProcessStartInfo
         {
-            file.WriteLine( 
-                $"<node " + 
-                    $"id=\"{lastNodeId}\" " + 
-                    $"mainText=\"{state.Name}\" " + 
-                    "upText=\"\" " + 
-                    "size=\"30\">" + 
-                "</node>" );    
-            stateToNodeId[state] = lastNodeId++;
+            FileName = _graphvizPath,
+            Arguments = $"-Tpng {tempDataPath} -o {path}",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        var process = new Process
+        {
+            StartInfo = startInfo
+        };
+
+        process.Start();
+        process.WaitForExit();
+
+        File.Delete( tempDataPath );
+    }
+
+    private static string BuildColor( State x )
+    {
+        if ( x.IsEnd )
+        {
+            return "red";
         }
 
-        var lastEdgeId = 1000;
-        foreach ( Transition transition in _automata.Transitions )
+        if ( x.IsStart )
         {
-            int from = stateToNodeId[transition.From];
-            int to = stateToNodeId[transition.To];
-            string text = transition.Argument.Value;
-            
-            file.WriteLine( 
-                $"<edge source=\"{from}\" " + 
-                    $"target=\"{to}\" " + 
-                    "isDirect=\"true\" " + 
-                    $"id=\"{lastEdgeId++}\" " + 
-                    $"text=\"{text}\" >" + 
-                "</edge>" );
+            // Blue
+            return "#40b0f0";
         }
-        
-        file.WriteLine("</graph>");
-        file.WriteLine("</graphml>");
-        
-        file.Close();
+
+        return "white";
     }
 }
