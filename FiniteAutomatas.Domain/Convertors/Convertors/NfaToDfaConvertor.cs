@@ -8,8 +8,8 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
     private class CollapsedState
     {
         public string Name { get; }
-        public bool IsStart { get; }
-        public bool IsEnd { get; }
+        public bool IsStart { get; set; }
+        public bool IsEnd { get; set; }
 
         public readonly HashSet<State> States = new();
 
@@ -78,13 +78,13 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
 
             processedStates.Add( fromState );
 
-            bool isEnd = false;
             foreach ( State state in fromState.States )
             {
                 var epsClosures = stateToEpsClosures[state];
                 foreach ( State epsClosure in epsClosures )
                 {
-                    isEnd = isEnd || epsClosure.IsEnd;
+                    fromState.IsStart = fromState.IsStart || epsClosure.IsStart;
+                    fromState.IsEnd = fromState.IsEnd || epsClosure.IsEnd;
                 }
             } 
 
@@ -102,7 +102,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
                 var toState = new CollapsedState(
                     achievableStates,
                     isStart: false,
-                    isEnd: isEnd );
+                    isEnd: false );
 
                 // If we didn't process the state yet
                 if ( !processedStates.Contains( toState ) )
@@ -117,7 +117,9 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
             }
         }
 
-        return BuildDfa( dfaTransitions, processedStates.Select( x => x.ToState() ) );
+        FiniteAutomata dfa = BuildDfa( dfaTransitions, processedStates.Select( x => x.ToState() ) );
+
+        return dfa;
     }
 
     private static FiniteAutomata BuildDfa( ICollection<Transition> transitions, IEnumerable<State> states )
