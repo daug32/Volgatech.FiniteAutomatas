@@ -14,9 +14,10 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
         IEnumerable<Argument> alphabet = automata.Alphabet
             .Where( x => x != Argument.Epsilon )
             .ToHashSet();
-        Dictionary<State, EpsClosure> stateToEpsClosures = automata.AllStates
-            .Select( x => new EpsClosure( automata, x ) )
-            .ToDictionary( x => x.From, x => x );
+
+        Dictionary<State, EpsClosure> stateToEpsClosures = automata
+            .EpsClosure()
+            .ToDictionary( x => x.Key, x => new EpsClosure( x.Key, x.Value ) );
         
         var queue = new Queue<CollapsedState>();
         queue.Enqueue( dfaStart );

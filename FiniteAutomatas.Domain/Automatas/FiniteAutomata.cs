@@ -46,9 +46,21 @@ public class FiniteAutomata
             .ToHashSet();
     }
 
-    public IEnumerable<State> EpsClosure( State from )
+    public Dictionary<State, HashSet<State>> EpsClosure()
     {
-        yield return from;
+        var result = new Dictionary<State, HashSet<State>>();
+        foreach ( State state in AllStates )
+        {
+            result[state] = EpsClosure( state );
+        }
+
+        return result;
+    }
+
+    public HashSet<State> EpsClosure( State from )
+    {
+        var closures = new HashSet<State>();
+        closures.Add( from );
         
         var statesToProcess = new Queue<State>();
         var processedStates = new HashSet<State>();
@@ -74,9 +86,11 @@ public class FiniteAutomata
                     continue;
                 }
 
-                yield return transition.To;
+                closures.Add( transition.To );
                 statesToProcess.Enqueue( transition.To );
             }
         }
+
+        return closures;
     }
 }
