@@ -195,11 +195,10 @@ public class RegexToNfaParser
 
             if ( curr.Value.Type == RegexSymbolType.OneOrMore )
             {
-                curr.RightOperand = 
-                    new RegexNode(
-                        value: new RegexSymbol( RegexSymbolType.ZeroOrMore ),
-                        leftOperand: curr.LeftOperand!.DeepCopy(),
-                        rightOperand: null );
+                curr.RightOperand = new RegexNode(
+                    value: new RegexSymbol( RegexSymbolType.ZeroOrMore ),
+                    leftOperand: curr.LeftOperand!.DeepCopy(),
+                    rightOperand: null );
                 curr.Value = new RegexSymbol( RegexSymbolType.And );
             }
 
@@ -212,7 +211,7 @@ public class RegexToNfaParser
             {
                 queue.Enqueue( curr.RightOperand );
             }
-            
+
             stack.Push( curr );
         }
 
