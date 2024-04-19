@@ -3,97 +3,71 @@ using FiniteAutomatas.Domain.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors;
 
-public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
+public class EClosure
 {
-    private class CollapsedState
+    public readonly State From;
+    public readonly HashSet<State> Closures;
+    public readonly bool HasEnd;
+    public readonly bool HasStart;
+
+    public EClosure( FiniteAutomata automata, State from )
+        : this ( from, automata.EpsClosure( from ).ToHashSet() )
     {
-        public string Name { get; }
-        public bool IsStart { get; set; }
-        public bool IsEnd { get; set; }
-
-        public readonly HashSet<State> States = new();
-
-        public CollapsedState( State state )
-        {
-            Name = state.Name;
-            IsStart = state.IsStart;
-            IsEnd = state.IsEnd;
-            States.Add( state );
-        }
-
-        public CollapsedState( HashSet<State> states, bool isStart, bool isEnd )
-        {
-            Name = String.Join( "_", states.Select( x => x.Name ).OrderBy( x => x ) );
-            IsEnd = isEnd;
-            IsStart = isStart;
-
-            foreach ( State state in states )
-            {
-                IsEnd = IsEnd || state.IsEnd;
-                IsStart = IsStart || state.IsStart;
-                States.Add( state );
-            }
-        }
-
-        public State ToState()
-        {
-            return new State( Name, IsStart, IsEnd );
-        }
-
-        public override bool Equals( object? obj )
-        {
-            return obj is CollapsedState other && Equals( other );
-        }
-
-        public bool Equals( CollapsedState? other )
-        {
-            return Name == other?.Name;
-        }
-
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode();
-        }
     }
 
+    public EClosure( State from, HashSet<State> closures )
+    {
+        From = from;
+        Closures = closures;
+        
+        foreach ( State closure in closures )
+        {
+            HasEnd |= closure.IsEnd;
+            HasStart |= closure.IsStart;
+        }
+    }
+}
+
+public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
+{
     public FiniteAutomata Convert( FiniteAutomata automata )
     {
+        Console.WriteLine( "NFA to DFA conversion" );
+        
         var dfaTransitions = new HashSet<Transition>();
         var dfaStart = new CollapsedState( automata.AllStates.First( x => x.IsStart ) );
-
-        var alphabet = automata.Alphabet.Where( x => x != Argument.Epsilon );
+        
+        IEnumerable<Argument> alphabet = automata.Alphabet
+            .Where( x => x != Argument.Epsilon )
+            .ToHashSet();
+        Dictionary<State, EClosure> stateToEpsClosures = automata.AllStates
+            .Select( x => new EClosure( automata, x ) )
+            .ToDictionary( x => x.From, x => x );
+        
         var queue = new Queue<CollapsedState>();
-        var processedStates = new HashSet<CollapsedState>();
         queue.Enqueue( dfaStart );
-
-        var stateToEpsClosures = new Dictionary<State, HashSet<State>>(
-            automata.AllStates.Select( 
-                state => new KeyValuePair<State, HashSet<State>>( 
-                    key: state,
-                    value: automata.EpsClosure( state ).ToHashSet() ) ) );
+        var processedStates = new HashSet<CollapsedState>();
         
         while ( queue.Any() )
         {
             CollapsedState fromState = queue.Dequeue();
-
+            Console.WriteLine( $"Processing state. State: {fromState.Name}" );
             processedStates.Add( fromState );
 
             foreach ( State state in fromState.States )
             {
-                var epsClosures = stateToEpsClosures[state];
-                foreach ( State epsClosure in epsClosures )
-                {
-                    fromState.IsStart = fromState.IsStart || epsClosure.IsStart;
-                    fromState.IsEnd = fromState.IsEnd || epsClosure.IsEnd;
-                }
-            } 
+                EClosure epsClosure = stateToEpsClosures[state];
+                fromState.IsStart |= epsClosure.HasStart;
+                fromState.IsEnd |= epsClosure.HasEnd;
+            }
 
             foreach ( Argument argument in alphabet )
             {
-                var achievableStates = fromState.States
+                Console.WriteLine( $"Processing state argument. Argument: {argument.Value}" );
+
+                HashSet<State> achievableStates = fromState.States
                     .SelectMany( state => automata.Move( state, argument ) )
                     .ToHashSet();
-
                 if ( !achievableStates.Any() )
                 {
                     continue;
@@ -103,7 +77,6 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
                     achievableStates,
                     isStart: false,
                     isEnd: false );
-
                 // If we didn't process the state yet
                 if ( !processedStates.Contains( toState ) )
                 {
@@ -117,13 +90,17 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
             }
         }
 
-        FiniteAutomata dfa = BuildDfa( dfaTransitions, processedStates.Select( x => x.ToState() ) );
+        FiniteAutomata dfa = BuildDfa( 
+            dfaTransitions,
+            processedStates.Select( x => x.ToState() ) );
 
         return dfa;
     }
 
     private static FiniteAutomata BuildDfa( ICollection<Transition> transitions, IEnumerable<State> states )
     {
+        Console.WriteLine( $"Building DFA" );
+        
         // oldName, newName
         var statesList = states.ToList();
 

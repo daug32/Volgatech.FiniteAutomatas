@@ -40,11 +40,18 @@ public class FiniteAutomata
         var result = new List<State>();
         
         var statesToProcess = new Queue<State>();
+        var processedStates = new HashSet<State>();
         statesToProcess.Enqueue( from );
 
         while ( statesToProcess.Any() )
         {
             State state = statesToProcess.Dequeue();
+            if ( processedStates.Contains( state ) )
+            {
+                continue;
+            }
+            
+            processedStates.Add( state );
             
             var stateTransitions = new Queue<Transition>( Transitions.Where( transition => transition.From == state ) );
 

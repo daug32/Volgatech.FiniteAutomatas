@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using FiniteAutomatas.Domain.Automatas;
 using FiniteAutomatas.Domain.ValueObjects;
 
@@ -43,7 +44,7 @@ public class Visualizer
 
         var process = new Process
         {
-            StartInfo = startInfo
+            StartInfo = startInfo,
         };
 
         process.Start();

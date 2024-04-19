@@ -8,10 +8,22 @@ namespace FiniteAutomatas.RegularExpressions.Console;
 
 public class Program
 {
-    private static readonly RegexToNfaParser _regexToNfaParser = new();
-
-    public static void Main( string[] args )
+    public static void Main()
     {
+        {
+            System.Console.WriteLine( "Parsing regex..." );
+            FiniteAutomata nfa = new RegexToNfaParser().Parse( "(a*c*b*)*b(a*b*c*)*" );
+            System.Console.WriteLine( "Visualizing NFA..." );
+            new Visualizer( nfa ).ToImage( @"D:\Development\Projects\TestingStation\nfa.png" );
+            System.Console.WriteLine( "Converting to DFA..." );
+            FiniteAutomata dfa = nfa.Convert( new NfaToDfaConvertor() );
+            System.Console.WriteLine( "Visualizing DFA" );
+            new Visualizer( dfa ).ToImage( @"D:\Development\Projects\TestingStation\dfa.png" );
+        }
+
+        return;
+
+
         while ( true )
         {
             System.Console.Write( "Write a regex: " );
