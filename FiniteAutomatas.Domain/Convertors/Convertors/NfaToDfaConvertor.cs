@@ -32,8 +32,6 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
 {
     public FiniteAutomata Convert( FiniteAutomata automata )
     {
-        Console.WriteLine( "NFA to DFA conversion" );
-        
         var dfaTransitions = new HashSet<Transition>();
         var dfaStart = new CollapsedState( automata.AllStates.First( x => x.IsStart ) );
         
@@ -51,7 +49,6 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
         while ( queue.Any() )
         {
             CollapsedState fromState = queue.Dequeue();
-            Console.WriteLine( $"Processing state. State: {fromState.Name}" );
             processedStates.Add( fromState );
 
             foreach ( State state in fromState.States )
@@ -63,8 +60,6 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
 
             foreach ( Argument argument in alphabet )
             {
-                Console.WriteLine( $"Processing state argument. Argument: {argument.Value}" );
-
                 HashSet<State> achievableStates = fromState.States
                     .SelectMany( state => automata.Move( state, argument ) )
                     .ToHashSet();
@@ -99,8 +94,6 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
 
     private static FiniteAutomata BuildDfa( ICollection<Transition> transitions, IEnumerable<State> states )
     {
-        Console.WriteLine( $"Building DFA" );
-        
         // oldName, newName
         var statesList = states.ToList();
 
