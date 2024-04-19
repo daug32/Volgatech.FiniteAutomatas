@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata;
-using FiniteAutomatas.Domain.ValueObjects;
+﻿using FiniteAutomatas.Domain.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Automatas;
 
@@ -35,45 +34,16 @@ public class FiniteAutomata
     {
     }
 
-    public IEnumerable<State> Move( State from, Argument argument )
+    public HashSet<State> Move( State from, Argument argument, HashSet<State>? epsClosures = null )
     {
-        var result = new List<State>();
-        
-        var statesToProcess = new Queue<State>();
-        var processedStates = new HashSet<State>();
-        statesToProcess.Enqueue( from );
+        epsClosures ??= EpsClosure( from ).ToHashSet();
 
-        while ( statesToProcess.Any() )
-        {
-            State state = statesToProcess.Dequeue();
-            if ( processedStates.Contains( state ) )
-            {
-                continue;
-            }
-            
-            processedStates.Add( state );
-            
-            var stateTransitions = new Queue<Transition>( Transitions.Where( transition => transition.From == state ) );
-
-            while ( stateTransitions.Any() )
-            {
-                Transition transition = stateTransitions.Dequeue();
-
-                if ( transition.Argument == argument )
-                {
-                    result.Add( transition.To );
-                    continue;
-                }
-
-                if ( transition.Argument == Argument.Epsilon )
-                {
-                    statesToProcess.Enqueue( transition.To );
-                    continue;
-                }
-            }
-        }
-
-        return result;
+        return Transitions
+            .Where( transition => 
+                transition.Argument.Equals( argument ) && 
+                epsClosures.Contains( transition.From ) )
+            .Select( transition => transition.To )
+            .ToHashSet();
     }
 
     public IEnumerable<State> EpsClosure( State from )
@@ -81,8 +51,8 @@ public class FiniteAutomata
         yield return from;
         
         var statesToProcess = new Queue<State>();
-        statesToProcess.Enqueue( from );
         var processedStates = new HashSet<State>();
+        statesToProcess.Enqueue( from );
 
         while ( statesToProcess.Any() )
         {
@@ -99,7 +69,6 @@ public class FiniteAutomata
             while ( stateTransitions.Any() )
             {
                 Transition transition = stateTransitions.Dequeue();
-
                 if ( transition.Argument != Argument.Epsilon )
                 {
                     continue;
@@ -110,9 +79,4 @@ public class FiniteAutomata
             }
         }
     }
-
-    public FiniteAutomata Copy() => new(
-        alphabet: Alphabet.ToHashSet(),
-        transitions: Transitions,
-        allStates: AllStates.ToHashSet() );
 }

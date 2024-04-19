@@ -1,32 +1,8 @@
 ﻿using FiniteAutomatas.Domain.Automatas;
+using FiniteAutomatas.Domain.Convertors.Convertors.Implementation.ToDfa;
 using FiniteAutomatas.Domain.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors;
-
-public class EClosure
-{
-    public readonly State From;
-    public readonly HashSet<State> Closures;
-    public readonly bool HasEnd;
-    public readonly bool HasStart;
-
-    public EClosure( FiniteAutomata automata, State from )
-        : this ( from, automata.EpsClosure( from ).ToHashSet() )
-    {
-    }
-
-    public EClosure( State from, HashSet<State> closures )
-    {
-        From = from;
-        Closures = closures;
-        
-        foreach ( State closure in closures )
-        {
-            HasEnd |= closure.IsEnd;
-            HasStart |= closure.IsStart;
-        }
-    }
-}
 
 public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
 {
@@ -38,8 +14,8 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
         IEnumerable<Argument> alphabet = automata.Alphabet
             .Where( x => x != Argument.Epsilon )
             .ToHashSet();
-        Dictionary<State, EClosure> stateToEpsClosures = automata.AllStates
-            .Select( x => new EClosure( automata, x ) )
+        Dictionary<State, EpsClosure> stateToEpsClosures = automata.AllStates
+            .Select( x => new EpsClosure( automata, x ) )
             .ToDictionary( x => x.From, x => x );
         
         var queue = new Queue<CollapsedState>();
@@ -53,7 +29,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
 
             foreach ( State state in fromState.States )
             {
-                EClosure epsClosure = stateToEpsClosures[state];
+                EpsClosure epsClosure = stateToEpsClosures[state];
                 fromState.IsStart |= epsClosure.HasStart;
                 fromState.IsEnd |= epsClosure.HasEnd;
             }
@@ -61,7 +37,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
             foreach ( Argument argument in alphabet )
             {
                 HashSet<State> achievableStates = fromState.States
-                    .SelectMany( state => automata.Move( state, argument ) )
+                    .SelectMany( state => automata.Move( state, argument, stateToEpsClosures[state].Closures ) )
                     .ToHashSet();
                 if ( !achievableStates.Any() )
                 {
