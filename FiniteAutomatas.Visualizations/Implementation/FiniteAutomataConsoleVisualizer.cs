@@ -2,17 +2,24 @@
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
 
-namespace FiniteAutomatas.RegularExpressions.Console.Displays;
+namespace FiniteAutomatas.Visualizations.Implementation;
 
-public static class FiniteAutomataConsoleDisplay
+internal class FiniteAutomataConsoleVisualizer
 {
-    public static void Print( this FiniteAutomata automata )
+    private readonly FiniteAutomata _automata;
+
+    public FiniteAutomataConsoleVisualizer( FiniteAutomata automata )
+    {
+        _automata = automata;
+    }
+
+    public void Print()
     {
         // Create columns
-        string[] columns = BuildColumns( automata ).ToArray();
-        
+        string[] columns = BuildColumns().ToArray();
+
         // Create rows
-        List<string>[] rows = BuildRows( automata, columns ).ToArray();
+        var rows = BuildRows( columns ).ToArray();
 
         var table = new ConsoleTable( columns );
         foreach ( var row in rows )
@@ -23,14 +30,14 @@ public static class FiniteAutomataConsoleDisplay
         table.Write();
     }
 
-    private static IEnumerable<List<string>> BuildRows( FiniteAutomata automata, string[] columns )
+    private IEnumerable<List<string>> BuildRows( string[] columns )
     {
-        foreach ( State state in automata.AllStates.OrderBy( x => Int32.TryParse( x.Name, out int value )
+        foreach ( State state in _automata.AllStates.OrderBy( x => Int32.TryParse( x.Name, out int value )
                      ? value
                      : -1 ) )
         {
             var items = new List<string>();
-            
+
             foreach ( string column in columns )
             {
                 if ( column == "Id" )
@@ -57,13 +64,21 @@ public static class FiniteAutomataConsoleDisplay
                     continue;
                 }
 
-                List<string> transitions = automata.Transitions
+                var transitions = _automata.Transitions
                     .Where( x =>
-                        x.From.Equals( state ) &&
-                        x.Argument == new Argument( column ) )
-                    .Select( x => x.To.Name )
+                        x.From.Equals( state ) && x.Argument == new Argument( column ) )
+                    .Select( x =>
+                    {
+                        string transitionLabel = x.To.Name; 
+                        if ( x.AdditionalData != null )
+                        {
+                            transitionLabel = $"{transitionLabel}/{x.AdditionalData}";
+                        }
+
+                        return transitionLabel;
+                    } )
                     .ToList();
-                
+
                 items.Add( String.Join( ",", transitions ) );
             }
 
@@ -71,14 +86,14 @@ public static class FiniteAutomataConsoleDisplay
         }
     }
 
-    private static IEnumerable<string> BuildColumns( FiniteAutomata automata )
+    private IEnumerable<string> BuildColumns()
     {
         var result = new List<string>();
         result.Add( "Id" );
         result.Add( "IsStart" );
         result.Add( "IsEnd" );
         result.Add( "IsError" );
-        result.AddRange( automata.Alphabet.Select( x => x.Value ) );
+        result.AddRange( _automata.Alphabet.Select( x => x.Value ) );
 
         return result;
     }

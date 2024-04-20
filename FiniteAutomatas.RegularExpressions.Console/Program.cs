@@ -1,7 +1,6 @@
 ﻿using FiniteAutomatas.Domain.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors;
 using FiniteAutomatas.Domain.Models.Automatas;
-using FiniteAutomatas.RegularExpressions.Console.Displays;
 using FiniteAutomatas.Visualizations;
 
 namespace FiniteAutomatas.RegularExpressions.Console;
@@ -23,20 +22,17 @@ public class Program
             try
             {
                 System.Console.WriteLine( "Creating an NFA..." );
-                FiniteAutomata nfa = new RegexToNfaParser().Parse( regex );
-                nfa.Print();
-                new Visualizer( nfa ).ToImage( 
-                    @"D:\Development\Projects\TestingStation\nfa.png",
-                     _visualizationOptions );
+                FiniteAutomata nfa = new RegexToNfaParser()
+                    .Parse( regex )
+                    .PrintToConsole()
+                    .PrintToImage( @"D:\Development\Projects\TestingStation\nfa.png", _visualizationOptions );
 
                 System.Console.WriteLine( "Converting into DFA..." );
                 FiniteAutomata dfa = nfa
                     .Convert( new NfaToDfaConvertor() )
-                    .Convert( new DfaNormalizationConvertor() );
-                dfa.Print();
-                new Visualizer( dfa ).ToImage( 
-                    @"D:\Development\Projects\TestingStation\dfa.png",
-                     _visualizationOptions );
+                    .Convert( new DfaNormalizationConvertor() )
+                    .PrintToConsole()
+                    .PrintToImage( @"D:\Development\Projects\TestingStation\dfa.png", _visualizationOptions );
             }
             catch ( Exception ex )
             {
