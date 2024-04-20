@@ -1,4 +1,6 @@
-﻿namespace FiniteAutomatas.RegularExpressions.Implementation.Models;
+﻿using FiniteAutomatas.RegularExpressions.Implementation.Models;
+
+namespace FiniteAutomatas.RegularExpressions.Implementation.Extensions;
 
 internal static class RegexSymbolListExtensions
 {
