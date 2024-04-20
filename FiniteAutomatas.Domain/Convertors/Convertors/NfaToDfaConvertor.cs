@@ -32,7 +32,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
             {
                 EpsClosure epsClosure = stateToEpsClosures[state];
                 fromState.IsStart |= epsClosure.HasStart;
-                fromState.IsEnd |= epsClosure.HasEnd;
+                fromState.IsEnd |= epsClosure.HasError;
             }
 
             foreach ( Argument argument in alphabet )
@@ -71,6 +71,11 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
 
     private static FiniteAutomata BuildDfa( ICollection<Transition> transitions, IEnumerable<State> states )
     {
+        if ( transitions.Any( x => x.Argument == Argument.Epsilon ) )
+        {
+            Console.WriteLine( "CONTAINS EPSILON TRANSITION" );
+        }
+        
         // oldName, newName
         var statesList = states.ToList();
 

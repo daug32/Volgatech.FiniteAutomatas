@@ -49,4 +49,6 @@ public class Transition
     {
         return !a.Equals( b );
     }
+
+    public Transition Copy() => new( From.Copy(), Argument.Copy(), To.Copy() );
 }

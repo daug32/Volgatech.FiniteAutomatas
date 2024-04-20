@@ -6,7 +6,7 @@ internal class EpsClosure
 {
     public readonly State From;
     public readonly HashSet<State> Closures;
-    public readonly bool HasEnd;
+    public readonly bool HasError;
     public readonly bool HasStart;
 
     public EpsClosure( State from, HashSet<State> closures )
@@ -16,7 +16,7 @@ internal class EpsClosure
         
         foreach ( State closure in closures )
         {
-            HasEnd |= closure.IsEnd;
+            HasError |= closure.IsTerminateState;
             HasStart |= closure.IsStart;
         }
     }

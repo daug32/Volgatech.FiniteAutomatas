@@ -110,4 +110,9 @@ public class FiniteAutomata
 
         return closures;
     }
+
+    public FiniteAutomata Copy() => new(
+        alphabet: Alphabet.Select( x => x.Copy() ).ToHashSet(),
+        transitions: Transitions.Select( x => x.Copy() ).ToHashSet(),
+        allStates: AllStates.Select( x => x.Copy() ).ToHashSet() );
 }

@@ -50,4 +50,6 @@ public class Argument : IComparable
     {
         return !a.Equals( b );
     }
+
+    public Argument Copy() => new Argument( Value );
 }

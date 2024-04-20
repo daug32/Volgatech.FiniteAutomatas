@@ -83,9 +83,7 @@ public class RegexTests
     public void Test( RegexTestData testData )
     {
         // Arrange
-        FiniteAutomata dfa = new RegexToNfaParser()
-            .Parse( testData.Regex )
-            .Convert( new NfaToDfaConvertor() );
+        FiniteAutomata dfa = new RegexToDfaParser().Parse( testData.Regex );
 
         // Act & Assert
         Assert.Multiple( () =>

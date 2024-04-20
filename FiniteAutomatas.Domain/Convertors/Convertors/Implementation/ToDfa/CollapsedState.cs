@@ -5,6 +5,8 @@ namespace FiniteAutomatas.Domain.Convertors.Convertors.Implementation.ToDfa;
 internal class CollapsedState
 {
     public string Name { get; }
+    public bool IsTerminateState => IsEnd || IsError;
+    public bool IsError { get; set; }
     public bool IsStart { get; set; }
     public bool IsEnd { get; set; }
 
@@ -15,6 +17,7 @@ internal class CollapsedState
         Name = state.Name;
         IsStart = state.IsStart;
         IsEnd = state.IsEnd;
+        IsError = state.IsError;
         States.Add( state );
     }
 
@@ -26,6 +29,7 @@ internal class CollapsedState
 
         foreach ( State state in states )
         {
+            IsError = IsError || state.IsError;
             IsEnd = IsEnd || state.IsEnd;
             IsStart = IsStart || state.IsStart;
             States.Add( state );

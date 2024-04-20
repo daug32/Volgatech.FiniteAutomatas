@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
 
@@ -19,7 +18,14 @@ public class Visualizer
 
     public void ToImage( string path )
     {
-        var nodes = _automata.AllStates.Select( x => $"{x.Name} [{BuildNodeStyles( x )}];" );
+        var nodes = _automata.AllStates.Select( x => $"{x.Name} [{BuildNodeStyles( x )}];" ).ToList();
+        if ( _automata.AllStates.Any( x => x.IsError ) )
+        {
+            nodes.Add( "error [style=\"filled\" fillcolor=\"red\" label=\"error\"]" );
+        }
+
+        nodes.Add( "end [style=\"filled\" fillcolor=\"green\" label=\"end\"]" );
+        nodes.Add( "start [style=\"filled\" fillcolor=\"#40b0f0\" label=\"start\"]" );
         var transitions = _automata.Transitions.Select( x => $"{x.From.Name} -> {x.To.Name} [label=\"{BuildTransitionLabel( x )}\"];" );
 
         string data = $@"
@@ -73,6 +79,11 @@ public class Visualizer
     {
         if ( x.IsEnd && x.IsStart )
         {
+            return "#008080";
+        }
+        
+        if ( x.IsError && x.IsStart )
+        {
             return "purple";
         }
         
@@ -83,6 +94,11 @@ public class Visualizer
         }
 
         if ( x.IsEnd )
+        {
+            return "green";
+        }
+
+        if ( x.IsError )
         {
             return "red";
         }

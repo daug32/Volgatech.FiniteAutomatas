@@ -27,6 +27,10 @@ public class Program
                 dfa.Print();
                 
                 new Visualizer( dfa ).ToImage( @"D:\Development\Projects\TestingStation\dfa.png" );
+
+                FiniteAutomata dfaWithError = dfa.Convert( new SetErrorStateOnEmptyTransitionsConvertor() );
+                dfaWithError.Print();
+                new Visualizer( dfaWithError ).ToImage( @"D:\Development\Projects\TestingStation\dfaWithError.png" );
             }
             catch ( Exception ex )
             {

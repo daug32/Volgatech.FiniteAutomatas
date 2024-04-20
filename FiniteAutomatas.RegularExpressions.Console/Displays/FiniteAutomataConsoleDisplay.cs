@@ -51,6 +51,12 @@ public static class FiniteAutomataConsoleDisplay
                     continue;
                 }
 
+                if ( column == "IsError" )
+                {
+                    items.Add( state.IsError.ToString() );
+                    continue;
+                }
+
                 List<string> transitions = automata.Transitions
                     .Where( x =>
                         x.From.Equals( state ) &&
@@ -71,6 +77,7 @@ public static class FiniteAutomataConsoleDisplay
         result.Add( "Id" );
         result.Add( "IsStart" );
         result.Add( "IsEnd" );
+        result.Add( "IsError" );
         result.AddRange( automata.Alphabet.Select( x => x.Value ) );
 
         return result;
