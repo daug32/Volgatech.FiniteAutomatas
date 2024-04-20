@@ -13,6 +13,7 @@ public class RegexToDfaParser
         return _regexToNfaParser
             .Parse( regex )
             .Convert( new NfaToDfaConvertor() )
-            .Convert( new SetErrorStateOnEmptyTransitionsConvertor() );
+            .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
+            .Convert( new DfaMinimizationConvertor() );
     }
 }

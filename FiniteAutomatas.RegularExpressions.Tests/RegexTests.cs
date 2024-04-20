@@ -1,5 +1,3 @@
-using FiniteAutomatas.Domain.Convertors;
-using FiniteAutomatas.Domain.Convertors.Convertors;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.Automatas.Extensions;
 using FiniteAutomatas.Domain.Models.ValueObjects;

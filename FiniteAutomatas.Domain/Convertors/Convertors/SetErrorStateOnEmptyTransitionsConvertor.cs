@@ -24,11 +24,6 @@ public class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<Finit
         var alphabet = automata.Transitions.Select( x => x.Argument ).ToHashSet();
         foreach ( var transition in stateToTransitions )
         {
-            if ( newStates[transition.Key].IsEnd )
-            {
-                continue;
-            }
-            
             var argumentToTargetState = transition.Value;
             if ( argumentToTargetState.Count == alphabet.Count )
             {
@@ -53,6 +48,7 @@ public class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<Finit
         } 
 
         newStates.Add( "-1", new State( "-1", isError: true ) );
+        stateToTransitions.Add( "-1", automata.Alphabet.ToDictionary( x => x, _ => "-1" ) );
 
         return new FiniteAutomata(
             alphabet: alphabet,
