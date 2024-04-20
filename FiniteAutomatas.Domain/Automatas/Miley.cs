@@ -4,11 +4,12 @@ namespace FiniteAutomatas.Domain.Automatas;
 
 public class Miley : FiniteAutomata
 {
-    public Miley(ICollection<Transition> transitions) : base( transitions: transitions )
+    public Miley( ICollection<Transition> transitions )
+        : base( transitions )
     {
-        if (Transitions.Any(x => x.AdditionalData == null))
+        if ( Transitions.Any( x => x.AdditionalData == null ) )
         {
-            throw new ArgumentException(nameof(Transitions));
+            throw new ArgumentException( nameof( Transitions ) );
         }
     }
 }

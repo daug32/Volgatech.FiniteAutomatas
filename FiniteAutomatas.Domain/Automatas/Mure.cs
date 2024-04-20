@@ -8,9 +8,9 @@ public class Mure : FiniteAutomata
     public readonly Dictionary<State, State> Overrides;
 
     public Mure(
-        Dictionary<State, State> overrides, 
-        ICollection<Transition> transitions)
-        : base( transitions: transitions )
+        Dictionary<State, State> overrides,
+        ICollection<Transition> transitions )
+        : base( transitions )
     {
         Overrides = overrides;
     }

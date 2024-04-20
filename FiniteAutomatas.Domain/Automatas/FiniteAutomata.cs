@@ -6,7 +6,6 @@ public class FiniteAutomata
 {
     public readonly HashSet<Argument> Alphabet;
     public readonly HashSet<Transition> Transitions;
-
     public readonly HashSet<State> AllStates;
 
     public FiniteAutomata( 
@@ -16,14 +15,31 @@ public class FiniteAutomata
     {
         Alphabet = alphabet.ToHashSet();
         AllStates = allStates.ToHashSet();
+        Transitions = transitions.ToHashSet();
+        
+        foreach ( Transition transition in Transitions )
+        {
+            if ( !AllStates.Contains( transition.From ) )
+            {
+                throw new ArgumentException( 
+                    $"Some of the transitions has a state that is not presented in the {nameof( AllStates )}. " + 
+                    $"Transition: {transition}. State: {transition.From}" );
+            }
 
-        Transitions = transitions
-            .All( x =>
-                AllStates.Contains( x.From ) && 
-                AllStates.Contains( x.To ) && 
-                Alphabet.Contains( x.Argument ) )
-            ? transitions.ToHashSet()
-            : throw new ArgumentException( "Not all From and To states of the transitions are presented in the AllStates" );
+            if ( !AllStates.Contains( transition.To ) )
+            {
+                throw new ArgumentException( 
+                    $"Some of the transitions has a state that is not presented in the {nameof( AllStates )}. " + 
+                    $"Transition: {transition}. State: {transition.To}" );
+            }
+
+            if ( !Alphabet.Contains( transition.Argument ) )
+            {
+                throw new ArgumentException( 
+                    $"Some of the transitions has an argument that is not presented in the {nameof( Alphabet )}. " + 
+                    $"Transition: {transition}. Argument: {transition.Argument}" );
+            }
+        }
     }
 
     public FiniteAutomata( ICollection<Transition> transitions )
