@@ -1,4 +1,4 @@
-﻿using FiniteAutomatas.Domain.ValueObjects;
+﻿using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.Implementation.ToDfa;
 

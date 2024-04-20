@@ -1,4 +1,4 @@
-﻿namespace FiniteAutomatas.Domain.ValueObjects;
+﻿namespace FiniteAutomatas.Domain.Models.ValueObjects;
 
 public class Transition
 {

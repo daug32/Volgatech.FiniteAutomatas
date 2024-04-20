@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using FiniteAutomatas.Domain.Automatas;
-using FiniteAutomatas.Domain.ValueObjects;
+using FiniteAutomatas.Domain.Models.Automatas;
+using FiniteAutomatas.Domain.Models.ValueObjects;
 using FiniteAutomatas.RegularExpressions.Implementation.Models;
 using FiniteAutomatas.RegularExpressions.Implementation.Utils;
 

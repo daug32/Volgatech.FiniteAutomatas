@@ -1,6 +1,6 @@
-﻿using FiniteAutomatas.Domain.Automatas;
-using FiniteAutomatas.Domain.Convertors;
+﻿using FiniteAutomatas.Domain.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors;
+using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.RegularExpressions.Console.Displays;
 using FiniteAutomatas.Visualizations;
 

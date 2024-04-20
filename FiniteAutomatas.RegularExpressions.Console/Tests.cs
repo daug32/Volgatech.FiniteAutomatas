@@ -1,7 +1,7 @@
-﻿using FiniteAutomatas.Domain.Automatas;
-using FiniteAutomatas.Domain.Convertors;
+﻿using FiniteAutomatas.Domain.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors;
-using FiniteAutomatas.Domain.ValueObjects;
+using FiniteAutomatas.Domain.Models.Automatas;
+using FiniteAutomatas.Domain.Models.ValueObjects;
 using FiniteAutomatas.RegularExpressions.Console.Displays;
 
 namespace FiniteAutomatas.RegularExpressions.Console;

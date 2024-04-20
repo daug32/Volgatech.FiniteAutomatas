@@ -1,7 +1,7 @@
-﻿using FiniteAutomatas.Domain.Automatas;
-using FiniteAutomatas.Domain.Convertors;
+﻿using FiniteAutomatas.Domain.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors;
-using FiniteAutomatas.Domain.ValueObjects;
+using FiniteAutomatas.Domain.Models.Automatas;
+using FiniteAutomatas.Domain.Models.ValueObjects;
 using FiniteAutomatas.MileyToMure.Console.Displays;
 
 namespace FiniteAutomatas.MileyToMure.Console;

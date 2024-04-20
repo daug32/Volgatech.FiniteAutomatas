@@ -1,6 +1,6 @@
-﻿using FiniteAutomatas.Domain.ValueObjects;
+﻿using FiniteAutomatas.Domain.Models.ValueObjects;
 
-namespace FiniteAutomatas.Domain.Automatas;
+namespace FiniteAutomatas.Domain.Models.Automatas;
 
 public class Miley : FiniteAutomata
 {

@@ -1,4 +1,4 @@
-﻿using FiniteAutomatas.Domain.Automatas;
+﻿using FiniteAutomatas.Domain.Models.Automatas;
 
 namespace FiniteAutomatas.Domain.Convertors;
 

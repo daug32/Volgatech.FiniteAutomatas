@@ -1,6 +1,6 @@
-﻿using FiniteAutomatas.Domain.Automatas;
-using FiniteAutomatas.Domain.Convertors.Convertors.Implementation.ToDfa;
-using FiniteAutomatas.Domain.ValueObjects;
+﻿using FiniteAutomatas.Domain.Convertors.Convertors.Implementation.ToDfa;
+using FiniteAutomatas.Domain.Models.Automatas;
+using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors;
 
