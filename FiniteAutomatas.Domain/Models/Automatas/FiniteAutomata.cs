@@ -55,10 +55,11 @@ public class FiniteAutomata
         epsClosures ??= EpsClosure( from ).ToHashSet();
 
         return Transitions
-            .Where( transition => 
-                transition.Argument.Equals( argument ) && 
+            .Where( transition =>
+                transition.Argument.Equals( argument ) &&
                 epsClosures.Contains( transition.From ) )
-            .Select( transition => transition.To )
+            .Select( transition => transition.To.Name )
+            .Select( stateName => AllStates.Single( x => x.Name == stateName ) )
             .ToHashSet();
     }
 
