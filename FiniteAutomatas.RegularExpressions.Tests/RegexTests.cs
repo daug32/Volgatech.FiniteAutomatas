@@ -1,3 +1,5 @@
+using FiniteAutomatas.Domain.Convertors;
+using FiniteAutomatas.Domain.Convertors.Convertors;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.Automatas.Extensions;
 using FiniteAutomatas.Domain.Models.ValueObjects;
@@ -81,7 +83,9 @@ public class RegexTests
     public void Test( RegexTestData testData )
     {
         // Arrange
-        FiniteAutomata dfa = new RegexToDfaParser().Parse( testData.Regex );
+        FiniteAutomata dfa = new RegexToDfaParser()
+            .Parse( testData.Regex )
+            .Convert( new DfaNormalizationConvertor() );
 
         // Act & Assert
         Assert.Multiple( () =>

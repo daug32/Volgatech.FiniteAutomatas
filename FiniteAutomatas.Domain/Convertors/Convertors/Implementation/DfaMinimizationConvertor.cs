@@ -1,9 +1,9 @@
 ﻿using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
 
-namespace FiniteAutomatas.Domain.Convertors.Convertors;
+namespace FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
 
-public class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
+internal class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
 {
     public FiniteAutomata Convert( FiniteAutomata automata )
     {
@@ -34,8 +34,8 @@ public class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
 
         while ( true )
         {
-            bool hasChanges = false;
-            for ( int groupIndex = 0; groupIndex < groups.Count; groupIndex++ )
+            var hasChanges = false;
+            for ( var groupIndex = 0; groupIndex < groups.Count; groupIndex++ )
             {
                 var currentStatesGroup = groups[groupIndex];
                 if ( currentStatesGroup.Count < 2 )
@@ -43,7 +43,7 @@ public class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
                     continue;
                 }
 
-                for ( int itemIndex = 0; itemIndex < currentStatesGroup.Count - 1; itemIndex++ )
+                for ( var itemIndex = 0; itemIndex < currentStatesGroup.Count - 1; itemIndex++ )
                 {
                     State first = currentStatesGroup[itemIndex];
                     State second = currentStatesGroup[itemIndex + 1];
@@ -62,7 +62,7 @@ public class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
 
                     hasChanges = true;
 
-                    bool hasAddedToNewGroup = false;
+                    var hasAddedToNewGroup = false;
                     foreach ( var group in groups )
                     {
                         if ( group.Count == 0 )
@@ -105,19 +105,19 @@ public class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
     }
 
     private FiniteAutomata BuildMinimizedDfa(
-        List<List<State>> groups, 
+        List<List<State>> groups,
         HashSet<Transition> oldTransitions )
     {
         var states = new Dictionary<string, State>( groups.Count );
         var oldStateNameToNewStateName = new Dictionary<string, string>();
-        int index = 0;
+        var index = 0;
         foreach ( var group in groups )
         {
             var newName = index++.ToString();
 
-            bool isStart = false;
-            bool isEnd = false;
-            bool isError = false;
+            var isStart = false;
+            var isEnd = false;
+            var isError = false;
             foreach ( State state in group )
             {
                 isError |= state.IsError;
@@ -125,12 +125,13 @@ public class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
                 isStart |= state.IsStart;
                 oldStateNameToNewStateName.Add( state.Name, newName );
             }
-            
+
             var collapsedState = new State(
-                newName, 
-                isStart: isStart,
-                isEnd: isEnd, 
-                isError: isError );
+                newName,
+                isStart,
+                isEnd,
+                isError );
+
             states.Add( collapsedState.Name, collapsedState );
         }
 
@@ -141,27 +142,26 @@ public class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
             State from = states[oldStateNameToNewStateName[transition.From.Name]];
             State to = states[oldStateNameToNewStateName[transition.To.Name]];
             Argument argument = transition.Argument;
-            
-            bool hasThisTransition = transitions.Any( x => 
-                x.From.Equals( from ) &&
-                x.To.Equals( to ) && 
-                x.Argument.Equals( argument ) );
+
+            bool hasThisTransition = transitions.Any( x =>
+                x.From.Equals( from ) && x.To.Equals( to ) && x.Argument.Equals( argument ) );
+
             if ( hasThisTransition )
             {
                 continue;
             }
 
-            transitions.Add( new Transition( from: from, to: to, argument: argument ) );
+            transitions.Add( new Transition( from, to: to, argument: argument ) );
             alphabet.Add( argument );
         }
 
         return new FiniteAutomata(
-            alphabet: alphabet,
-            transitions: transitions,
-            allStates: states.Values );
+            alphabet,
+            transitions,
+            states.Values );
     }
 
-    private static bool HasSameEquivalenceClass( 
+    private static bool HasSameEquivalenceClass(
         State first,
         State second,
         Dictionary<string, Dictionary<Argument, string>> transitions,

@@ -30,7 +30,9 @@ public class Program
                      _visualizationOptions );
 
                 System.Console.WriteLine( "Converting into DFA..." );
-                FiniteAutomata dfa = nfa.Convert( new NfaToDfaConvertor() );
+                FiniteAutomata dfa = nfa
+                    .Convert( new NfaToDfaConvertor() )
+                    .Convert( new DfaNormalizationConvertor() );
                 dfa.Print();
                 new Visualizer( dfa ).ToImage( 
                     @"D:\Development\Projects\TestingStation\dfa.png",

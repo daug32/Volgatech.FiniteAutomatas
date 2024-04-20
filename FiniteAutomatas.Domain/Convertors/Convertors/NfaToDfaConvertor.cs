@@ -66,9 +66,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
             dfaTransitions,
             processedStates.Select( x => x.ToState() ) );
 
-        return dfa
-            .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
-            .Convert( new DfaMinimizationConvertor() );
+        return dfa;
     }
 
     private static FiniteAutomata BuildDfa( ICollection<Transition> transitions, IEnumerable<State> states )

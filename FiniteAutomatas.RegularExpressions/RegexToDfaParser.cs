@@ -10,10 +10,6 @@ public class RegexToDfaParser
 
     public FiniteAutomata Parse( string regex )
     {
-        return _regexToNfaParser
-            .Parse( regex )
-            .Convert( new NfaToDfaConvertor() )
-            .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
-            .Convert( new DfaMinimizationConvertor() );
+        return _regexToNfaParser.Parse( regex ).Convert( new NfaToDfaConvertor() );
     }
 }
