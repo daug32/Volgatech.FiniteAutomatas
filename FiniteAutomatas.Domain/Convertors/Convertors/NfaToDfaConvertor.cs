@@ -66,16 +66,13 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
             dfaTransitions,
             processedStates.Select( x => x.ToState() ) );
 
-        return dfa;
+        return dfa
+            .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
+            .Convert( new DfaMinimizationConvertor() );
     }
 
     private static FiniteAutomata BuildDfa( ICollection<Transition> transitions, IEnumerable<State> states )
     {
-        if ( transitions.Any( x => x.Argument == Argument.Epsilon ) )
-        {
-            Console.WriteLine( "CONTAINS EPSILON TRANSITION" );
-        }
-        
         // oldName, newName
         var statesList = states.ToList();
 

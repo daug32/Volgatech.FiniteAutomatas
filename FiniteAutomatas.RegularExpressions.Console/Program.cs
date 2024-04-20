@@ -8,6 +8,11 @@ namespace FiniteAutomatas.RegularExpressions.Console;
 
 public class Program
 {
+    private static readonly VisualizationOptions _visualizationOptions = new()
+    {
+        DrawErrorState = false
+    };
+
     public static void Main()
     {
         while ( true )
@@ -20,22 +25,16 @@ public class Program
                 System.Console.WriteLine( "Creating an NFA..." );
                 FiniteAutomata nfa = new RegexToNfaParser().Parse( regex );
                 nfa.Print();
-                new Visualizer( nfa ).ToImage( @"D:\Development\Projects\TestingStation\nfa.png" );
+                new Visualizer( nfa ).ToImage( 
+                    @"D:\Development\Projects\TestingStation\nfa.png",
+                     _visualizationOptions );
 
                 System.Console.WriteLine( "Converting into DFA..." );
                 FiniteAutomata dfa = nfa.Convert( new NfaToDfaConvertor() );
                 dfa.Print();
-                new Visualizer( dfa ).ToImage( @"D:\Development\Projects\TestingStation\dfa.png" );
-
-                System.Console.WriteLine( "Adding Error state..." );
-                FiniteAutomata dfaWithError = dfa.Convert( new SetErrorStateOnEmptyTransitionsConvertor() );
-                dfaWithError.Print();
-                new Visualizer( dfaWithError ).ToImage( @"D:\Development\Projects\TestingStation\dfaWithError.png" );
-
-                System.Console.WriteLine( "Minimizing" );
-                FiniteAutomata minimizedDfa = dfaWithError.Convert( new DfaMinimizationConvertor() );
-                minimizedDfa.Print();
-                new Visualizer( minimizedDfa ).ToImage( @"D:\Development\Projects\TestingStation\dfaMinimized.png" );
+                new Visualizer( dfa ).ToImage( 
+                    @"D:\Development\Projects\TestingStation\dfa.png",
+                     _visualizationOptions );
             }
             catch ( Exception ex )
             {

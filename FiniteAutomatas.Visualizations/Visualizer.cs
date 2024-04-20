@@ -16,17 +16,12 @@ public class Visualizer
         _automata = automata;
     }
 
-    public void ToImage( string path )
+    public void ToImage( string path, VisualizationOptions? options = null )
     {
-        var nodes = _automata.AllStates.Select( x => $"{x.Name} [{BuildNodeStyles( x )}];" ).ToList();
-        if ( _automata.AllStates.Any( x => x.IsError ) )
-        {
-            nodes.Add( "error [style=\"filled\" fillcolor=\"red\" label=\"error\"]" );
-        }
+        options ??= new VisualizationOptions();
 
-        nodes.Add( "end [style=\"filled\" fillcolor=\"green\" label=\"end\"]" );
-        nodes.Add( "start [style=\"filled\" fillcolor=\"#40b0f0\" label=\"start\"]" );
-        var transitions = _automata.Transitions.Select( x => $"{x.From.Name} -> {x.To.Name} [label=\"{BuildTransitionLabel( x )}\"];" );
+        var nodes = BuildNodes( options );
+        var transitions = BuildTransitions( options );
 
         string data = $@"
             digraph {_graphName} {{
@@ -57,6 +52,53 @@ public class Visualizer
         process.WaitForExit();
 
         File.Delete( tempDataPath );
+    }
+
+    private IEnumerable<string> BuildTransitions( VisualizationOptions options )
+    {
+        var statesToExclude = options.DrawErrorState 
+            ? new HashSet<State>()  
+            : _automata.AllStates.Where( x => x.IsError ).ToHashSet();
+        
+        var transitions = new List<string>();
+        foreach ( Transition transition in _automata.Transitions )
+        {
+            if ( statesToExclude.Contains( transition.To ) )
+            {
+                continue;
+            } 
+            
+            transitions.Add( $"{transition.From.Name} -> {transition.To.Name} [label=\"{BuildTransitionLabel( transition )}\"];" );
+        }
+
+        return transitions;
+    }
+
+    private List<string> BuildNodes( VisualizationOptions options )
+    {
+        var statesToExclude = options.DrawErrorState
+            ? new HashSet<State>()
+            : _automata.AllStates.Where( x => x.IsError ).ToHashSet();
+        
+        var nodes = new List<string>();
+        nodes.Add( "end [style=\"filled\" fillcolor=\"green\" label=\"end\"]" );
+        nodes.Add( "start [style=\"filled\" fillcolor=\"#40b0f0\" label=\"start\"]" );
+        if ( options.DrawErrorState && _automata.AllStates.Any( x => x.IsError ) )
+        {
+            nodes.Add( "error [style=\"filled\" fillcolor=\"red\" label=\"error\"]" );
+        }
+        
+        foreach ( State state in _automata.AllStates )
+        {
+            if ( statesToExclude.Contains( state ) )
+            {
+                continue;
+            }
+            
+            nodes.Add( $"{state.Name} [{BuildNodeStyles( state )}];" );
+        }
+        
+        return nodes;
     }
 
     private static string BuildTransitionLabel( Transition transition )

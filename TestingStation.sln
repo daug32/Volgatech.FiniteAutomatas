@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{B003DC11-C771-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FiniteAutomatas.Visualizations", "FiniteAutomatas.Visualizations\FiniteAutomatas.Visualizations.csproj", "{6139F3F9-ED06-41ED-9795-683F3D3E2631}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{7EFD8D38-D05D-4B62-8EFC-F16F483F71EC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{7EFD8D38-D05D-4B62-8EFC-F16F483F71EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A0C5AB8E-963C-4989-8EA5-01BA6F407EAF}"
 EndProject
