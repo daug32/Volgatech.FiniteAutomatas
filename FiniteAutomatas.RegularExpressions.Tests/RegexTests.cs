@@ -44,8 +44,8 @@ public class RegexTests
         new RegexTestData( "a|bc|d", new[] { "ac", "ad", "bc", "bd" }, new[] { "ab", "cd", "abcd", "" } ),
 
         new RegexTestData(
-            "(x|y)*(ab|ac*)*|(x|y)*(a*b*c)*|(x|y)(ab)*",
-            new[]
+            regex: "(x|y)*(ab|ac*)*|(x|y)*(a*b*c)*|(x|y)(ab)*",
+            successTests: new[]
             {
                 "xyxyxyxyxyxyx",
                 "abaccccc",
@@ -56,14 +56,14 @@ public class RegexTests
                 "xabcabcx",
                 ""
             },
-            new[]
+            failTests: new[]
             {
                 "abacx"
             } ),
 
         new RegexTestData(
-            "(a*b*c*)*b(a*b*c*)*",
-            new[]
+            regex: "(a*b*c*)*b(a*b*c*)*",
+            successTests: new[]
             {
                 "b",
                 "abc",
@@ -72,7 +72,7 @@ public class RegexTests
                 "acb",
                 "babc"
             },
-            new[]
+            failTests: new[]
             {
                 "",
                 "ac"
