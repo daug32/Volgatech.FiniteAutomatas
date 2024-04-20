@@ -56,7 +56,7 @@ public class RegexTests
                 "xabcabcx",
                 ""
             },
-            new[] 
+            new[]
             {
                 "abacx"
             } ),
@@ -70,44 +70,43 @@ public class RegexTests
                 "abcb",
                 "aabbccaabbccb",
                 "acb",
-                "babc",
+                "babc"
             },
-            new[] 
+            new[]
             {
                 "",
                 "ac"
-            } ),
+            } )
     };
 
-[TestCaseSource( nameof( _regexTestData ) )]
-public void Test( RegexTestData testData )
-{
-    // Arrange
-    FiniteAutomata dfa = new RegexToNfaParser()
-        .Parse( testData.Regex )
-        .Convert( new NfaToDfaConvertor() );
-
-    // Act & Assert
-    Assert.Multiple( () =>
+    [TestCaseSource( nameof( _regexTestData ) )]
+    public void Test( RegexTestData testData )
     {
-        foreach ( string successTest in testData.SuccessTests )
-        {
-            bool result = dfa.RunForAllSymbols( successTest.Select( x => new Argument( x.ToString() ) ) );
-            Assert.That(
-                result,
-                Is.True,
-                $"Regex: {testData.Regex}, Test: {successTest}. Must be success" );
-        }
+        // Arrange
+        FiniteAutomata dfa = new RegexToNfaParser()
+            .Parse( testData.Regex )
+            .Convert( new NfaToDfaConvertor() );
 
-        foreach ( string failTest in testData.FailTests )
+        // Act & Assert
+        Assert.Multiple( () =>
         {
-            bool result = dfa.RunForAllSymbols( failTest.Select( x => new Argument( x.ToString() ) ) );
-            Assert.That(
-                result, 
-                Is.False,
-                $"Regex: {testData.Regex}, Test: {failTest}. Must be failed" );
-        }
-    } );
-}
+            foreach ( string successTest in testData.SuccessTests )
+            {
+                bool result = dfa.RunForAllSymbols( successTest.Select( x => new Argument( x.ToString() ) ) );
+                Assert.That(
+                    result,
+                    Is.True,
+                    $"Regex: {testData.Regex}, Test: {successTest}. Must be success" );
+            }
 
+            foreach ( string failTest in testData.FailTests )
+            {
+                bool result = dfa.RunForAllSymbols( failTest.Select( x => new Argument( x.ToString() ) ) );
+                Assert.That(
+                    result,
+                    Is.False,
+                    $"Regex: {testData.Regex}, Test: {failTest}. Must be failed" );
+            }
+        } );
+    }
 }
