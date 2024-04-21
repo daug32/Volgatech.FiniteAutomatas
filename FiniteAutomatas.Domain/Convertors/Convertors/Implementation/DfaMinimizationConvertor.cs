@@ -19,7 +19,7 @@ internal class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
             automata.AllStates.Where( x => x.IsEnd ).ToList(),
             automata.AllStates.Where( x => !x.IsEnd && !x.IsError ).ToList(),
             automata.AllStates.Where( x => x.IsError ).ToList()
-        };
+        }.Where( x => x.Any() ).ToList();
 
         var transitions = automata.AllStates.ToDictionary( x => x.Name, x => new Dictionary<Argument, string>() );
         foreach ( Transition transition in automata.Transitions )
@@ -101,7 +101,7 @@ internal class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
             }
         }
 
-        return groups;
+        return groups.Where( x => x.Any() ).ToList();
     }
 
     private FiniteAutomata BuildMinimizedDfa(
@@ -168,12 +168,21 @@ internal class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
         IEnumerable<Argument> alphabet,
         List<List<State>> groups )
     {
+        if ( first.IsError || second.IsError )
+        {
+            return false;
+        }
+
         foreach ( Argument argument in alphabet )
         {
-            var firstGroup = groups.Single( x => x.Any( groupItem => groupItem.Name == transitions[first.Name][argument] ) );
-            var secondGroup = groups.Single( x => x.Any( groupItem => groupItem.Name == transitions[second.Name][argument] ) );
+            var firstGroup = groups.SingleOrDefault( x => 
+                x.Any( groupItem => groupItem.Name == transitions[first.Name][argument] ) );
+            var secondGroup = groups.SingleOrDefault( x => 
+                x.Any( groupItem => groupItem.Name == transitions[second.Name][argument] ) );
 
-            if ( firstGroup.Equals( secondGroup ) )
+            if ( firstGroup is not null &&
+                 secondGroup is not null &&
+                 firstGroup.Equals( secondGroup ) )
             {
                 continue;
             }

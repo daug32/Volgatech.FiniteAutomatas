@@ -25,14 +25,15 @@ public class Program
                 FiniteAutomata nfa = new RegexToNfaParser()
                     .Parse( regex )
                     .PrintToConsole()
-                    .PrintToImage( @"D:\Development\Projects\TestingStation\nfa.png", _visualizationOptions );
+                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\nfa.png", _visualizationOptions );
 
                 System.Console.WriteLine( "Converting into DFA..." );
                 FiniteAutomata dfa = nfa
                     .Convert( new NfaToDfaConvertor() )
+                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\dfa.png", _visualizationOptions )
                     .Convert( new DfaNormalizationConvertor() )
                     .PrintToConsole()
-                    .PrintToImage( @"D:\Development\Projects\TestingStation\dfa.png", _visualizationOptions );
+                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\dfaMinimized.png", _visualizationOptions );
             }
             catch ( Exception ex )
             {
