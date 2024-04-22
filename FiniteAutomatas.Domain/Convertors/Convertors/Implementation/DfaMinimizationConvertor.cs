@@ -3,7 +3,7 @@ using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
 
-internal class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
+public class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
 {
     public FiniteAutomata Convert( FiniteAutomata automata )
     {

@@ -16,9 +16,11 @@ public static class Visualizer
     }
 
     public static T PrintToConsole<T>(
-        this T automata )
+        this T automata,
+        string? title = null )
         where T : FiniteAutomata
     {
+        Console.WriteLine( title );
         new FiniteAutomataConsoleVisualizer( automata ).Print();
         return automata;
     }

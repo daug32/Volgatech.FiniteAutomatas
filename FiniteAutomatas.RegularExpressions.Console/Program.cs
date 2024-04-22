@@ -1,5 +1,6 @@
 ﻿using FiniteAutomatas.Domain.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors;
+using FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Visualizations;
 
@@ -9,7 +10,7 @@ public class Program
 {
     private static readonly VisualizationOptions _visualizationOptions = new()
     {
-        DrawErrorState = false
+        DrawErrorState = true
     };
 
     public static void Main()
@@ -30,10 +31,16 @@ public class Program
                 System.Console.WriteLine( "Converting into DFA..." );
                 FiniteAutomata dfa = nfa
                     .Convert( new NfaToDfaConvertor() )
-                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\dfa.png", _visualizationOptions )
-                    .Convert( new DfaNormalizationConvertor() )
-                    .PrintToConsole()
-                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\dfaMinimized.png", _visualizationOptions );
+                    .PrintToConsole( "DFA" )
+                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\dfa1.png", _visualizationOptions )
+                    
+                    .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
+                    .PrintToConsole( "Normalized DFA" )
+                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\dfa2WithErrors.png", _visualizationOptions )
+                    
+                    .Convert( new DfaMinimizationConvertor() )
+                    .PrintToConsole( "Minimized DFA" )
+                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\dfa3Minimized.png", _visualizationOptions );
             }
             catch ( Exception ex )
             {

@@ -3,7 +3,7 @@ using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
 
-internal class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<FiniteAutomata>
+public class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<FiniteAutomata>
 {
     public FiniteAutomata Convert( FiniteAutomata automata )
     {

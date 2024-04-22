@@ -80,7 +80,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
             State state = statesList[i];
 
             string oldName = state.Name;
-            string newName = $"S{i}";
+            string newName = i.ToString();
 
             nameOverrides.Add( oldName, newName );
             state.Name = newName;
