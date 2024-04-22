@@ -14,6 +14,14 @@ public class MinimizationGroup
     {
         _states.Add( state.Name, state );
     }
+    
+    public MinimizationGroup( IEnumerable<State> states )
+    {
+        foreach ( State state in states )
+        {
+            _states.Add( state.Name, state );
+        }
+    }
 
     public void Add( State state )
     {
@@ -44,4 +52,6 @@ public class MinimizationGroup
     public bool Any( Func<State, bool> predicate ) => _states.Values.Any( predicate );
 
     public List<State> GetStates() => _states.Values.ToList();
+
+    public MinimizationGroup Copy() => new( _states.Values );
 }

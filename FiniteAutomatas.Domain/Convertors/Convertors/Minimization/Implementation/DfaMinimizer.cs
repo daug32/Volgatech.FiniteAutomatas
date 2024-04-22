@@ -39,10 +39,14 @@ internal class DfaMinimizer
         bool hasChanges = true;
         while ( hasChanges )
         {
+            var newGroups = new List<MinimizationGroup>();
+            
             hasChanges = false;
             for ( int groupIndex = 0; groupIndex < groups.Count; groupIndex++ )
             {
-                MinimizationGroup currentGroup = groups[groupIndex];
+                MinimizationGroup originalGroup = groups[groupIndex];
+                MinimizationGroup currentGroup = originalGroup.Copy();
+                newGroups.Add( currentGroup );
                 
                 var createdGroups = new List<MinimizationGroup>();
 
@@ -59,11 +63,10 @@ internal class DfaMinimizer
                     currentGroup.Remove( current.Name );
 
                     bool addedToGroup = false;
-                    var allGroups = groups.Union( createdGroups ).ToList();
                     foreach ( MinimizationGroup createdGroup in createdGroups )
                     {
                         State example = createdGroup.GetStates().First();
-                        if ( !HasSameEquivalenceClass( current, example, allGroups ) )
+                        if ( !HasSameEquivalenceClass( current, example, groups ) )
                         {
                             continue;
                         }
@@ -84,8 +87,10 @@ internal class DfaMinimizer
                     hasChanges = true;
                 }
                 
-                groups.AddRange( createdGroups );
+                newGroups.AddRange( createdGroups );
             }
+
+            groups = newGroups;
         }
 
         return groups.Where( x => x.Any() ).ToList();

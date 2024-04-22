@@ -96,24 +96,24 @@ public class RegexTests
         {
             foreach ( string successTest in testData.SuccessTests )
             {
-                var result = false;
+                var result = FiniteAutomataRunResult.Unknown;
                 Assert.DoesNotThrow(
                     () => result = dfa.RunForAllSymbols( successTest.Select( x => new Argument( x.ToString() ) ) ),
                     $"Regex: {testData.Regex}, Test: {successTest}" );
                 Assert.That(
-                    result,
+                    result.IsSuccess(),
                     Is.True,
                     $"Regex: {testData.Regex}, Test: {successTest}. Must be success" );
             }
 
             foreach ( string failTest in testData.FailTests )
             {
-                var result = false;
+                var result = FiniteAutomataRunResult.Unknown;
                 Assert.DoesNotThrow( 
-                    () => dfa.RunForAllSymbols( failTest.Select( x => new Argument( x.ToString() ) ) ),
+                    () => result = dfa.RunForAllSymbols( failTest.Select( x => new Argument( x.ToString() ) ) ),
                     $"Regex: {testData.Regex}, Test: {failTest}" );
                 Assert.That(
-                    result,
+                    result.IsSuccess(),
                     Is.False,
                     $"Regex: {testData.Regex}, Test: {failTest}. Must be failed" );
             }

@@ -4,7 +4,7 @@ namespace FiniteAutomatas.Domain.Models.Automatas.Extensions;
 
 public static class FiniteAutomataExtensions
 {
-    public static bool RunForAllSymbols( this FiniteAutomata automata, IEnumerable<Argument> arguments )
+    public static FiniteAutomataRunResult RunForAllSymbols( this FiniteAutomata automata, IEnumerable<Argument> arguments )
     {
         State currentState = automata.AllStates.First( x => x.IsStart );
 
@@ -18,12 +18,35 @@ public static class FiniteAutomataExtensions
 
             if ( states.Count == 0 )
             {
-                return false;
+                return FiniteAutomataRunResult.FinishedOnError;
             }
 
             currentState = states.Single();
         }
 
-        return currentState.IsEnd;
+        if ( currentState.IsEnd )
+        {
+            return FiniteAutomataRunResult.FinishedOnSuccess;
+        }
+
+        if ( currentState.IsError )
+        {
+            return FiniteAutomataRunResult.FinishedOnError;
+        }
+
+        return FiniteAutomataRunResult.FinishedOnIntermediate;
     }
+}
+
+public enum FiniteAutomataRunResult
+{
+    Unknown,
+    FinishedOnSuccess,
+    FinishedOnIntermediate,
+    FinishedOnError,
+}
+
+public static class FiniteAutomataRunResultExtensions
+{
+    public static bool IsSuccess( this FiniteAutomataRunResult result ) => result == FiniteAutomataRunResult.FinishedOnSuccess;
 }
