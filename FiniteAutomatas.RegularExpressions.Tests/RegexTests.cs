@@ -82,9 +82,9 @@ public class RegexTests
     public void Test( RegexTestData testData )
     {
         // Arrange
-        FiniteAutomata dfa = null!;
+        FiniteAutomata regex = null!;
         Assert.DoesNotThrow( 
-            () => dfa = new RegexToNfaParser()
+            () => regex = new RegexToNfaParser()
                 .Parse( testData.Regex )
                 .Convert( new NfaToDfaConvertor() )
                 .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
@@ -98,7 +98,7 @@ public class RegexTests
             {
                 var result = FiniteAutomataRunResult.Unknown;
                 Assert.DoesNotThrow(
-                    () => result = dfa.RunForAllSymbols( successTest.Select( x => new Argument( x.ToString() ) ) ),
+                    () => result = regex.RunForAllSymbols( successTest.Select( x => new Argument( x.ToString() ) ) ),
                     $"Regex: {testData.Regex}, Test: {successTest}" );
                 Assert.That(
                     result.IsSuccess(),
@@ -110,7 +110,7 @@ public class RegexTests
             {
                 var result = FiniteAutomataRunResult.Unknown;
                 Assert.DoesNotThrow( 
-                    () => result = dfa.RunForAllSymbols( failTest.Select( x => new Argument( x.ToString() ) ) ),
+                    () => result = regex.RunForAllSymbols( failTest.Select( x => new Argument( x.ToString() ) ) ),
                     $"Regex: {testData.Regex}, Test: {failTest}" );
                 Assert.That(
                     result.IsSuccess(),
