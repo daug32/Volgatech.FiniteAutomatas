@@ -1,6 +1,5 @@
 using FiniteAutomatas.Domain.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors;
-using FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.Automatas.Extensions;
 using FiniteAutomatas.Domain.Models.ValueObjects;
@@ -48,10 +47,11 @@ public class RegexTests
             regex: "(x|y)*(ab|ac*)*|(x|y)*(a*b*c)*|(x|y)(ab)*",
             successTests: new[]
             {
+                // (x|y)*(ab|ac*)*
                 "xyabacc", "abacc", "ab", "a", "accc", "",
-                
+                // (x|y)*(a*b*c)*
                 "xyaabbccc", "xy", "abc", "x", "ac", "bc", "c", "",
-                
+                // (x|y)(ab)*
                 "xabab", "x", "y", "ab"
             },
             failTests: new[]

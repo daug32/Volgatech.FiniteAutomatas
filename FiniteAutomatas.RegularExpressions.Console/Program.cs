@@ -1,6 +1,5 @@
 ﻿using FiniteAutomatas.Domain.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors;
-using FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Visualizations;
 
