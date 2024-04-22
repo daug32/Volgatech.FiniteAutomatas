@@ -4,10 +4,8 @@ namespace FiniteAutomatas.RegularExpressions.Implementation.Models;
 
 internal class RegexNode
 {
-    private RegexNode? _parent;
-    
-    public RegexNode? LeftOperand;
-    public RegexNode? RightOperand;
+    public RegexNode? LeftOperand { get; set; }
+    public RegexNode? RightOperand { get; set; }
     
     public RegexSymbol Value;
 
@@ -18,14 +16,13 @@ internal class RegexNode
             throw new Exception();
         }
         
-        return new RegexNode( 
-            RegexSymbol.Parse( expression.Length == 1 ? $"{expression}|{expression}" : expression ),
-            null );
+        return new RegexNode( RegexSymbol.Parse( expression.Length == 1 
+            ? $"{expression}|{expression}" 
+            : expression ) );
     }
     
-    private RegexNode( List<RegexSymbol> regex, RegexNode? parent )
+    private RegexNode( List<RegexSymbol> regex )
     {
-        _parent = parent;
         regex = regex.SimplifyBracesIfNeed();
 
         int symbolIndex = regex.GetOperationSymbolIndex();
@@ -41,7 +38,7 @@ internal class RegexNode
                      RegexSymbolType.Symbol)
             {
                 Value = regex.Last();
-                LeftOperand = new RegexNode( regex.GetRange( 0, regex.Count - 1 ), this );
+                LeftOperand = new RegexNode( regex.GetRange( 0, regex.Count - 1 ) );
                 return;
             }
 
@@ -53,8 +50,8 @@ internal class RegexNode
         var right = regex.GetRange( symbolIndex + 1, regex.Count - symbolIndex - 1 );
         
         Value = regex[symbolIndex];
-        LeftOperand = left.Count > 0 ? new RegexNode( left, this ) : null;
-        RightOperand = right.Count > 0 ? new RegexNode( right, this ) : null;
+        LeftOperand = left.Count > 0 ? new RegexNode( left ) : null;
+        RightOperand = right.Count > 0 ? new RegexNode( right ) : null;
     }
 
     public RegexNode( RegexSymbol value, RegexNode? leftOperand, RegexNode? rightOperand )
