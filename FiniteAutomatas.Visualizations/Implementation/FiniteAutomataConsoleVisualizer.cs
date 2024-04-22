@@ -93,7 +93,7 @@ internal class FiniteAutomataConsoleVisualizer
         result.Add( "IsStart" );
         result.Add( "IsEnd" );
         result.Add( "IsError" );
-        result.AddRange( _automata.Alphabet.Select( x => x.Value ) );
+        result.AddRange( _automata.Alphabet.Select( x => x.Value ).Order() );
 
         return result;
     }

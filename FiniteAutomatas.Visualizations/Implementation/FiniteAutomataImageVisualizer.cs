@@ -7,14 +7,14 @@ using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Visualizations.Implementation;
 
-public class ImageVisualizer
+public class FiniteAutomataImageVisualizer
 {
     private readonly string _graphvizPath = "./Graphviz/bin/dot.exe";
     private readonly string _graphName = "graphName";
     
     private readonly FiniteAutomata _automata;
 
-    public ImageVisualizer( FiniteAutomata automata )
+    public FiniteAutomataImageVisualizer( FiniteAutomata automata )
     {
         _automata = automata;
     }
