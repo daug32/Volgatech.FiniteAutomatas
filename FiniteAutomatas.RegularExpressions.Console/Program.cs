@@ -44,7 +44,7 @@ public class Program
             }
             catch ( Exception ex )
             {
-                System.Console.WriteLine( $"Couldn't create an NFA for regex. Regex: {regex}" );
+                System.Console.WriteLine( $"Couldn't create an finite automata for regex. Regex: {regex}" );
                 System.Console.WriteLine( ex );
             }
         }
