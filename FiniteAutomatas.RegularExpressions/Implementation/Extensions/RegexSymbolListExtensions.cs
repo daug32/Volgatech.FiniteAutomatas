@@ -9,8 +9,8 @@ internal static class RegexSymbolListExtensions
         { RegexSymbolType.Symbol, 0 },
         { RegexSymbolType.OpenBrace, 0 },
         { RegexSymbolType.CloseBrace, 0 },
-        { RegexSymbolType.And, 3 },
-        { RegexSymbolType.Or, 2 },
+        { RegexSymbolType.And, 2 },
+        { RegexSymbolType.Or, 3 },
         { RegexSymbolType.ZeroOrMore, 1 },
         { RegexSymbolType.OneOrMore, 1 },
     };

@@ -32,15 +32,15 @@ public class Program
                 FiniteAutomata dfa = nfa
                     .Convert( new NfaToDfaConvertor() )
                     .PrintToConsole( "DFA" )
-                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\dfa1.png", _visualizationOptions )
+                    .PrintToImage( @".\dfa1.png", _visualizationOptions )
                     
                     .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
                     .PrintToConsole( "Normalized DFA" )
-                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\dfa2WithErrors.png", _visualizationOptions )
+                    .PrintToImage( @".\dfa2WithErrors.png", _visualizationOptions )
                     
                     .Convert( new DfaMinimizationConvertor() )
                     .PrintToConsole( "Minimized DFA" )
-                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\dfa3Minimized.png", _visualizationOptions );
+                    .PrintToImage( @".\dfa3Minimized.png", _visualizationOptions );
             }
             catch ( Exception ex )
             {

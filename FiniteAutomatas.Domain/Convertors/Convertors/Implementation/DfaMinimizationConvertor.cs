@@ -61,35 +61,10 @@ public class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
                     }
 
                     hasChanges = true;
-
-                    var hasAddedToNewGroup = false;
-                    foreach ( var group in groups )
+                    groups.Add( new List<State>
                     {
-                        if ( group.Count == 0 )
-                        {
-                            continue;
-                        }
-
-                        if ( HasSameEquivalenceClass(
-                                second,
-                                group.First(),
-                                transitions,
-                                automata.Alphabet,
-                                groups ) )
-                        {
-                            hasAddedToNewGroup = true;
-                            group.Add( second );
-                            break;
-                        }
-                    }
-
-                    if ( !hasAddedToNewGroup )
-                    {
-                        groups.Add( new List<State>
-                        {
-                            second
-                        } );
-                    }
+                        second
+                    } );
 
                     currentStatesGroup.Remove( second );
                 }

@@ -25,7 +25,7 @@ public class ImageVisualizer
 
         string data = $@"
             digraph {_graphName} {{
-	            rankdir=LR; 
+	            rankdir=LR;
                 {{ {String.Join( "", nodes )} }}
                 {{ {String.Join( "", transitions )} }}
             }}
