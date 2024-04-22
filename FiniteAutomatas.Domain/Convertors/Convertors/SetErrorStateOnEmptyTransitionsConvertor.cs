@@ -1,7 +1,7 @@
 ﻿using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
 
-namespace FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
+namespace FiniteAutomatas.Domain.Convertors.Convertors;
 
 public class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<FiniteAutomata>
 {
