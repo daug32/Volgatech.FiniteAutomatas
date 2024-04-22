@@ -3,11 +3,12 @@
 public class State : IComparable
 {
     public string Name { get; set; }
-    public bool IsTerminateState => IsEnd || IsError;
     public bool IsEnd;
     public bool IsError;
     public bool IsStart;
-
+    
+    public bool IsTerminateState => IsEnd || IsError;
+    
     public State( string name, bool isStart = false, bool isEnd = false, bool isError = false )
     {
         Name = name;

@@ -1,4 +1,7 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
+using System.Text;
+using System.Text.RegularExpressions;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
 
@@ -16,135 +19,136 @@ public class ImageVisualizer
         _automata = automata;
     }
 
-    public void ToImage( string path, VisualizationOptions? options = null )
+    public async Task ToImage( string path, VisualizationOptions? options = null )
     {
-        options ??= new VisualizationOptions();
-
-        var nodes = BuildNodes( options );
-        var transitions = BuildTransitions( options );
-
-        string data = $@"
-            digraph {_graphName} {{
-	            rankdir=LR;
-                {{ {String.Join( "", nodes )} }}
-                {{ {String.Join( "", transitions )} }}
-            }}
-        ";
-
         var tempDataPath = $"{path}.dot";
-        File.WriteAllText( tempDataPath, data );
 
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = _graphvizPath,
-            Arguments = $"-Tpng {tempDataPath} -o {path}",
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
+        await File.WriteAllTextAsync( 
+            tempDataPath, 
+            BuildData( options ?? new VisualizationOptions() ) );
 
         var process = new Process
         {
-            StartInfo = startInfo,
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = _graphvizPath,
+                Arguments = $"-Tpng {tempDataPath} -o {path}",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            },
+            
         };
 
         process.Start();
-        process.WaitForExit();
+
+        Task timout = Task.Delay( 5000 );
+        Task work = process.WaitForExitAsync();
+        await Task.WhenAny( timout, work );
+        
+        if ( !work.IsCompleted )
+        {
+            process.Kill();
+            await process.WaitForExitAsync();
+            File.Delete( tempDataPath );
+            throw new TimeoutException( "Graphviz: Waiting for graph building is too long" );
+        }
 
         File.Delete( tempDataPath );
     }
 
-    private IEnumerable<string> BuildTransitions( VisualizationOptions options )
+    private string BuildData( VisualizationOptions options )
     {
-        var statesToExclude = options.DrawErrorState 
-            ? new HashSet<State>()  
-            : _automata.AllStates.Where( x => x.IsError ).ToHashSet();
-        
-        var transitions = new List<string>();
-        foreach ( Transition transition in _automata.Transitions )
+        var statesToDraw = _automata.AllStates.ToHashSet();
+        if ( !options.DrawErrorState )
         {
-            if ( statesToExclude.Contains( transition.To ) )
-            {
-                continue;
-            } 
-            
-            transitions.Add( $"{transition.From.Name} -> {transition.To.Name} [label=\"{BuildTransitionLabel( transition )}\"];" );
+            statesToDraw = statesToDraw.Where( x => !x.IsError ).ToHashSet();
         }
 
-        return transitions;
+        var dataBuilder = new StringBuilder();
+        dataBuilder.Append( $"digraph {_graphName}" );
+        dataBuilder.Append( "{" );
+        dataBuilder.Append( "rankdir=LR;" );
+        
+        dataBuilder.Append( "{" );
+        dataBuilder.AppendJoin( "", BuildNodes( statesToDraw ) );
+        dataBuilder.Append( "}" );
+        
+        dataBuilder.Append( "{" );
+        dataBuilder.AppendJoin( "", BuildTransitions( statesToDraw ) );
+        dataBuilder.Append( "}" );
+        
+        dataBuilder.Append( "}" );
+        
+        return Regex.Replace( dataBuilder.ToString(), @"\s\s*", " " );
     }
 
-    private List<string> BuildNodes( VisualizationOptions options )
+    private IEnumerable<string> BuildTransitions( HashSet<State> statesToDraw )
     {
-        var statesToExclude = options.DrawErrorState
-            ? new HashSet<State>()
-            : _automata.AllStates.Where( x => x.IsError ).ToHashSet();
-        
-        var nodes = new List<string>();
-        nodes.Add( "end [style=\"filled\" fillcolor=\"green\" label=\"end\"]" );
-        nodes.Add( "start [style=\"filled\" fillcolor=\"#40b0f0\" label=\"start\"]" );
-        if ( options.DrawErrorState && _automata.AllStates.Any( x => x.IsError ) )
+        foreach ( Transition transition in _automata.Transitions )
         {
-            nodes.Add( "error [style=\"filled\" fillcolor=\"red\" label=\"error\"]" );
-        }
-        
-        foreach ( State state in _automata.AllStates )
-        {
-            if ( statesToExclude.Contains( state ) )
+            if ( !statesToDraw.Contains( transition.To ) )
             {
                 continue;
             }
-            
-            nodes.Add( $"{state.Name} [{BuildNodeStyles( state )}];" );
+
+            string label = transition.Argument == Argument.Epsilon
+                ? "Eps"
+                : transition.Argument.Value;
+            yield return $"{transition.From.Name} -> {transition.To.Name} [label=\"{label}\"];";
         }
-        
-        return nodes;
     }
 
-    private static string BuildTransitionLabel( Transition transition )
+    private IEnumerable<string> BuildNodes( HashSet<State> statesToDraw )
     {
-        return transition.Argument == Argument.Epsilon
-            ? "Eps"
-            : transition.Argument.Value;
-    }
-
-    private static string BuildNodeStyles( State x )
-    {
-        string style = "filled";
-        string label = x.Name;
-        string fillcolor = BuildFillColor( x );
-
-        return $"style=\"{style}\" fillcolor=\"{fillcolor}\" label=\"{label}\"";
-    }
-
-    private static string BuildFillColor( State x )
-    {
-        if ( x.IsEnd && x.IsStart )
+        if ( statesToDraw.Any( x => x.IsEnd ) )
         {
-            return "#008080";
+            yield return $"end [style=\"filled\" fillcolor=\"{Color.Green.ToHex()}\" label=\"end\" shape=\"doublecircle\"]";
+        }
+
+        if ( statesToDraw.Any( x => x.IsStart ) )
+        {
+            yield return $"start [style=\"filled\" fillcolor=\"{Color.DodgerBlue.ToHex()}\" label=\"start\" shape=\"circle\"]";
+        }
+
+        if ( statesToDraw.Any( x => x.IsError ) )
+        {
+            yield return $"error [style=\"filled\" fillcolor=\"{Color.Red.ToHex()}\" label=\"error\" shape=\"doublecircle\"]";
         }
         
-        if ( x.IsError && x.IsStart )
+        foreach ( State state in statesToDraw )
         {
-            return "purple";
+            string style = "filled";
+            string label = state.Name;
+            string shape = state.IsTerminateState ? "doublecircle" : "circle";
+            string fillcolor = BuildFillColor( state );
+
+            yield return $"{state.Name} [style=\"{style}\" fillcolor=\"{fillcolor}\" label=\"{label}\" shape=\"{shape}\"];";
         }
-        
-        if ( x.IsStart )
+    }
+
+    private static string BuildFillColor( State state )
+    {
+        Color? color = null;
+        if ( state.IsError )
         {
-            // Blue
-            return "#40b0f0";
+            color = Color.Red;
         }
 
-        if ( x.IsEnd )
+        if ( state.IsEnd )
         {
-            return "green";
+            Color endColor = Color.Green;
+            color = color?.Avg( endColor ) ?? endColor;
         }
 
-        if ( x.IsError )
+        if ( state.IsStart )
         {
-            return "red";
+            Color startColor = Color.DodgerBlue;
+            color = color?.Avg( startColor ) ?? startColor;
         }
 
-        return "white";
+        color ??= Color.White;
+
+        return color.Value.ToHex();
     }
 }

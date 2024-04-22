@@ -8,11 +8,6 @@ namespace FiniteAutomatas.RegularExpressions.Console;
 
 public class Program
 {
-    private static readonly VisualizationOptions _visualizationOptions = new()
-    {
-        DrawErrorState = true
-    };
-
     public static void Main()
     {
         while ( true )
@@ -26,21 +21,24 @@ public class Program
                 FiniteAutomata nfa = new RegexToNfaParser()
                     .Parse( regex )
                     .PrintToConsole()
-                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\nfa.png", _visualizationOptions );
+                    .PrintToImage( @"D:\Development\Projects\FiniteAutomatas\nfa.png" );
 
                 System.Console.WriteLine( "Converting into DFA..." );
                 FiniteAutomata dfa = nfa
                     .Convert( new NfaToDfaConvertor() )
                     .PrintToConsole( "DFA" )
-                    .PrintToImage( @".\dfa1.png", _visualizationOptions )
+                    .PrintToImage( @".\dfa1.png" )
                     
                     .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
                     .PrintToConsole( "Normalized DFA" )
-                    .PrintToImage( @".\dfa2WithErrors.png", _visualizationOptions )
+                    .PrintToImage( @".\dfa2WithErrors.png", new VisualizationOptions()
+                    {
+                        DrawErrorState = true
+                    } )
                     
                     .Convert( new DfaMinimizationConvertor() )
                     .PrintToConsole( "Minimized DFA" )
-                    .PrintToImage( @".\dfa3Minimized.png", _visualizationOptions );
+                    .PrintToImage( @".\dfa3Minimized.png" );
             }
             catch ( Exception ex )
             {

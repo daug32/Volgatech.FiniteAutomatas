@@ -11,7 +11,19 @@ public static class Visualizer
         VisualizationOptions? options = null )
         where T : FiniteAutomata
     {
-        new ImageVisualizer( automata ).ToImage( path, options );
+        Task task = new ImageVisualizer( automata ).ToImage( path, options );
+        task.Wait();
+
+        return automata;
+    }
+    
+    public static async Task<T> PrintToImageAsync<T>( 
+        this T automata,
+        string path,
+        VisualizationOptions? options = null )
+        where T : FiniteAutomata
+    {
+        await new ImageVisualizer( automata ).ToImage( path, options );
         return automata;
     }
 
