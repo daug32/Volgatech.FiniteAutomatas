@@ -1,6 +1,6 @@
 ﻿using FiniteAutomatas.Domain.Models.ValueObjects;
 
-namespace FiniteAutomatas.Domain.Convertors.Convertors.Implementation.ToDfa;
+namespace FiniteAutomatas.Domain.Convertors.Convertors.Implementation.Models;
 
 internal class EpsClosure
 {

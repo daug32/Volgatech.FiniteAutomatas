@@ -1,10 +1,12 @@
 ﻿using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
 
-namespace FiniteAutomatas.Domain.Convertors.Convertors;
+namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization;
 
 public class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<FiniteAutomata>
 {
+    private static readonly string _errorStateId = "-1";
+        
     public FiniteAutomata Convert( FiniteAutomata automata )
     {
         var stateToTransitions = automata.AllStates
@@ -23,6 +25,7 @@ public class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<Finit
 
         var addedNewTransition = false;
         var alphabet = automata.Transitions.Select( x => x.Argument ).ToHashSet();
+        
         foreach ( var transition in stateToTransitions )
         {
             var argumentToTargetState = transition.Value;
@@ -39,7 +42,7 @@ public class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<Finit
                     continue;
                 }
 
-                argumentToTargetState.Add( argument, "-1" );
+                argumentToTargetState.Add( argument, _errorStateId );
             }
         }
 
@@ -48,8 +51,8 @@ public class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<Finit
             return automata.Copy();
         }
 
-        newStates.Add( "-1", new State( "-1", isError: true ) );
-        stateToTransitions.Add( "-1", automata.Alphabet.ToDictionary( x => x, _ => "-1" ) );
+        newStates.Add( _errorStateId, new State( _errorStateId, isError: true ) );
+        stateToTransitions.Add( _errorStateId, automata.Alphabet.ToDictionary( x => x, _ => _errorStateId ) );
 
         return new FiniteAutomata(
             alphabet,

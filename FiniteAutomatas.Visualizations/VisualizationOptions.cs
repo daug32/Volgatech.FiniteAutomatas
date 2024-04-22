@@ -2,5 +2,6 @@
 
 public class VisualizationOptions
 {
-    public bool DrawErrorState = false;
+    public bool DrawErrorState { get; set; } = false;
+    public int? TimeoutInMilliseconds { get; set; } = null;
 }

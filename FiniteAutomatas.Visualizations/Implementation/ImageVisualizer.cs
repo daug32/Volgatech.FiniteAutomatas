@@ -21,11 +21,13 @@ public class ImageVisualizer
 
     public async Task ToImage( string path, VisualizationOptions? options = null )
     {
+        options ??= new VisualizationOptions();
+
         var tempDataPath = $"{path}.dot";
 
         await File.WriteAllTextAsync( 
             tempDataPath, 
-            BuildData( options ?? new VisualizationOptions() ) );
+            BuildData( options ) );
 
         var process = new Process
         {
@@ -37,21 +39,27 @@ public class ImageVisualizer
                 UseShellExecute = false,
                 CreateNoWindow = true,
             },
-            
         };
 
         process.Start();
 
-        Task timout = Task.Delay( 5000 );
         Task work = process.WaitForExitAsync();
-        await Task.WhenAny( timout, work );
+
+        var tasks = new List<Task>();
+        tasks.Add( work );
+        if ( options.TimeoutInMilliseconds.HasValue )
+        {
+            tasks.Add( Task.Delay( options.TimeoutInMilliseconds.Value ) );
+        }
+
+        await Task.WhenAny( tasks.ToArray() );
         
         if ( !work.IsCompleted )
         {
             process.Kill();
-            await process.WaitForExitAsync();
+            await work;
             File.Delete( tempDataPath );
-            throw new TimeoutException( "Graphviz: Waiting for graph building is too long" );
+            throw new TimeoutException( "Graphviz: Waiting for graph building takes too long time" );
         }
 
         File.Delete( tempDataPath );

@@ -1,5 +1,6 @@
 using FiniteAutomatas.Domain.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors;
+using FiniteAutomatas.Domain.Convertors.Convertors.Minimization;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.Automatas.Extensions;
 using FiniteAutomatas.Domain.Models.ValueObjects;
@@ -81,18 +82,24 @@ public class RegexTests
     public void Test( RegexTestData testData )
     {
         // Arrange
-        FiniteAutomata dfa = new RegexToNfaParser()
-            .Parse( testData.Regex )
-            .Convert( new NfaToDfaConvertor() )
-            .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
-            .Convert( new DfaMinimizationConvertor() );
+        FiniteAutomata dfa = null!;
+        Assert.DoesNotThrow( 
+            () => dfa = new RegexToNfaParser()
+                .Parse( testData.Regex )
+                .Convert( new NfaToDfaConvertor() )
+                .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
+                .Convert( new DfaMinimizationConvertor() ),
+            $"Regex: {testData.Regex}" );
 
         // Act & Assert
         Assert.Multiple( () =>
         {
             foreach ( string successTest in testData.SuccessTests )
             {
-                bool result = dfa.RunForAllSymbols( successTest.Select( x => new Argument( x.ToString() ) ) );
+                var result = false;
+                Assert.DoesNotThrow(
+                    () => result = dfa.RunForAllSymbols( successTest.Select( x => new Argument( x.ToString() ) ) ),
+                    $"Regex: {testData.Regex}, Test: {successTest}" );
                 Assert.That(
                     result,
                     Is.True,
@@ -101,7 +108,10 @@ public class RegexTests
 
             foreach ( string failTest in testData.FailTests )
             {
-                bool result = dfa.RunForAllSymbols( failTest.Select( x => new Argument( x.ToString() ) ) );
+                var result = false;
+                Assert.DoesNotThrow( 
+                    () => dfa.RunForAllSymbols( failTest.Select( x => new Argument( x.ToString() ) ) ),
+                    $"Regex: {testData.Regex}, Test: {failTest}" );
                 Assert.That(
                     result,
                     Is.False,
