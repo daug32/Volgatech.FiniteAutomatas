@@ -118,5 +118,7 @@ public class RegexTests
                     $"Regex: {testData.Regex}, Test: {failTest}. Must be failed" );
             }
         } );
+        
+        Assert.Pass( $"Regex: {testData.Regex}" );
     }
 }
