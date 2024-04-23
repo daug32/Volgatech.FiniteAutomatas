@@ -55,7 +55,11 @@ public class NonDeterminedFiniteAutomata : IFiniteAutomata
             .Select( stateName => AllStates.Single( x => x.Id == stateName ) )
             .ToHashSet();
     }
-    
+
+    public State GetState( StateId stateId )
+    {
+        return AllStates.Single( x => x.Id == stateId );
+    }
 
     public Dictionary<State, HashSet<State>> EpsClosure()
     {
@@ -104,28 +108,4 @@ public class NonDeterminedFiniteAutomata : IFiniteAutomata
 
         return closures;
     } 
-
-    public void RenameState( StateId oldId, StateId newId )
-    {
-        foreach ( State state in AllStates )
-        {
-            if ( state.Id == oldId )
-            {
-                state.Id = newId;
-            }
-        }
-
-        foreach ( Transition transition in Transitions )
-        {
-            if ( transition.From.Id == oldId )
-            {
-                transition.From.Id = newId;
-            }
-
-            if ( transition.To.Id == newId )
-            {
-                transition.To.Id = newId;
-            }
-        }
-    }
 }

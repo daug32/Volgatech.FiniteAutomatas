@@ -1,7 +1,7 @@
-﻿using FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
-using FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas.Implementation;
+﻿using FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas.Implementation;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
+using FiniteAutomatas.Domain.Models.ValueObjects.Implementation;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas;
 
@@ -14,8 +14,8 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
         var errorState = new State( new StateId( -1 ), isError: true );
         
         // For optimization
-        var stateToEpsClosures = automata.EpsClosure().ToDictionary( x => x.Key, x => new EpsClosure( x.Key, x.Value ) );
-        stateToEpsClosures[errorState] = new EpsClosure( errorState, new HashSet<State>() { errorState } );
+        var stateToEpsClosures = automata.EpsClosure().ToDictionary( x => x.Key, x => new EpsClosure( x.Value ) );
+        stateToEpsClosures[errorState] = new EpsClosure( new HashSet<State>() { errorState } );
 
         // Algorithm data
         var alphabet = automata.Alphabet.Where( x => x != Argument.Epsilon ).ToHashSet();
@@ -61,7 +61,8 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
             }
         }
 
-        return BuildDfa( dfaTransitions );
+        DeterminedFiniteAutomata dfa = BuildDfa( dfaTransitions );
+        return dfa;
     }
 
     private static DeterminedFiniteAutomata BuildDfa( List<(CollapsedState from, Argument argument, CollapsedState to)> rawTransitions )

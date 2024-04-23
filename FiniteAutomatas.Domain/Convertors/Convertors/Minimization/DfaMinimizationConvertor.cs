@@ -7,6 +7,7 @@ public class DfaMinimizationConvertor : IAutomataConvertor<DeterminedFiniteAutom
 {
     public DeterminedFiniteAutomata Convert( DeterminedFiniteAutomata automata )
     {
-        return new DfaMinimizer( automata ).Minimize();
+        DeterminedFiniteAutomata dfa = new DfaMinimizer( automata ).Minimize();
+        return dfa;
     }
 }

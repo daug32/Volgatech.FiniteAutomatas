@@ -9,5 +9,5 @@ public interface IFiniteAutomata
     ISet<Transition> Transitions { get; }
 
     HashSet<State> Move( State from, Argument argument );
-    void RenameState( StateId oldId, StateId newId );
+    State GetState( StateId stateId );
 }

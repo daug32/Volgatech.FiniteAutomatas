@@ -1,7 +1,7 @@
-﻿using FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
-using FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementation.Models;
+﻿using FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementation.Models;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
+using FiniteAutomatas.Domain.Models.ValueObjects.Implementation;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementation;
 

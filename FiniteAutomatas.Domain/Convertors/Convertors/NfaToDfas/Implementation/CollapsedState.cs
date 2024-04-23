@@ -5,7 +5,6 @@ namespace FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas.Implementation;
 internal class CollapsedState
 {
     public string Name { get; }
-    public bool IsTerminateState => IsEnd || IsError;
     public bool IsError { get; set; }
     public bool IsStart { get; set; }
     public bool IsEnd { get; set; }

@@ -42,6 +42,11 @@ public class DeterminedFiniteAutomata : IFiniteAutomata
         }
     }
 
+    public State GetState( StateId stateId )
+    {
+        return AllStates.Single( x => x.Id == stateId );
+    }
+
     public HashSet<State> Move( State from, Argument argument ) 
     {
         return Transitions
@@ -51,29 +56,5 @@ public class DeterminedFiniteAutomata : IFiniteAutomata
             .Select( transition => transition.To.Id )
             .Select( stateName => AllStates.Single( x => x.Id == stateName ) )
             .ToHashSet();
-    }
-
-    public void RenameState( StateId oldId, StateId newId )
-    {
-        foreach ( State state in AllStates )
-        {
-            if ( state.Id == oldId )
-            {
-                state.Id = newId;
-            }
-        }
-
-        foreach ( Transition transition in Transitions )
-        {
-            if ( transition.From.Id == oldId )
-            {
-                transition.From.Id = newId;
-            }
-
-            if ( transition.To.Id == newId )
-            {
-                transition.To.Id = newId;
-            }
-        }
     }
 }

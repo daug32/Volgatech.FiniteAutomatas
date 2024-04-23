@@ -1,8 +1,6 @@
-﻿using FiniteAutomatas.Domain.Models.ValueObjects;
+﻿namespace FiniteAutomatas.Domain.Models.ValueObjects.Implementation;
 
-namespace FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
-
-public class StateIdIncrementer
+internal class StateIdIncrementer
 {
     private int _lastId = 0;
 
