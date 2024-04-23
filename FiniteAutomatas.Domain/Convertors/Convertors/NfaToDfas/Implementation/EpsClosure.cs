@@ -18,7 +18,7 @@ internal class EpsClosure
         foreach ( State closure in closures )
         {
             HasEnd |= closure.IsEnd;
-            HasError |= closure.IsTerminateState;
+            HasError |= closure.IsError;
             HasStart |= closure.IsStart;
         }
     }

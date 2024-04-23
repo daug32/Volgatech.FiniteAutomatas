@@ -51,7 +51,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
                     isStart: false,
                     isEnd: false );
                 // If we didn't process the state yet
-                if ( !processedStates.Contains( toState ) )
+                if ( !processedStates.Contains( toState ) && !queue.Contains( toState ) )
                 {
                     queue.Enqueue( toState );
                 }

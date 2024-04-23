@@ -38,7 +38,7 @@ internal class CollapsedState
 
     public State ToState()
     {
-        return new State( Name, IsStart, IsEnd );
+        return new State( Name, IsStart, IsEnd, IsError );
     }
 
     public override bool Equals( object? obj )

@@ -5,8 +5,9 @@ using FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.Automatas.Extensions;
 using FiniteAutomatas.Domain.Models.ValueObjects;
+using FiniteAutomatas.RegularExpressions;
 
-namespace FiniteAutomatas.RegularExpressions.Tests;
+namespace FiniteAutomatas.Tests;
 
 public class RegexTests
 {
