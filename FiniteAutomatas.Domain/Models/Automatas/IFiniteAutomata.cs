@@ -6,7 +6,7 @@ public interface IFiniteAutomata
 {
     HashSet<State> AllStates { get; }
     HashSet<Argument> Alphabet { get; }
-    ISet<Transition> Transitions { get; }
+    IReadOnlySet<Transition> Transitions { get; }
 
     HashSet<StateId> Move( StateId from, Argument argument );
     State GetState( StateId stateId );

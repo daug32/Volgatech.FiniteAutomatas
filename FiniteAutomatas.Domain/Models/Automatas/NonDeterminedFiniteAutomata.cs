@@ -6,7 +6,7 @@ public class NonDeterminedFiniteAutomata : IFiniteAutomata
 {
     public HashSet<State> AllStates { get; }
     public HashSet<Argument> Alphabet { get; }
-    public ISet<Transition> Transitions { get; }
+    public IReadOnlySet<Transition> Transitions { get; }
 
     public NonDeterminedFiniteAutomata( 
         IEnumerable<Argument> alphabet,

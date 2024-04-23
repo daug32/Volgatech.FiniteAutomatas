@@ -129,27 +129,37 @@ internal class FiniteAutomataDictionary
     public static NonDeterminedFiniteAutomata ForZeroOrMore( NonDeterminedFiniteAutomata? left )
     {
         left = left.ThrowIfNull();
+        
+        // Prepare
+        var newEndId = new StateId( UpdateNamesAndGetBiggest( 1, left ) + 1 );
+        
+        var transitions = left.Transitions.ToHashSet();
+        var states = left.AllStates.ToHashSet();
+        var alphabet = left.Alphabet.ToHashSet();
+        alphabet.Add( Argument.Epsilon );
 
-        int endStateName = UpdateNamesAndGetBiggest( 1, left ) + 1;
-
+        // Update current automata
         var newStart = new State( new StateId( 0 ), true );
-        left.AllStates.Add( newStart );
-
-        State oldStart = left.AllStates.First( x => x.IsStart );
+        states.Add( newStart );
+        
+        State oldStart = states.First( x => x.IsStart );
         oldStart.IsStart = false;
-        left.Transitions.Add( new Transition( from: newStart.Id, to: oldStart.Id, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( from: newStart.Id, to: oldStart.Id, argument: Argument.Epsilon ) );
 
-        var newEnd = new State( new StateId( endStateName ), isEnd: true );
-        left.AllStates.Add( newEnd );
-
-        State oldEnd = left.AllStates.First( x => x.IsEnd );
+        var newEnd = new State( newEndId, isEnd: true );
+        states.Add( newEnd );
+        
+        State oldEnd = states.First( x => x.IsEnd );
         oldEnd.IsEnd = false;
-        left.Transitions.Add( new Transition( from: oldEnd.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( from: oldEnd.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
 
-        left.Transitions.Add( new Transition( from: oldEnd.Id, to: oldStart.Id, argument: Argument.Epsilon ) );
-        left.Transitions.Add( new Transition( from: newStart.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( from: oldEnd.Id, to: oldStart.Id, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( from: newStart.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
 
-        return left;
+        return new NonDeterminedFiniteAutomata( 
+            alphabet,
+            transitions,
+            states );
     }
 
     private static int UpdateNamesAndGetBiggest( int offset, IFiniteAutomata automata )

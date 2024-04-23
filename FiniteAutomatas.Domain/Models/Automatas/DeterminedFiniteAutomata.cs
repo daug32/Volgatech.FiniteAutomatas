@@ -5,7 +5,7 @@ namespace FiniteAutomatas.Domain.Models.Automatas;
 public class DeterminedFiniteAutomata : IFiniteAutomata
 {
     public HashSet<Argument> Alphabet { get; private set; }
-    public ISet<Transition> Transitions { get; private set; }
+    public IReadOnlySet<Transition> Transitions { get; private set; }
     public HashSet<State> AllStates { get; private set; }
 
     public DeterminedFiniteAutomata( 
