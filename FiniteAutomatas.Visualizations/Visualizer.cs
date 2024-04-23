@@ -23,17 +23,16 @@ public static class Visualizer
         VisualizationOptions? options = null )
         where T : IFiniteAutomata
     {
-        await new FiniteAutomataImageVisualizer( automata ).ToImage( path, options );
+        await new FiniteAutomataImageVisualizer( automata ).ToImage( path, options ?? new VisualizationOptions() );
         return automata;
     }
 
     public static T PrintToConsole<T>(
         this T automata,
-        string? title = null )
+        VisualizationOptions? options = null )
         where T : IFiniteAutomata
     {
-        Console.WriteLine( title );
-        new FiniteAutomataConsoleVisualizer( automata ).Print();
+        new FiniteAutomataConsoleVisualizer( automata ).Print( options ?? new VisualizationOptions() );
         return automata;
     }
 }

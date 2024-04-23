@@ -13,13 +13,13 @@ internal class FiniteAutomataConsoleVisualizer
         _automata = automata;
     }
 
-    public void Print()
+    public void Print( VisualizationOptions options )
     {
         // Create columns
-        string[] columns = BuildColumns().ToArray();
+        string[] columns = BuildColumns( options ).ToArray();
 
         // Create rows
-        var rows = BuildRows( columns ).ToArray();
+        var rows = BuildRows( columns, options ).ToArray();
 
         var table = new ConsoleTable( columns );
         foreach ( var row in rows )
@@ -30,7 +30,7 @@ internal class FiniteAutomataConsoleVisualizer
         table.Write();
     }
 
-    private IEnumerable<List<string>> BuildRows( string[] columns )
+    private IEnumerable<List<string>> BuildRows( string[] columns, VisualizationOptions options )
     {
         foreach ( State state in _automata.AllStates.OrderBy( x => Int32.TryParse( x.Name, out int value )
                      ? value
@@ -58,7 +58,7 @@ internal class FiniteAutomataConsoleVisualizer
                     continue;
                 }
 
-                if ( column == "IsError" )
+                if ( options.DrawErrorState && column == "IsError" )
                 {
                     items.Add( state.IsError.ToString() );
                     continue;
@@ -86,13 +86,17 @@ internal class FiniteAutomataConsoleVisualizer
         }
     }
 
-    private IEnumerable<string> BuildColumns()
+    private IEnumerable<string> BuildColumns( VisualizationOptions options )
     {
         var result = new List<string>();
         result.Add( "Id" );
         result.Add( "IsStart" );
         result.Add( "IsEnd" );
-        result.Add( "IsError" );
+        if ( options.DrawErrorState )
+        {
+            result.Add( "IsError" );
+        }
+
         result.AddRange( _automata.Alphabet.Select( x => x.Value ).Order() );
 
         return result;

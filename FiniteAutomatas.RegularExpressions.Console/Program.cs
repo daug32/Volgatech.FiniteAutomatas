@@ -24,7 +24,12 @@ public class Program
                     .Convert( new DfaMinimizationConvertor() );
 
                 System.Console.WriteLine( "Printing DFA..." );
-                await dfa.PrintToImageAsync( @".\dfa3Minimized.png", new VisualizationOptions()
+                await dfa
+                    .PrintToConsole( new VisualizationOptions()
+                    {
+                        DrawErrorState = false
+                    } )
+                    .PrintToImageAsync( @".\dfa3Minimized.png", new VisualizationOptions()
                     {
                         DrawErrorState = false,
                         TimeoutInMilliseconds = 15_000

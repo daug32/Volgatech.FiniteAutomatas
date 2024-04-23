@@ -21,8 +21,6 @@ public class FiniteAutomataImageVisualizer
 
     public async Task ToImage( string path, VisualizationOptions? options = null )
     {
-        options ??= new VisualizationOptions();
-
         var tempDataPath = $"{path}.dot";
 
         await File.WriteAllTextAsync( 

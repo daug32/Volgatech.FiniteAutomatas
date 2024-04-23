@@ -7,7 +7,7 @@ using FiniteAutomatas.RegularExpressions;
 
 namespace FiniteAutomatas.Tests;
 
-public class MinimizationTests
+public class DfaCreationTests
 {
     // I used this website to calculate minimal number of states
     // I also increased total number of states because this website doesn't count error state as a different state
@@ -21,7 +21,9 @@ public class MinimizationTests
     };
     
     [TestCaseSource( nameof( _testData ) )]
-    public void Test( string regex, int expectedNumberOfStates )
+    public void GetRegexAndExpectedNumberOfStates_CreatesNormalizedDfaAndConvertIntoMinimizedDfa_NumberOfStatesIsEqualToExpectedAndAllStatesHasTransitionsForAllArguments(
+        string regex,
+        int expectedNumberOfStates )
     {
         // Arrange
         DeterminedFiniteAutomata regexFa = new RegexToNfaParser()
