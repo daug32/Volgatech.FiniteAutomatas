@@ -18,32 +18,21 @@ public class Program
             
             try
             {
-                System.Console.WriteLine( "Creating an NFA..." );
-                FiniteAutomata nfa = await new RegexToNfaParser()
+                System.Console.WriteLine( "Creating a DFA..." );
+                DeterminedFiniteAutomata dfa = new RegexToNfaParser()
                     .Parse( regex )
-                    .PrintToConsole()
-                    .PrintToImageAsync( @".\nfa.png" );
-
-                System.Console.WriteLine( "Converting NFA into DFA..." );
-                FiniteAutomata dfa = await nfa
                     .Convert( new NfaToDfaConvertor() )
-                    .PrintToConsole( "DFA" )
-                    .PrintToImageAsync( @".\dfa1.png" );
-                    
-                System.Console.WriteLine( "DFA normalization..." );
-                FiniteAutomata normalizedDfa = dfa
                     .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
-                    .PrintToConsole( "Normalized DFA" );
-                    
-                System.Console.WriteLine( "DFA minimization..." );
-                FiniteAutomata minimizedDfa = await normalizedDfa
-                    .Convert( new DfaMinimizationConvertor() )
-                    .PrintToConsole( "Minimized DFA" )
-                    .PrintToImageAsync( @".\dfa3Minimized.png", new VisualizationOptions()
+                    .Convert( new DfaMinimizationConvertor() );
+
+                System.Console.WriteLine( "Printing DFA..." );
+                await dfa.PrintToImageAsync( @".\dfa3Minimized.png", new VisualizationOptions()
                     {
                         DrawErrorState = false,
                         TimeoutInMilliseconds = 15_000
                     } );
+
+                System.Console.WriteLine( "Success" );
             }
             catch ( Exception ex )
             {

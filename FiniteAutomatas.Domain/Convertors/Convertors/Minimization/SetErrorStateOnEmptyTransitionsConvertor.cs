@@ -3,11 +3,11 @@ using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization;
 
-public class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<FiniteAutomata>
+public class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<DeterminedFiniteAutomata, DeterminedFiniteAutomata>
 {
     private static readonly string _errorStateId = "-1";
         
-    public FiniteAutomata Convert( FiniteAutomata automata )
+    public DeterminedFiniteAutomata Convert( DeterminedFiniteAutomata automata )
     {
         var stateToTransitions = automata.AllStates
             .ToDictionary(
@@ -54,7 +54,7 @@ public class SetErrorStateOnEmptyTransitionsConvertor : IAutomataConvertor<Finit
         newStates.Add( _errorStateId, new State( _errorStateId, isError: true ) );
         stateToTransitions.Add( _errorStateId, automata.Alphabet.ToDictionary( x => x, _ => _errorStateId ) );
 
-        return new FiniteAutomata(
+        return new DeterminedFiniteAutomata(
             alphabet,
             allStates: newStates.Values,
             transitions: stateToTransitions.SelectMany( stateToTransition => stateToTransition.Value

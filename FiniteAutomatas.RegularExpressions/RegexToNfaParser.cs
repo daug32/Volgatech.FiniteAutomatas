@@ -8,7 +8,7 @@ namespace FiniteAutomatas.RegularExpressions;
 
 public class RegexToNfaParser
 {
-    public bool TryParse( string regex, out FiniteAutomata? automata )
+    public bool TryParse( string regex, out NonDeterminedFiniteAutomata? automata )
     {
         try
         {
@@ -22,7 +22,7 @@ public class RegexToNfaParser
         }
     }
 
-    public FiniteAutomata Parse( string regex )
+    public NonDeterminedFiniteAutomata Parse( string regex )
     {
         var alphabet = new HashSet<Argument>( regex.Select( x => new Argument( x.ToString() ) ) );
         alphabet.Add( Argument.Epsilon );
@@ -31,11 +31,11 @@ public class RegexToNfaParser
         RegexNode node = RegexNode.Parse( regex );
 
         var stack = GetItemsToProcess( node );
-        var nodesAutomatas = new Dictionary<RegexNode, FiniteAutomata>();
+        var nodesAutomatas = new Dictionary<RegexNode, NonDeterminedFiniteAutomata>();
         while ( stack.Any() )
         {
             RegexNode curr = stack.Pop();
-            FiniteAutomata automata = ConvertNodeToAutomata(
+            NonDeterminedFiniteAutomata automata = ConvertNodeToAutomata(
                 curr,
                 curr.LeftOperand != null
                     ? nodesAutomatas[curr.LeftOperand]
@@ -51,10 +51,10 @@ public class RegexToNfaParser
         return nodesAutomatas[node];
     }
 
-    private FiniteAutomata ConvertNodeToAutomata(
+    private NonDeterminedFiniteAutomata ConvertNodeToAutomata(
         RegexNode current,
-        FiniteAutomata? left,
-        FiniteAutomata? right,
+        NonDeterminedFiniteAutomata? left,
+        NonDeterminedFiniteAutomata? right,
         HashSet<Argument> alphabet )
     {
         RegexSymbol regexSymbol = current.Value;
@@ -127,7 +127,7 @@ public class RegexToNfaParser
             rightOldEnd.IsEnd = false;
             right.Transitions.Add( new Transition( rightOldEnd, to: newEnd, argument: Argument.Epsilon ) );
 
-            return new FiniteAutomata(
+            return new NonDeterminedFiniteAutomata(
                 allStates: left.AllStates.Union( right.AllStates ),
                 transitions: left.Transitions.Union( right.Transitions ),
                 alphabet: alphabet );
@@ -167,7 +167,7 @@ public class RegexToNfaParser
 
             right.AllStates.Remove( rightOldStart );
 
-            return new FiniteAutomata(
+            return new NonDeterminedFiniteAutomata(
                 alphabet,
                 left.Transitions.Union( right.Transitions ),
                 left.AllStates.Union( right.AllStates ) );

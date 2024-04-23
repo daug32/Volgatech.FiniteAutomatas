@@ -4,11 +4,11 @@ namespace FiniteAutomatas.Domain.Convertors;
 
 public interface IAutomataConvertor<out TOutput>
 {
-    TOutput Convert( FiniteAutomata automata );
+    TOutput Convert( IFiniteAutomata automata );
 }
 
 public interface IAutomataConvertor<in TInput, out TOutput> 
-    where TInput : FiniteAutomata
+    where TInput : IFiniteAutomata
 {
     TOutput Convert( TInput automata );
 }

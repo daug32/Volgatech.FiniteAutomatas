@@ -4,9 +4,9 @@ using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas;
 
-public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
+public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata, DeterminedFiniteAutomata>
 {
-    public FiniteAutomata Convert( FiniteAutomata automata )
+    public DeterminedFiniteAutomata Convert( NonDeterminedFiniteAutomata automata )
     {
         var dfaTransitions = new HashSet<Transition>();
         var dfaStart = new CollapsedState( automata.AllStates.First( x => x.IsStart ) );
@@ -62,14 +62,14 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
             }
         }
 
-        FiniteAutomata dfa = BuildDfa( 
+        DeterminedFiniteAutomata dfa = BuildDfa( 
             dfaTransitions,
             processedStates.Select( x => x.ToState() ) );
 
         return dfa;
     }
 
-    private static FiniteAutomata BuildDfa( ICollection<Transition> transitions, IEnumerable<State> states )
+    private static DeterminedFiniteAutomata BuildDfa( ICollection<Transition> transitions, IEnumerable<State> states )
     {
         // oldName, newName
         var statesList = states.ToList();
@@ -94,7 +94,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
             alphabet.Add( transition.Argument );
         }
 
-        return new FiniteAutomata(
+        return new DeterminedFiniteAutomata(
             alphabet,
             transitions,
             statesList );

@@ -6,10 +6,10 @@ namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementati
 
 internal class DfaMinimizer
 {
-    private readonly FiniteAutomata _automata;
+    private readonly DeterminedFiniteAutomata _automata;
     private readonly Dictionary<string, Dictionary<Argument, string>> _transitions;
     
-    public DfaMinimizer( FiniteAutomata automata )
+    public DfaMinimizer( DeterminedFiniteAutomata automata )
     {
         _automata = automata;
 
@@ -25,7 +25,7 @@ internal class DfaMinimizer
         }
     }
     
-    public FiniteAutomata Minimize()
+    public DeterminedFiniteAutomata Minimize()
     {
         return MinimizationGroupsConvertor.ToFiniteAutomata(
             FindEquivalentStates(),

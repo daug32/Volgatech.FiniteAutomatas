@@ -5,12 +5,12 @@ namespace FiniteAutomatas.RegularExpressions.Implementation.Utils;
 
 internal class FiniteAutomataCreator
 {
-    public static FiniteAutomata ForSymbol( Argument argument )
+    public static NonDeterminedFiniteAutomata ForSymbol( Argument argument )
     {
         var start = new State( "0", isStart: true );
         var end = new State( "1", isEnd: true );
 
-        return new FiniteAutomata(
+        return new NonDeterminedFiniteAutomata(
             alphabet: new[] { argument },
             transitions: new[]
             {

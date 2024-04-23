@@ -12,9 +12,9 @@ public class FiniteAutomataImageVisualizer
     private readonly string _graphvizPath = "./Graphviz/bin/dot.exe";
     private readonly string _graphName = "graphName";
     
-    private readonly FiniteAutomata _automata;
+    private readonly IFiniteAutomata _automata;
 
-    public FiniteAutomataImageVisualizer( FiniteAutomata automata )
+    public FiniteAutomataImageVisualizer( IFiniteAutomata automata )
     {
         _automata = automata;
     }

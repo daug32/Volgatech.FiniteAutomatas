@@ -2,13 +2,13 @@
 
 namespace FiniteAutomatas.Domain.Models.Automatas;
 
-public class FiniteAutomata
+public class NonDeterminedFiniteAutomata : IFiniteAutomata
 {
-    public readonly HashSet<Argument> Alphabet;
-    public readonly HashSet<Transition> Transitions;
-    public readonly HashSet<State> AllStates;
+    public HashSet<State> AllStates { get; }
+    public HashSet<Argument> Alphabet { get; }
+    public HashSet<Transition> Transitions { get; }
 
-    public FiniteAutomata( 
+    public NonDeterminedFiniteAutomata( 
         IEnumerable<Argument> alphabet,
         IEnumerable<Transition> transitions, 
         IEnumerable<State> allStates )
@@ -42,10 +42,11 @@ public class FiniteAutomata
         }
     }
 
+    HashSet<State> IFiniteAutomata.Move( State from, Argument argument ) => Move( from, argument );
+
     public HashSet<State> Move( State from, Argument argument, HashSet<State>? epsClosures = null )
     {
         epsClosures ??= EpsClosure( from ).ToHashSet();
-
         return Transitions
             .Where( transition =>
                 transition.Argument.Equals( argument ) &&
@@ -54,6 +55,7 @@ public class FiniteAutomata
             .Select( stateName => AllStates.Single( x => x.Name == stateName ) )
             .ToHashSet();
     }
+    
 
     public Dictionary<State, HashSet<State>> EpsClosure()
     {
@@ -102,9 +104,4 @@ public class FiniteAutomata
 
         return closures;
     }
-
-    public FiniteAutomata Copy() => new(
-        alphabet: Alphabet.Select( x => x.Copy() ).ToHashSet(),
-        transitions: Transitions.Select( x => x.Copy() ).ToHashSet(),
-        allStates: AllStates.Select( x => x.Copy() ).ToHashSet() );
 }

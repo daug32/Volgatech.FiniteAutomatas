@@ -37,7 +37,7 @@ internal static class MinimizationGroupsConvertor
         }.Where( x => x.Any() ).ToList();
     }
 
-    public static FiniteAutomata ToFiniteAutomata(
+    public static DeterminedFiniteAutomata ToFiniteAutomata(
         List<MinimizationGroup> groups,
         ISet<Transition> oldTransitions )
     {
@@ -89,7 +89,7 @@ internal static class MinimizationGroupsConvertor
             alphabet.Add( argument );
         }
 
-        return new FiniteAutomata(
+        return new DeterminedFiniteAutomata(
             alphabet,
             transitions,
             states.Values );
