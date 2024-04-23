@@ -32,9 +32,7 @@ internal class FiniteAutomataConsoleVisualizer
 
     private IEnumerable<List<string>> BuildRows( string[] columns, VisualizationOptions options )
     {
-        foreach ( State state in _automata.AllStates.OrderBy( x => Int32.TryParse( x.Id.Value, out int value )
-                     ? value
-                     : -1 ) )
+        foreach ( State state in _automata.AllStates.OrderBy( x => x.Id.Value ) )
         {
             var items = new List<string>();
 

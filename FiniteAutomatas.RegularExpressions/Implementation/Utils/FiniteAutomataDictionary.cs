@@ -8,8 +8,8 @@ internal class FiniteAutomataDictionary
 {
     public static NonDeterminedFiniteAutomata ForSymbol( Argument argument )
     {
-        var start = new State( new StateId( "0" ), isStart: true );
-        var end = new State( new StateId( "1" ), isEnd: true );
+        var start = new State( new StateId( 0 ), isStart: true );
+        var end = new State( new StateId( 1 ), isEnd: true );
 
         return new NonDeterminedFiniteAutomata(
             alphabet: new[] { argument },
@@ -93,10 +93,10 @@ internal class FiniteAutomataDictionary
         
         var transitions = left.Transitions.Union( right.Transitions ).ToHashSet();
 
-        var newStart = new State( new StateId( "0" ), true );
+        var newStart = new State( new StateId( 0 ), true );
         left.AllStates.Add( newStart );
 
-        var newEnd = new State( new StateId( endStateName.ToString() ), isEnd: true );
+        var newEnd = new State( new StateId( endStateName ), isEnd: true );
         left.AllStates.Add( newEnd );
 
         State leftOldStart = left.AllStates.First( x => x.IsStart );
@@ -127,14 +127,14 @@ internal class FiniteAutomataDictionary
 
         int endStateName = UpdateNamesAndGetBiggest( 1, left.AllStates ) + 1;
 
-        var newStart = new State( new StateId( "0" ), true );
+        var newStart = new State( new StateId( 0 ), true );
         left.AllStates.Add( newStart );
 
         State oldStart = left.AllStates.First( x => x.IsStart );
         oldStart.IsStart = false;
         left.Transitions.Add( new Transition( from: newStart, to: oldStart, argument: Argument.Epsilon ) );
 
-        var newEnd = new State( new StateId( endStateName.ToString() ), isEnd: true );
+        var newEnd = new State( new StateId( endStateName ), isEnd: true );
         left.AllStates.Add( newEnd );
 
         State oldEnd = left.AllStates.First( x => x.IsEnd );
@@ -152,8 +152,8 @@ internal class FiniteAutomataDictionary
         var max = 0;
         foreach ( State state in states )
         {
-            int newName = Int32.Parse( state.Id.Value ) + offset;
-            state.Id = new StateId( newName.ToString() );
+            int newName = state.Id.Value + offset;
+            state.Id = new StateId( newName );
             max = max > newName
                 ? max
                 : newName;
@@ -164,6 +164,6 @@ internal class FiniteAutomataDictionary
 
     private static int FindMaxName( IEnumerable<State> states )
     {
-        return states.Select( x => Int32.Parse( x.Id.Value ) ).Max();
+        return states.MaxBy( x => x.Id.Value ).Id.Value;
     }
 }

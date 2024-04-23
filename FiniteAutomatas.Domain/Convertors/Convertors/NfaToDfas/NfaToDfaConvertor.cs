@@ -61,9 +61,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
             }
         }
 
-        DeterminedFiniteAutomata dfa = BuildDfa( dfaTransitions );
-
-        return dfa;
+        return BuildDfa( dfaTransitions );
     }
 
     private static DeterminedFiniteAutomata BuildDfa( List<(CollapsedState from, Argument argument, CollapsedState to)> rawTransitions )

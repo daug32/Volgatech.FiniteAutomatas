@@ -2,36 +2,20 @@
 
 public class StateId : IComparable
 {
-    public readonly string Value;
+    public readonly int Value;
 
-    public StateId( string value )
+    public StateId( int value )
     {
         Value = value;
     }
 
-    public StateId( int value ) : this( value.ToString() )
-    {
-    }
+    public override bool Equals( object? obj ) => obj is StateId other && Equals( other );
 
-    public override bool Equals( object? obj )
-    {
-        return obj is StateId other && Equals( other );
-    }
+    public bool Equals( StateId other ) => Value == other.Value;
 
-    public bool Equals( StateId other )
-    {
-        return Value == other.Value;
-    }
+    public override int GetHashCode() => Value.GetHashCode();
 
-    public override int GetHashCode()
-    {
-        return Value.GetHashCode();
-    }
-
-    public override string ToString()
-    {
-        return Value;
-    }
+    public override string ToString() => Value.ToString();
 
     public int CompareTo( object? obj )
     {
@@ -40,7 +24,7 @@ public class StateId : IComparable
             throw new ArgumentException();
         }
 
-        return String.CompareOrdinal( Value, other.Value );
+        return Value.CompareTo( other.Value );
     }
 
     public static bool operator ==( StateId a, StateId b )
