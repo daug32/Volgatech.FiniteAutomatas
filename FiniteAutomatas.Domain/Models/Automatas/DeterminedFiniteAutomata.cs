@@ -52,9 +52,4 @@ public class DeterminedFiniteAutomata : IFiniteAutomata
             .Select( stateName => AllStates.Single( x => x.Name == stateName ) )
             .ToHashSet();
     }
-
-    public DeterminedFiniteAutomata Copy() => new(
-        alphabet: Alphabet.Select( x => x.Copy() ).ToHashSet(),
-        transitions: Transitions.Select( x => x.Copy() ).ToHashSet(),
-        allStates: AllStates.Select( x => x.Copy() ).ToHashSet() );
 }
