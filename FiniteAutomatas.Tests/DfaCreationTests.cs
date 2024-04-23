@@ -14,10 +14,11 @@ public class DfaCreationTests
     // https://cyberzhg.github.io/toolbox/min_dfa 
     private static readonly object[][] _testData = 
     {
-        new object[] { "abcdefgh|1-abcdefgh|2-abcdefgh", 12 },
-        new object[] { "abc", 5 },
-        new object[] { "a*b*c*", 4 },
-        new object[] { "(x|y)*(ab|ac*)*|(x|y)*(a*b*c)*|(x|y)(ab)*", 11 }
+        new object[] { "abcdefgh|1-abcdefgh|2-abcdefgh", 11 },
+        new object[] { "abc", 4 },
+        new object[] { "a*b*c*", 3 },
+        new object[] { "(x|y)*(ab|ac*)*|(x|y)*(a*b*c)*|(x|y)(ab)*", 10 },
+        new object[] { "a*", 1 }
     };
     
     [TestCaseSource( nameof( _testData ) )]
@@ -36,6 +37,11 @@ public class DfaCreationTests
         // Assert
         
         // Number of states must be equal to expected number
+        if ( minimizedFa.AllStates.Any( x => x.IsError ) )
+        {
+            expectedNumberOfStates++;
+        }
+        
         Assert.That( minimizedFa.AllStates.Count, Is.EqualTo( expectedNumberOfStates ) );
         
         // All states must contain transitions via all possible arguments
