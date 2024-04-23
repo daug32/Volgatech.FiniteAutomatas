@@ -11,7 +11,7 @@ public static class FiniteAutomataExtensions
 
         foreach ( Argument argument in arguments )
         {
-            HashSet<State> states = automata.Move( currentState, argument ); 
+            HashSet<StateId> states = automata.Move( currentState.Id, argument ); 
             if ( states.Count > 1 )
             {
                 throw new ArgumentException( "Can only process DFA automatas" );
@@ -22,7 +22,7 @@ public static class FiniteAutomataExtensions
                 return FiniteAutomataRunResult.FinishedOnError;
             }
 
-            currentState = states.Single();
+            currentState = automata.GetState( states.Single() );
         }
 
         if ( currentState.IsEnd )
@@ -64,10 +64,15 @@ public static class FiniteAutomataExtensions
             stateOldIdToNewId[state.Id] = stateIdIncrementor.Next();
         }
 
+        foreach ( State state in automata.AllStates )
+        {
+            state.Id = stateOldIdToNewId[state.Id];
+        }
+        
         foreach ( Transition transition in automata.Transitions )
         {
-            transition.From.Id = stateOldIdToNewId[transition.From.Id];
-            transition.To.Id = stateOldIdToNewId[transition.To.Id];
+            transition.From = stateOldIdToNewId[transition.From];
+            transition.To = stateOldIdToNewId[transition.To];
         }
     }
 }

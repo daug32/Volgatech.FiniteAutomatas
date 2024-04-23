@@ -19,14 +19,14 @@ public class DeterminedFiniteAutomata : IFiniteAutomata
         
         foreach ( Transition transition in Transitions )
         {
-            if ( !AllStates.Contains( transition.From ) )
+            if ( !AllStates.Any( x => x.Id == transition.From ) )
             {
                 throw new ArgumentException( 
                     $"Some of the transitions has a state that is not presented in the {nameof( AllStates )}. " + 
                     $"Transition: {transition}. State: {transition.From}" );
             }
 
-            if ( !AllStates.Contains( transition.To ) )
+            if ( !AllStates.Any( x => x.Id == transition.To ) )
             {
                 throw new ArgumentException( 
                     $"Some of the transitions has a state that is not presented in the {nameof( AllStates )}. " + 
@@ -42,19 +42,37 @@ public class DeterminedFiniteAutomata : IFiniteAutomata
         }
     }
 
+    public HashSet<State> GetStates( HashSet<StateId> stateIds )
+    {
+        var result = new HashSet<State>();
+        foreach ( State state in AllStates )
+        {
+            if ( stateIds.Contains( state.Id ) )
+            {
+                result.Add( state );
+            }
+        }
+
+        if ( result.Count != stateIds.Count )
+        {
+            throw new ArgumentException( "Can't find states with given ids" );
+        }
+
+        return result;
+    }
+
     public State GetState( StateId stateId )
     {
         return AllStates.Single( x => x.Id == stateId );
     }
 
-    public HashSet<State> Move( State from, Argument argument ) 
+    public HashSet<StateId> Move( StateId from, Argument argument ) 
     {
         return Transitions
             .Where( transition =>
-                transition.Argument.Equals( argument ) &&
-                transition.From.Equals( from ) )
-            .Select( transition => transition.To.Id )
-            .Select( stateName => AllStates.Single( x => x.Id == stateName ) )
+                transition.Argument == argument &&
+                transition.From == from )
+            .Select( transition => transition.To )
             .ToHashSet();
     }
 }

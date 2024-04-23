@@ -54,7 +54,7 @@ public class DfaCreationTests
                 bool hasTransitionForArgument = false;
                 foreach ( Transition transition in minimizedFa.Transitions )
                 {
-                    if ( !transition.From.Equals( state ) || !transition.Argument.Equals( argument ))
+                    if ( transition.From != state.Id || transition.Argument != argument )
                     {
                         continue;
                     }

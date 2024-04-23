@@ -2,16 +2,16 @@
 
 public class Transition
 {
-    public State From { get; set; }
+    public StateId From { get; set; }
     public Argument Argument { get; }
-    public State To { get; set; }
+    public StateId To { get; set; }
 
     public string? AdditionalData { get; }
 
     public Transition(
-        State from,
+        StateId from,
         Argument argument,
-        State to,
+        StateId to,
         string? additionalData = null )
     {
         From = from;
@@ -49,6 +49,4 @@ public class Transition
     {
         return !a.Equals( b );
     }
-
-    public Transition Copy() => new( From.Copy(), Argument.Copy(), To.Copy() );
 }

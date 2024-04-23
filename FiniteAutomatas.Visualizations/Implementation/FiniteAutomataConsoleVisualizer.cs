@@ -63,11 +63,12 @@ internal class FiniteAutomataConsoleVisualizer
                 }
 
                 var transitions = _automata.Transitions
-                    .Where( x =>
-                        x.From.Equals( state ) && x.Argument == new Argument( column ) )
+                    .Where( transition =>
+                        transition.From == state.Id &&
+                        transition.Argument == new Argument( column ) )
                     .Select( x =>
                     {
-                        string transitionLabel = x.To.Id.ToString(); 
+                        string transitionLabel = x.To.ToString(); 
                         if ( x.AdditionalData != null )
                         {
                             transitionLabel = $"{transitionLabel}/{x.AdditionalData}";

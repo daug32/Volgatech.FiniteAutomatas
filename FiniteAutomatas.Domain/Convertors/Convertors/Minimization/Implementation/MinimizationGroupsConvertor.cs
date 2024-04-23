@@ -47,7 +47,7 @@ internal static class MinimizationGroupsConvertor
         var oldStateNameToNewStateName = new Dictionary<StateId, StateId>();
         foreach ( MinimizationGroup group in groups )
         {
-            var newName = stateIdIncrementer.Next();
+            StateId newName = stateIdIncrementer.Next();
 
             var isStart = false;
             var isEnd = false;
@@ -73,20 +73,20 @@ internal static class MinimizationGroupsConvertor
         var transitions = new HashSet<Transition>();
         foreach ( Transition transition in oldTransitions )
         {
-            State from = states[oldStateNameToNewStateName[transition.From.Id]];
-            State to = states[oldStateNameToNewStateName[transition.To.Id]];
+            State from = states[oldStateNameToNewStateName[transition.From]];
+            State to = states[oldStateNameToNewStateName[transition.To]];
             Argument argument = transition.Argument;
 
-            bool hasThisTransition = transitions.Any( x =>
-                x.From.Equals( from ) && 
-                x.To.Equals( to ) &&
-                x.Argument.Equals( argument ) );
+            bool hasThisTransition = transitions.Any( transition =>
+                transition.From == from.Id && 
+                transition.To == to.Id &&
+                transition.Argument == argument );
             if ( hasThisTransition )
             {
                 continue;
             }
 
-            transitions.Add( new Transition( from, to: to, argument: argument ) );
+            transitions.Add( new Transition( from.Id, to: to.Id, argument: argument ) );
             alphabet.Add( argument );
         }
 

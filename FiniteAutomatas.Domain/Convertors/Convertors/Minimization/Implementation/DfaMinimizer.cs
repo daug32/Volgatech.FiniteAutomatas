@@ -16,12 +16,12 @@ internal class DfaMinimizer
         _transitions = _automata.AllStates.ToDictionary( x => x.Id, x => new Dictionary<Argument, StateId>() );
         foreach ( Transition transition in _automata.Transitions )
         {
-            if ( !_transitions.ContainsKey( transition.From.Id ) )
+            if ( !_transitions.ContainsKey( transition.From ) )
             {
-                _transitions[transition.From.Id] = new Dictionary<Argument, StateId>();
+                _transitions[transition.From] = new Dictionary<Argument, StateId>();
             }
 
-            _transitions[transition.From.Id].Add( transition.Argument, transition.To.Id );
+            _transitions[transition.From].Add( transition.Argument, transition.To );
         }
     }
     

@@ -16,8 +16,8 @@ internal class FiniteAutomataDictionary
             transitions: new[]
             {
                 new Transition(
-                    from: start,
-                    to: end,
+                    from: start.Id,
+                    to: end.Id,
                     argument: argument )
             },
             allStates: new[] { start, end } );
@@ -34,11 +34,11 @@ internal class FiniteAutomataDictionary
         int biggestRight = FindMaxName( right.AllStates );
         if ( biggestLeft > biggestRight )
         {
-            UpdateNamesAndGetBiggest( biggestLeft + 1, right!.AllStates );
+            UpdateNamesAndGetBiggest( biggestLeft + 1, right );
         }
         else
         {
-            UpdateNamesAndGetBiggest( biggestRight + 1, left!.AllStates );
+            UpdateNamesAndGetBiggest( biggestRight + 1, left );
         }
 
         State leftOldEnd = left.AllStates.First( x => x.IsEnd );
@@ -49,14 +49,14 @@ internal class FiniteAutomataDictionary
 
         foreach ( Transition rightTransition in right.Transitions )
         {
-            if ( rightTransition.From.Equals( rightOldStart ) )
+            if ( rightTransition.From == rightOldStart.Id )
             {
-                rightTransition.From = leftOldEnd;
+                rightTransition.From = leftOldEnd.Id;
             }
 
-            if ( rightTransition.To.Equals( rightOldStart ) )
+            if ( rightTransition.To == rightOldStart.Id )
             {
-                rightTransition.To = leftOldEnd;
+                rightTransition.To = leftOldEnd.Id;
             }
         }
 
@@ -82,41 +82,46 @@ internal class FiniteAutomataDictionary
         int endStateName;
         if ( biggestLeft > biggestRight )
         {
-            endStateName = UpdateNamesAndGetBiggest( biggestLeft + 2, right!.AllStates ) + 1;
-            UpdateNamesAndGetBiggest( 1, left!.AllStates );
+            endStateName = UpdateNamesAndGetBiggest( biggestLeft + 2, right ) + 1;
+            UpdateNamesAndGetBiggest( 1, left );
         }
         else
         {
-            endStateName = UpdateNamesAndGetBiggest( biggestRight + 2, left!.AllStates ) + 1;
-            UpdateNamesAndGetBiggest( 1, right!.AllStates );
+            endStateName = UpdateNamesAndGetBiggest( biggestRight + 2, left ) + 1;
+            UpdateNamesAndGetBiggest( 1, right );
         }
-        
-        var transitions = left.Transitions.Union( right.Transitions ).ToHashSet();
 
+        var states = new List<State>();
         var newStart = new State( new StateId( 0 ), true );
-        left.AllStates.Add( newStart );
-
+        states.Add( newStart );
         var newEnd = new State( new StateId( endStateName ), isEnd: true );
-        left.AllStates.Add( newEnd );
+        states.Add( newEnd );
+
+        var transitions = new List<Transition>();
+        transitions.AddRange( left.Transitions );
+        transitions.AddRange( right.Transitions );
 
         State leftOldStart = left.AllStates.First( x => x.IsStart );
         leftOldStart.IsStart = false;
-        transitions.Add( new Transition( newStart, to: leftOldStart, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( newStart.Id, to: leftOldStart.Id, argument: Argument.Epsilon ) );
 
         State rightOldStart = right.AllStates.First( x => x.IsStart );
         rightOldStart.IsStart = false;
-        transitions.Add( new Transition( newStart, to: rightOldStart, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( newStart.Id, to: rightOldStart.Id, argument: Argument.Epsilon ) );
 
         State leftOldEnd = left.AllStates.First( x => x.IsEnd );
         leftOldEnd.IsEnd = false;
-        transitions.Add( new Transition( leftOldEnd, to: newEnd, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( leftOldEnd.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
 
         State rightOldEnd = right.AllStates.First( x => x.IsEnd );
         rightOldEnd.IsEnd = false;
-        transitions.Add( new Transition( rightOldEnd, to: newEnd, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( rightOldEnd.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
+        
+        states.AddRange( left.AllStates );
+        states.AddRange( right.AllStates );
 
         return new NonDeterminedFiniteAutomata(
-            allStates: left.AllStates.Union( right.AllStates ),
+            allStates: states,
             transitions: transitions,
             alphabet: transitions.Select( x => x.Argument ).ToHashSet() );
     }
@@ -125,38 +130,48 @@ internal class FiniteAutomataDictionary
     {
         left = left.ThrowIfNull();
 
-        int endStateName = UpdateNamesAndGetBiggest( 1, left.AllStates ) + 1;
+        int endStateName = UpdateNamesAndGetBiggest( 1, left ) + 1;
 
         var newStart = new State( new StateId( 0 ), true );
         left.AllStates.Add( newStart );
 
         State oldStart = left.AllStates.First( x => x.IsStart );
         oldStart.IsStart = false;
-        left.Transitions.Add( new Transition( from: newStart, to: oldStart, argument: Argument.Epsilon ) );
+        left.Transitions.Add( new Transition( from: newStart.Id, to: oldStart.Id, argument: Argument.Epsilon ) );
 
         var newEnd = new State( new StateId( endStateName ), isEnd: true );
         left.AllStates.Add( newEnd );
 
         State oldEnd = left.AllStates.First( x => x.IsEnd );
         oldEnd.IsEnd = false;
-        left.Transitions.Add( new Transition( from: oldEnd, to: newEnd, argument: Argument.Epsilon ) );
+        left.Transitions.Add( new Transition( from: oldEnd.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
 
-        left.Transitions.Add( new Transition( from: oldEnd, to: oldStart, argument: Argument.Epsilon ) );
-        left.Transitions.Add( new Transition( from: newStart, to: newEnd, argument: Argument.Epsilon ) );
+        left.Transitions.Add( new Transition( from: oldEnd.Id, to: oldStart.Id, argument: Argument.Epsilon ) );
+        left.Transitions.Add( new Transition( from: newStart.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
 
         return left;
     }
 
-    private static int UpdateNamesAndGetBiggest( int offset, IEnumerable<State> states )
+    private static int UpdateNamesAndGetBiggest( int offset, IFiniteAutomata automata )
     {
         var max = 0;
-        foreach ( State state in states )
+
+        var oldStateIdToNewStateId = new Dictionary<StateId, StateId>();
+        foreach ( State state in automata.AllStates )
         {
-            int newName = state.Id.Value + offset;
-            state.Id = new StateId( newName );
-            max = max > newName
+            var newId = new StateId( state.Id.Value + offset );
+            oldStateIdToNewStateId[state.Id] = newId;
+            state.Id = newId;
+            
+            max = max > newId.Value
                 ? max
-                : newName;
+                : newId.Value;
+        }
+
+        foreach ( Transition transition in automata.Transitions )
+        {
+            transition.From = oldStateIdToNewStateId[transition.From];
+            transition.To = oldStateIdToNewStateId[transition.To];
         }
 
         return max;

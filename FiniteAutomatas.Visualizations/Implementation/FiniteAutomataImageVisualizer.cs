@@ -93,7 +93,7 @@ public class FiniteAutomataImageVisualizer
     {
         foreach ( Transition transition in _automata.Transitions )
         {
-            if ( !statesToDraw.Contains( transition.To ) )
+            if ( !statesToDraw.Any( x => x.Id == transition.To ) )
             {
                 continue;
             }
@@ -101,7 +101,7 @@ public class FiniteAutomataImageVisualizer
             string label = transition.Argument == Argument.Epsilon
                 ? "Eps"
                 : transition.Argument.Value;
-            yield return $"{transition.From.Id} -> {transition.To.Id} [label=\"{label}\"];";
+            yield return $"{transition.From} -> {transition.To} [label=\"{label}\"];";
         }
     }
 

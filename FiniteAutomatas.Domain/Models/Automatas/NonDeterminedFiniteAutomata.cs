@@ -19,14 +19,14 @@ public class NonDeterminedFiniteAutomata : IFiniteAutomata
         
         foreach ( Transition transition in Transitions )
         {
-            if ( !AllStates.Contains( transition.From ) )
+            if ( !AllStates.Any( x => x.Id == transition.From ) )
             {
                 throw new ArgumentException( 
                     $"Some of the transitions has a state that is not presented in the {nameof( AllStates )}. " + 
                     $"Transition: {transition}. State: {transition.From}" );
             }
 
-            if ( !AllStates.Contains( transition.To ) )
+            if ( !AllStates.Any( x => x.Id == transition.To ) )
             {
                 throw new ArgumentException( 
                     $"Some of the transitions has a state that is not presented in the {nameof( AllStates )}. " + 
@@ -42,18 +42,36 @@ public class NonDeterminedFiniteAutomata : IFiniteAutomata
         }
     }
 
-    HashSet<State> IFiniteAutomata.Move( State from, Argument argument ) => Move( from, argument );
+    HashSet<StateId> IFiniteAutomata.Move( StateId from, Argument argument ) => Move( from, argument );
 
-    public HashSet<State> Move( State from, Argument argument, HashSet<State>? epsClosures = null )
+    public HashSet<StateId> Move( StateId from, Argument argument, HashSet<StateId>? epsClosures = null )
     {
         epsClosures ??= EpsClosure( from ).ToHashSet();
         return Transitions
             .Where( transition =>
-                transition.Argument.Equals( argument ) &&
+                transition.Argument == argument &&
                 epsClosures.Contains( transition.From ) )
-            .Select( transition => transition.To.Id )
-            .Select( stateName => AllStates.Single( x => x.Id == stateName ) )
+            .Select( transition => transition.To )
             .ToHashSet();
+    }
+
+    public HashSet<State> GetStates( HashSet<StateId> stateIds )
+    {
+        var result = new HashSet<State>();
+        foreach ( State state in AllStates )
+        {
+            if ( stateIds.Contains( state.Id ) )
+            {
+                result.Add( state );
+            }
+        }
+
+        if ( result.Count != stateIds.Count )
+        {
+            throw new ArgumentException( "Can't find states with given ids" );
+        }
+
+        return result;
     }
 
     public State GetState( StateId stateId )
@@ -61,29 +79,31 @@ public class NonDeterminedFiniteAutomata : IFiniteAutomata
         return AllStates.Single( x => x.Id == stateId );
     }
 
-    public Dictionary<State, HashSet<State>> EpsClosure()
+    public Dictionary<StateId, HashSet<StateId>> EpsClosure()
     {
-        var result = new Dictionary<State, HashSet<State>>();
+        var result = new Dictionary<StateId, HashSet<StateId>>();
         foreach ( State state in AllStates )
         {
-            result[state] = EpsClosure( state );
+            result[state.Id] = EpsClosure( state.Id );
         }
 
         return result;
     }
 
-    public HashSet<State> EpsClosure( State from )
+    public HashSet<StateId> EpsClosure( StateId from )
     {
-        var closures = new HashSet<State>();
-        closures.Add( from );
-        
-        var statesToProcess = new Queue<State>();
-        var processedStates = new HashSet<State>();
+        var closures = new HashSet<StateId>
+        {
+            from
+        };
+
+        var statesToProcess = new Queue<StateId>();
+        var processedStates = new HashSet<StateId>();
         statesToProcess.Enqueue( from );
 
         while ( statesToProcess.Any() )
         {
-            State state = statesToProcess.Dequeue();
+            StateId state = statesToProcess.Dequeue();
             if ( processedStates.Contains( state ) )
             {
                 continue;

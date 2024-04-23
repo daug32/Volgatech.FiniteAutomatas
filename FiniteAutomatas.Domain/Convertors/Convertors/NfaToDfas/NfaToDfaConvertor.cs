@@ -14,7 +14,11 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
         var errorState = new State( new StateId( -1 ), isError: true );
         
         // For optimization
-        var stateToEpsClosures = automata.EpsClosure().ToDictionary( x => x.Key, x => new EpsClosure( x.Value ) );
+        Dictionary<State, EpsClosure> stateToEpsClosures = automata
+            .EpsClosure()
+            .ToDictionary( 
+                x => automata.GetState( x.Key),
+                x => new EpsClosure( automata.GetStates( x.Value ) ) );
         stateToEpsClosures[errorState] = new EpsClosure( new HashSet<State>() { errorState } );
 
         // Algorithm data
@@ -39,9 +43,13 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
 
             foreach ( Argument argument in alphabet )
             {
-                HashSet<State> achievableStates = fromState.States
-                    .SelectMany( state => automata.Move( state, argument, stateToEpsClosures[state].Closures ) )
+                var achievableStatesIds = fromState.States
+                    .SelectMany( state => automata.Move(
+                        state.Id,
+                        argument,
+                        stateToEpsClosures[state].Closures ) )
                     .ToHashSet();
+                HashSet<State> achievableStates = automata.GetStates( achievableStatesIds ).ToHashSet();
                 if ( !achievableStates.Any() )
                 {
                     achievableStates.Add( errorState );
@@ -98,7 +106,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
 
             alphabet.Add( rawTransition.argument );
             
-            transitions.Add( new Transition( fromState, rawTransition.argument, toState ) );
+            transitions.Add( new Transition( fromState.Id, rawTransition.argument, toState.Id ) );
         }
 
         return new DeterminedFiniteAutomata(
