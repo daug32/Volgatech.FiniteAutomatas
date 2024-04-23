@@ -22,7 +22,6 @@ public class Program
                 DeterminedFiniteAutomata dfa = new RegexToNfaParser()
                     .Parse( regex )
                     .Convert( new NfaToDfaConvertor() )
-                    .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
                     .Convert( new DfaMinimizationConvertor() );
 
                 System.Console.WriteLine( "Printing DFA..." );

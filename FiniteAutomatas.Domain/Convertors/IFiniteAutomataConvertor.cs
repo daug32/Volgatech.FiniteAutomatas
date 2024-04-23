@@ -2,7 +2,7 @@
 
 namespace FiniteAutomatas.Domain.Convertors;
 
-public interface IAutomataConvertor<out TOutput>
+public interface IFiniteAutomataConvertor<out TOutput>
 {
     TOutput Convert( IFiniteAutomata automata );
 }

@@ -2,11 +2,12 @@
 
 namespace FiniteAutomatas.Domain.Convertors;
 
-public static class FiniteAutomataConvertorExtensions
+// ReSharper disable once InconsistentNaming
+public static class IFiniteAutomataConvertorExtensions
 {
     public static TOutput Convert<TOutput>(
         this IFiniteAutomata automata, 
-        IAutomataConvertor<TOutput> convertor )
+        IFiniteAutomataConvertor<TOutput> convertor )
     {
         return convertor.Convert( automata );
     }

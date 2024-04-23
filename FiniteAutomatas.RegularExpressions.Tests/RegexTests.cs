@@ -88,7 +88,6 @@ public class RegexTests
             () => regex = new RegexToNfaParser()
                 .Parse( testData.Regex )
                 .Convert( new NfaToDfaConvertor() )
-                .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
                 .Convert( new DfaMinimizationConvertor() ),
             $"Regex: {testData.Regex}" );
 
