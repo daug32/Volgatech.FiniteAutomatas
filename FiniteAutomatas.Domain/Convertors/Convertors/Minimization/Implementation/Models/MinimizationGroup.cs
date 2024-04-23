@@ -2,7 +2,7 @@
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementation.Models;
 
-public class MinimizationGroup
+internal class MinimizationGroup
 {
     private readonly Dictionary<string, State> _states = new();
 
