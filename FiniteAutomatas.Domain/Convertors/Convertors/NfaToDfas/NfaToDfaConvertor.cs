@@ -1,4 +1,5 @@
-﻿using FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas.Implementation;
+﻿using FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
+using FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas.Implementation;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
 
@@ -9,8 +10,8 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
     public DeterminedFiniteAutomata Convert( NonDeterminedFiniteAutomata automata )
     {
         // Result data
-        var dfaTransitions = new HashSet<Transition>();
-        var errorState = new State( new StateName( "-1" ), isError: true );
+        var dfaTransitions = new List<(CollapsedState from, Argument argument, CollapsedState to)>();
+        var errorState = new State( new StateId( -1 ), isError: true );
         
         // For optimization
         var stateToEpsClosures = automata.EpsClosure().ToDictionary( x => x.Key, x => new EpsClosure( x.Key, x.Value ) );
@@ -56,48 +57,54 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
                     queue.Enqueue( toState );
                 }
 
-                dfaTransitions.Add( new Transition(
-                    fromState.ToState(),
-                    argument,
-                    toState.ToState() ) );
+                dfaTransitions.Add( ( fromState, argument, toState ) );
             }
         }
 
-        DeterminedFiniteAutomata dfa = BuildDfa( 
-            dfaTransitions,
-            processedStates.Select( x => x.ToState() ) );
+        DeterminedFiniteAutomata dfa = BuildDfa( dfaTransitions );
 
         return dfa;
     }
 
-    private static DeterminedFiniteAutomata BuildDfa( ICollection<Transition> transitions, IEnumerable<State> states )
+    private static DeterminedFiniteAutomata BuildDfa( List<(CollapsedState from, Argument argument, CollapsedState to)> rawTransitions )
     {
-        var statesList = states.ToList();
-
-        // oldName, newName
-        var nameOverrides = new Dictionary<StateName, StateName>();
-        for ( var i = 0; i < statesList.Count; i++ )
-        {
-            State state = statesList[i];
-
-            StateName oldName = state.Name;
-            StateName newName = new StateName( i.ToString() );
-
-            nameOverrides.Add( oldName, newName );
-            state.Name = newName;
-        }
-
+        var stateIdIncrementor = new StateIdIncrementer( new StateId( 0 ) );
+        
+        var states = new Dictionary<CollapsedState, State>();
+        var transitions = new List<Transition>();
         var alphabet = new HashSet<Argument>();
-        foreach ( Transition transition in transitions )
+        foreach ( (CollapsedState from, Argument argument, CollapsedState to) rawTransition in rawTransitions )
         {
-            transition.From.Name = nameOverrides[transition.From.Name];
-            transition.To.Name = nameOverrides[transition.To.Name];
-            alphabet.Add( transition.Argument );
+            State fromState; 
+            if ( states.ContainsKey( rawTransition.from ) )
+            {
+                fromState = states[rawTransition.from];
+            }
+            else
+            {
+                fromState = rawTransition.from.ToState( stateIdIncrementor.Next() );
+                states[rawTransition.from] = fromState;
+            }
+
+            State toState; 
+            if ( states.ContainsKey( rawTransition.to ) )
+            {
+                toState = states[rawTransition.to];
+            }
+            else
+            {
+                toState = rawTransition.to.ToState( stateIdIncrementor.Next() );
+                states[rawTransition.to] = toState;
+            }
+
+            alphabet.Add( rawTransition.argument );
+            
+            transitions.Add( new Transition( fromState, rawTransition.argument, toState ) );
         }
 
         return new DeterminedFiniteAutomata(
             alphabet,
             transitions,
-            statesList );
+            states.Values );
     }
 }

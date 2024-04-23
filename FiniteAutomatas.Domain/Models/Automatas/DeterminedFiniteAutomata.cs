@@ -48,31 +48,31 @@ public class DeterminedFiniteAutomata : IFiniteAutomata
             .Where( transition =>
                 transition.Argument.Equals( argument ) &&
                 transition.From.Equals( from ) )
-            .Select( transition => transition.To.Name )
-            .Select( stateName => AllStates.Single( x => x.Name == stateName ) )
+            .Select( transition => transition.To.Id )
+            .Select( stateName => AllStates.Single( x => x.Id == stateName ) )
             .ToHashSet();
     }
 
-    public void RenameState( StateName oldName, StateName newName )
+    public void RenameState( StateId oldId, StateId newId )
     {
         foreach ( State state in AllStates )
         {
-            if ( state.Name == oldName )
+            if ( state.Id == oldId )
             {
-                state.Name = newName;
+                state.Id = newId;
             }
         }
 
         foreach ( Transition transition in Transitions )
         {
-            if ( transition.From.Name == oldName )
+            if ( transition.From.Id == oldId )
             {
-                transition.From.Name = newName;
+                transition.From.Id = newId;
             }
 
-            if ( transition.To.Name == newName )
+            if ( transition.To.Id == newId )
             {
-                transition.To.Name = newName;
+                transition.To.Id = newId;
             }
         }
     }

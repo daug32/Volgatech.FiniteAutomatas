@@ -4,7 +4,7 @@ namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementati
 
 internal class MinimizationGroup
 {
-    private readonly Dictionary<StateName, State> _states = new();
+    private readonly Dictionary<StateId, State> _states = new();
 
     public MinimizationGroup()
     {
@@ -12,38 +12,38 @@ internal class MinimizationGroup
 
     public MinimizationGroup( State state )
     {
-        _states.Add( state.Name, state );
+        _states.Add( state.Id, state );
     }
     
     public MinimizationGroup( IEnumerable<State> states )
     {
         foreach ( State state in states )
         {
-            _states.Add( state.Name, state );
+            _states.Add( state.Id, state );
         }
     }
 
     public void Add( State state )
     {
-        if ( _states.ContainsKey( state.Name ) )
+        if ( _states.ContainsKey( state.Id ) )
         {
             throw new InvalidOperationException(
-                $"Can't add state to the {nameof( MinimizationGroup )} because it already contains the given state. StateName: {state.Name}" );
+                $"Can't add state to the {nameof( MinimizationGroup )} because it already contains the given state. StateName: {state.Id}" );
         }
 
-        _states.Add( state.Name, state );
+        _states.Add( state.Id, state );
     }
 
-    public void Remove( StateName stateName )
+    public void Remove( StateId stateId )
     {
-        if ( !_states.Remove( stateName ) )
+        if ( !_states.Remove( stateId ) )
         {
             throw new InvalidOperationException(
-                $"Can't remove state from {nameof( MinimizationGroup )} because it doesn't contain the given state. StateName: {stateName}" );
+                $"Can't remove state from {nameof( MinimizationGroup )} because it doesn't contain the given state. StateName: {stateId}" );
         }
     }
 
-    public bool Contains( StateName stateName ) => _states.ContainsKey( stateName );
+    public bool Contains( StateId stateId ) => _states.ContainsKey( stateId );
 
     public int Count => _states.Count;
 

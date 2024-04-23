@@ -1,4 +1,5 @@
-﻿using FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementation.Models;
+﻿using FiniteAutomatas.Domain.Convertors.Convertors.Implementation;
+using FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementation.Models;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
 
@@ -41,12 +42,12 @@ internal static class MinimizationGroupsConvertor
         List<MinimizationGroup> groups,
         IEnumerable<Transition> oldTransitions )
     {
-        var states = new Dictionary<StateName, State>( groups.Count );
-        var oldStateNameToNewStateName = new Dictionary<StateName, StateName>();
-        var index = 0;
+        var stateIdIncrementer = new StateIdIncrementer( groups.SelectMany( x => x.GetStates() ) );
+        var states = new Dictionary<StateId, State>( groups.Count );
+        var oldStateNameToNewStateName = new Dictionary<StateId, StateId>();
         foreach ( MinimizationGroup group in groups )
         {
-            var newName = new StateName( index++.ToString() );
+            var newName = stateIdIncrementer.Next();
 
             var isStart = false;
             var isEnd = false;
@@ -56,7 +57,7 @@ internal static class MinimizationGroupsConvertor
                 isError |= state.IsError;
                 isEnd |= state.IsEnd;
                 isStart |= state.IsStart;
-                oldStateNameToNewStateName.Add( state.Name, newName );
+                oldStateNameToNewStateName.Add( state.Id, newName );
             }
 
             var collapsedState = new State(
@@ -65,15 +66,15 @@ internal static class MinimizationGroupsConvertor
                 isEnd,
                 isError );
 
-            states.Add( collapsedState.Name, collapsedState );
+            states.Add( collapsedState.Id, collapsedState );
         }
 
         var alphabet = new HashSet<Argument>();
         var transitions = new HashSet<Transition>();
         foreach ( Transition transition in oldTransitions )
         {
-            State from = states[oldStateNameToNewStateName[transition.From.Name]];
-            State to = states[oldStateNameToNewStateName[transition.To.Name]];
+            State from = states[oldStateNameToNewStateName[transition.From.Id]];
+            State to = states[oldStateNameToNewStateName[transition.To.Id]];
             Argument argument = transition.Argument;
 
             bool hasThisTransition = transitions.Any( x =>

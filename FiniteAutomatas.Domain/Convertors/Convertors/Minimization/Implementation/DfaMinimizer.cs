@@ -7,21 +7,21 @@ namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementati
 internal class DfaMinimizer
 {
     private readonly DeterminedFiniteAutomata _automata;
-    private readonly Dictionary<StateName, Dictionary<Argument, StateName>> _transitions;
+    private readonly Dictionary<StateId, Dictionary<Argument, StateId>> _transitions;
     
     public DfaMinimizer( DeterminedFiniteAutomata automata )
     {
         _automata = automata;
 
-        _transitions = _automata.AllStates.ToDictionary( x => x.Name, x => new Dictionary<Argument, StateName>() );
+        _transitions = _automata.AllStates.ToDictionary( x => x.Id, x => new Dictionary<Argument, StateId>() );
         foreach ( Transition transition in _automata.Transitions )
         {
-            if ( !_transitions.ContainsKey( transition.From.Name ) )
+            if ( !_transitions.ContainsKey( transition.From.Id ) )
             {
-                _transitions[transition.From.Name] = new Dictionary<Argument, StateName>();
+                _transitions[transition.From.Id] = new Dictionary<Argument, StateId>();
             }
 
-            _transitions[transition.From.Name].Add( transition.Argument, transition.To.Name );
+            _transitions[transition.From.Id].Add( transition.Argument, transition.To.Id );
         }
     }
     
@@ -60,7 +60,7 @@ internal class DfaMinimizer
                         continue;
                     }
 
-                    currentGroup.Remove( current.Name );
+                    currentGroup.Remove( current.Id );
 
                     bool addedToGroup = false;
                     foreach ( MinimizationGroup createdGroup in createdGroups )
@@ -108,13 +108,13 @@ internal class DfaMinimizer
 
         foreach ( Argument argument in _automata.Alphabet )
         {
-            MinimizationGroup? firstGroup = groups.SingleOrDefault( x => x.Any( groupItem => groupItem.Name == _transitions[first.Name][argument] ) );
+            MinimizationGroup? firstGroup = groups.SingleOrDefault( x => x.Any( groupItem => groupItem.Id == _transitions[first.Id][argument] ) );
             if ( firstGroup is null )
             {
                 return false;
             }
             
-            MinimizationGroup? secondGroup = groups.SingleOrDefault( x => x.Any( groupItem => groupItem.Name == _transitions[second.Name][argument] ) );
+            MinimizationGroup? secondGroup = groups.SingleOrDefault( x => x.Any( groupItem => groupItem.Id == _transitions[second.Id][argument] ) );
             if ( secondGroup is null )
             {
                 return false;

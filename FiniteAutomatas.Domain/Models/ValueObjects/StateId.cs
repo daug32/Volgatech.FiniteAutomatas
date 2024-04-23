@@ -1,20 +1,24 @@
 ﻿namespace FiniteAutomatas.Domain.Models.ValueObjects;
 
-public class StateName : IComparable
+public class StateId : IComparable
 {
     public readonly string Value;
 
-    public StateName( string value )
+    public StateId( string value )
     {
         Value = value;
     }
 
-    public override bool Equals( object? obj )
+    public StateId( int value ) : this( value.ToString() )
     {
-        return obj is StateName other && Equals( other );
     }
 
-    public bool Equals( StateName other )
+    public override bool Equals( object? obj )
+    {
+        return obj is StateId other && Equals( other );
+    }
+
+    public bool Equals( StateId other )
     {
         return Value == other.Value;
     }
@@ -31,7 +35,7 @@ public class StateName : IComparable
 
     public int CompareTo( object? obj )
     {
-        if ( obj is not StateName other )
+        if ( obj is not StateId other )
         {
             throw new ArgumentException();
         }
@@ -39,12 +43,12 @@ public class StateName : IComparable
         return String.CompareOrdinal( Value, other.Value );
     }
 
-    public static bool operator ==( StateName a, StateName b )
+    public static bool operator ==( StateId a, StateId b )
     {
         return a.Equals( b );
     }
 
-    public static bool operator !=( StateName a, StateName b )
+    public static bool operator !=( StateId a, StateId b )
     {
         return !a.Equals( b );
     }

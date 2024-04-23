@@ -2,16 +2,16 @@
 
 public class State : IComparable
 {
-    public StateName Name { get; set; }
+    public StateId Id { get; set; }
     public bool IsEnd;
     public bool IsError;
     public bool IsStart;
     
     public bool IsTerminateState => IsEnd || IsError;
     
-    public State( StateName name, bool isStart = false, bool isEnd = false, bool isError = false )
+    public State( StateId id, bool isStart = false, bool isEnd = false, bool isError = false )
     {
-        Name = name;
+        Id = id;
         IsStart = isStart;
         IsEnd = isEnd;
         IsError = isError;
@@ -24,11 +24,11 @@ public class State : IComparable
 
     public override bool Equals( object? obj ) => obj is State other && Equals( other );
 
-    public bool Equals( State other ) => Name.Equals( other.Name );
+    public bool Equals( State other ) => Id.Equals( other.Id );
 
-    public override int GetHashCode() => Name.GetHashCode();
+    public override int GetHashCode() => Id.GetHashCode();
 
-    public override string ToString() => Name.ToString();
+    public override string ToString() => Id.ToString();
 
     public int CompareTo( object? obj )
     {
@@ -37,7 +37,7 @@ public class State : IComparable
             throw new ArgumentException();
         }
 
-        return Name.CompareTo( other.Name );
+        return Id.CompareTo( other.Id );
     }
 
     public static bool operator ==( State a, State b )
@@ -51,7 +51,7 @@ public class State : IComparable
     }
 
     public State Copy() => new(
-        Name,
+        Id,
         IsStart,
         IsEnd,
         IsError );

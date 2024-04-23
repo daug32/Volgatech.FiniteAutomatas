@@ -101,7 +101,7 @@ public class FiniteAutomataImageVisualizer
             string label = transition.Argument == Argument.Epsilon
                 ? "Eps"
                 : transition.Argument.Value;
-            yield return $"{transition.From.Name} -> {transition.To.Name} [label=\"{label}\"];";
+            yield return $"{transition.From.Id} -> {transition.To.Id} [label=\"{label}\"];";
         }
     }
 
@@ -125,11 +125,11 @@ public class FiniteAutomataImageVisualizer
         foreach ( State state in statesToDraw )
         {
             string style = "filled";
-            string label = state.Name.ToString();
+            string label = state.Id.ToString();
             string shape = state.IsTerminateState ? "doublecircle" : "circle";
             string fillcolor = BuildFillColor( state );
 
-            yield return $"{state.Name} [style=\"{style}\" fillcolor=\"{fillcolor}\" label=\"{label}\" shape=\"{shape}\"];";
+            yield return $"{state.Id} [style=\"{style}\" fillcolor=\"{fillcolor}\" label=\"{label}\" shape=\"{shape}\"];";
         }
     }
 
