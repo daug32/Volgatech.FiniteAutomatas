@@ -4,9 +4,9 @@ namespace FiniteAutomatas.Domain.Models.Automatas;
 
 public class NonDeterminedFiniteAutomata : IFiniteAutomata
 {
-    public IReadOnlySet<State> AllStates { get; }
-    public IReadOnlySet<Argument> Alphabet { get; }
-    public IReadOnlySet<Transition> Transitions { get; }
+    public IReadOnlyCollection<State> AllStates { get; }
+    public IReadOnlyCollection<Argument> Alphabet { get; }
+    public IReadOnlyCollection<Transition> Transitions { get; }
 
     public NonDeterminedFiniteAutomata( 
         IEnumerable<Argument> alphabet,

@@ -4,9 +4,9 @@ namespace FiniteAutomatas.Domain.Models.Automatas;
 
 public interface IFiniteAutomata
 {
-    IReadOnlySet<State> AllStates { get; }
-    IReadOnlySet<Argument> Alphabet { get; }
-    IReadOnlySet<Transition> Transitions { get; }
+    IReadOnlyCollection<State> AllStates { get; }
+    IReadOnlyCollection<Argument> Alphabet { get; }
+    IReadOnlyCollection<Transition> Transitions { get; }
 
     HashSet<StateId> Move( StateId from, Argument argument );
     State GetState( StateId stateId );
