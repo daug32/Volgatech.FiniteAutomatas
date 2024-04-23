@@ -61,13 +61,7 @@ public class RegexToNfaParser
 
         if ( regexSymbol.Type == RegexSymbolType.Symbol )
         {
-            return new FiniteAutomata( new[]
-            {
-                new Transition(
-                    new State( "0", true ),
-                    to: new State( "1", isEnd: true ),
-                    argument: new Argument( regexSymbol.ToString() ) )
-            } );
+            return FiniteAutomataCreator.ForSymbol( new Argument( current.Value.Value.Value ) );
         }
 
         if ( regexSymbol.Type is RegexSymbolType.ZeroOrMore )

@@ -39,7 +39,7 @@ internal static class MinimizationGroupsConvertor
 
     public static FiniteAutomata ToFiniteAutomata(
         List<MinimizationGroup> groups,
-        HashSet<Transition> oldTransitions )
+        ISet<Transition> oldTransitions )
     {
         var states = new Dictionary<string, State>( groups.Count );
         var oldStateNameToNewStateName = new Dictionary<string, string>();

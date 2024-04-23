@@ -6,6 +6,10 @@ public class Argument : IComparable
 
     public static Argument Epsilon => new( "" );
 
+    public Argument( char c ) : this( c.ToString() )
+    {
+    }
+
     public Argument( string value )
     {
         Value = value;

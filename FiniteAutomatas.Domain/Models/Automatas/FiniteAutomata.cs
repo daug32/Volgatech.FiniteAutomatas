@@ -42,14 +42,6 @@ public class FiniteAutomata
         }
     }
 
-    public FiniteAutomata( ICollection<Transition> transitions )
-        : this(
-            transitions.Select( x => x.Argument ).Distinct(),
-            transitions, 
-            transitions.SelectMany( x => new[] { x.From, x.To } ) )
-    {
-    }
-
     public HashSet<State> Move( State from, Argument argument, HashSet<State>? epsClosures = null )
     {
         epsClosures ??= EpsClosure( from ).ToHashSet();
