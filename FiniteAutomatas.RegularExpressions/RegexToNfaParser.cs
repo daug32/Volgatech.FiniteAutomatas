@@ -32,7 +32,7 @@ public class RegexToNfaParser
         while ( stack.Any() )
         {
             RegexNode curr = stack.Pop();
-            NonDeterminedFiniteAutomata automata = ConvertNodeToAutomata(
+            NonDeterminedFiniteAutomata automata = FiniteAutomataDictionary.Convert(
                 curr,
                 curr.LeftOperand != null
                     ? nodesAutomatas[curr.LeftOperand]
@@ -45,39 +45,6 @@ public class RegexToNfaParser
         }
 
         return nodesAutomatas[node];
-    }
-
-    private NonDeterminedFiniteAutomata ConvertNodeToAutomata(
-        RegexNode current,
-        NonDeterminedFiniteAutomata? left,
-        NonDeterminedFiniteAutomata? right )
-    {
-        RegexSymbol regexSymbol = current.Value;
-
-        if ( regexSymbol.Type == RegexSymbolType.Symbol )
-        {
-            left.ThrowIfNotNull();
-            right.ThrowIfNotNull();
-            return FiniteAutomataDictionary.ForSymbol( new Argument( regexSymbol.Value.Value ) );
-        }
-
-        if ( regexSymbol.Type is RegexSymbolType.ZeroOrMore )
-        {
-            right.ThrowIfNotNull();
-            return FiniteAutomataDictionary.ForZeroOrMore( left );
-        }
-
-        if ( regexSymbol.Type == RegexSymbolType.Or )
-        {
-            return FiniteAutomataDictionary.ForOr( left, right );
-        }
-
-        if ( regexSymbol.Type == RegexSymbolType.And )
-        {
-            return FiniteAutomataDictionary.ForAnd( left, right );
-        }
-
-        throw new UnreachableException();
     }
 
     private static Stack<RegexNode> GetItemsToProcess( RegexNode node )

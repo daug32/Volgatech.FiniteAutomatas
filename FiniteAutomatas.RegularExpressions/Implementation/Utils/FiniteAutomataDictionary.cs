@@ -1,12 +1,38 @@
-﻿using FiniteAutomatas.Domain.Models.Automatas;
+﻿using System.Diagnostics;
+using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
+using FiniteAutomatas.RegularExpressions.Implementation.Models;
 using FluentAssertions;
 
 namespace FiniteAutomatas.RegularExpressions.Implementation.Utils;
 
 internal class FiniteAutomataDictionary
 {
-    public static NonDeterminedFiniteAutomata ForSymbol( Argument argument )
+    public static NonDeterminedFiniteAutomata Convert(
+        RegexNode current,
+        NonDeterminedFiniteAutomata? left,
+        NonDeterminedFiniteAutomata? right)
+    {
+        RegexSymbol regexSymbol = current.Value;
+        switch ( regexSymbol.Type )
+        {
+            case RegexSymbolType.Symbol:
+                left.ThrowIfNotNull();
+                right.ThrowIfNotNull();
+                return ForSymbol( new Argument( regexSymbol.Value.ThrowIfNull()!.Value ) );
+            
+            case RegexSymbolType.ZeroOrMore:
+                right.ThrowIfNotNull();
+                return ForZeroOrMore( left );
+            
+            case RegexSymbolType.Or: return ForOr( left, right );
+            case RegexSymbolType.And: return ForAnd( left, right );
+            
+            default: throw new UnreachableException();
+        }
+    }
+
+    private static NonDeterminedFiniteAutomata ForSymbol( Argument argument )
     {
         var start = new State( new StateId( 0 ), isStart: true );
         var end = new State( new StateId( 1 ), isEnd: true );
@@ -23,7 +49,7 @@ internal class FiniteAutomataDictionary
             allStates: new[] { start, end } );
     }
 
-    public static NonDeterminedFiniteAutomata ForAnd(
+    private static NonDeterminedFiniteAutomata ForAnd(
         NonDeterminedFiniteAutomata? left,
         NonDeterminedFiniteAutomata? right )
     {
@@ -60,8 +86,6 @@ internal class FiniteAutomataDictionary
             }
         }
 
-        var states = right.AllStates.Union( left.AllStates ).ToHashSet();
-        states.Remove( rightOldStart );
         var transitions = left.Transitions.Union( right.Transitions ).ToHashSet();
         
         return new NonDeterminedFiniteAutomata(
@@ -70,7 +94,7 @@ internal class FiniteAutomataDictionary
             left.AllStates.Union( right.AllStates ) );
     }
 
-    public static NonDeterminedFiniteAutomata ForOr(
+    private static NonDeterminedFiniteAutomata ForOr(
         NonDeterminedFiniteAutomata? left,
         NonDeterminedFiniteAutomata? right )
     {
@@ -127,7 +151,7 @@ internal class FiniteAutomataDictionary
             alphabet: transitions.Select( x => x.Argument ).ToHashSet() );
     }
 
-    public static NonDeterminedFiniteAutomata ForZeroOrMore( NonDeterminedFiniteAutomata? left )
+    private static NonDeterminedFiniteAutomata ForZeroOrMore( NonDeterminedFiniteAutomata? left )
     {
         left = left.ThrowIfNull();
         
@@ -186,8 +210,5 @@ internal class FiniteAutomataDictionary
         return max;
     }
 
-    private static int FindMaxName( IEnumerable<State> states )
-    {
-        return states.MaxBy( x => x.Id.Value ).Id.Value;
-    }
+    private static int FindMaxName( IEnumerable<State> states ) => states.Max( x => x.Id.Value );
 }
