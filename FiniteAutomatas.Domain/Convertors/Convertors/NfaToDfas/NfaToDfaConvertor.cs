@@ -1,8 +1,8 @@
-﻿using FiniteAutomatas.Domain.Convertors.Convertors.Implementation.Models;
+﻿using FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas.Implementation;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.ValueObjects;
 
-namespace FiniteAutomatas.Domain.Convertors.Convertors;
+namespace FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas;
 
 public class NfaToDfaConvertor : IAutomataConvertor<FiniteAutomata>
 {

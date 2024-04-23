@@ -1,6 +1,7 @@
 ﻿using FiniteAutomatas.Domain.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors.Minimization;
+using FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Visualizations;
 
