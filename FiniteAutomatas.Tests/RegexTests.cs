@@ -104,7 +104,7 @@ public class RegexTests
                 Assert.That(
                     result.IsSuccess(),
                     Is.True,
-                    $"Regex: {testData.Regex}, Test: {successTest}. Must be success" );
+                    $"Regex: {testData.Regex}, Test: {successTest}. Must be success but got {result}" );
             }
 
             foreach ( string failTest in testData.FailTests )
@@ -116,7 +116,7 @@ public class RegexTests
                 Assert.That(
                     result.IsSuccess(),
                     Is.False,
-                    $"Regex: {testData.Regex}, Test: {failTest}. Must be failed" );
+                    $"Regex: {testData.Regex}, Test: {failTest}. Must be failed but got {result}" );
             }
         } );
         

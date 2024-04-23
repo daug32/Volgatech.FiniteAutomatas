@@ -60,12 +60,13 @@ internal class FiniteAutomataDictionary
             }
         }
 
-        right.AllStates.Remove( rightOldStart );
-
-        var allTransitions = left.Transitions.Union( right.Transitions ).ToHashSet();
+        var states = right.AllStates.Union( left.AllStates ).ToHashSet();
+        states.Remove( rightOldStart );
+        var transitions = left.Transitions.Union( right.Transitions ).ToHashSet();
+        
         return new NonDeterminedFiniteAutomata(
-            allTransitions.Select( x => x.Argument ).ToHashSet(),
-            allTransitions,
+            transitions.Select( x => x.Argument ).ToHashSet(),
+            transitions,
             left.AllStates.Union( right.AllStates ) );
     }
 
@@ -135,8 +136,6 @@ internal class FiniteAutomataDictionary
         
         var transitions = left.Transitions.ToHashSet();
         var states = left.AllStates.ToHashSet();
-        var alphabet = left.Alphabet.ToHashSet();
-        alphabet.Add( Argument.Epsilon );
 
         // Update current automata
         var newStart = new State( new StateId( 0 ), true );
@@ -157,7 +156,7 @@ internal class FiniteAutomataDictionary
         transitions.Add( new Transition( from: newStart.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
 
         return new NonDeterminedFiniteAutomata( 
-            alphabet,
+            transitions.Select( x => x.Argument ).ToHashSet(),
             transitions,
             states );
     }

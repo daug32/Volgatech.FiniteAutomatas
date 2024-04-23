@@ -4,7 +4,7 @@ namespace FiniteAutomatas.Domain.Models.Automatas;
 
 public interface IFiniteAutomata
 {
-    HashSet<State> AllStates { get; }
+    IReadOnlySet<State> AllStates { get; }
     IReadOnlySet<Argument> Alphabet { get; }
     IReadOnlySet<Transition> Transitions { get; }
 

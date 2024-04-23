@@ -6,7 +6,7 @@ public class DeterminedFiniteAutomata : IFiniteAutomata
 {
     public IReadOnlySet<Argument> Alphabet { get; private set; }
     public IReadOnlySet<Transition> Transitions { get; private set; }
-    public HashSet<State> AllStates { get; private set; }
+    public IReadOnlySet<State> AllStates { get; private set; }
 
     public DeterminedFiniteAutomata( 
         IEnumerable<Argument> alphabet,
