@@ -10,7 +10,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
     {
         // Result data
         var dfaTransitions = new HashSet<Transition>();
-        var errorState = new State( "-1", isError: true );
+        var errorState = new State( new StateName( "-1" ), isError: true );
         
         // For optimization
         var stateToEpsClosures = automata.EpsClosure().ToDictionary( x => x.Key, x => new EpsClosure( x.Key, x.Value ) );
@@ -75,13 +75,13 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
         var statesList = states.ToList();
 
         // oldName, newName
-        var nameOverrides = new Dictionary<string, string>();
+        var nameOverrides = new Dictionary<StateName, StateName>();
         for ( var i = 0; i < statesList.Count; i++ )
         {
             State state = statesList[i];
 
-            string oldName = state.Name;
-            string newName = i.ToString();
+            StateName oldName = state.Name;
+            StateName newName = new StateName( i.ToString() );
 
             nameOverrides.Add( oldName, newName );
             state.Name = newName;

@@ -4,7 +4,7 @@ namespace FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas.Implementation;
 
 internal class CollapsedState
 {
-    public string Name { get; }
+    public StateName Name { get; }
     public bool IsTerminateState => IsEnd || IsError;
     public bool IsError { get; set; }
     public bool IsStart { get; set; }
@@ -23,7 +23,7 @@ internal class CollapsedState
 
     public CollapsedState( HashSet<State> states, bool isStart, bool isEnd )
     {
-        Name = String.Join( "_", states.Select( x => x.Name ).OrderBy( x => x ) );
+        Name = new StateName( String.Join( "_", states.Select( x => x.Name ).OrderBy( x => x ) ) );
         IsEnd = isEnd;
         IsStart = isStart;
 

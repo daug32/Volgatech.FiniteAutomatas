@@ -6,7 +6,8 @@ public interface IFiniteAutomata
 {
     HashSet<State> AllStates { get; }
     HashSet<Argument> Alphabet { get; }
-    HashSet<Transition> Transitions { get; }
+    ISet<Transition> Transitions { get; }
 
     HashSet<State> Move( State from, Argument argument );
+    void RenameState( StateName oldName, StateName newName );
 }

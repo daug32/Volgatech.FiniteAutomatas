@@ -5,7 +5,7 @@ namespace FiniteAutomatas.Domain.Models.Automatas;
 public class DeterminedFiniteAutomata : IFiniteAutomata
 {
     public HashSet<Argument> Alphabet { get; private set; }
-    public HashSet<Transition> Transitions { get; private set; }
+    public ISet<Transition> Transitions { get; private set; }
     public HashSet<State> AllStates { get; private set; }
 
     public DeterminedFiniteAutomata( 
@@ -51,5 +51,29 @@ public class DeterminedFiniteAutomata : IFiniteAutomata
             .Select( transition => transition.To.Name )
             .Select( stateName => AllStates.Single( x => x.Name == stateName ) )
             .ToHashSet();
+    }
+
+    public void RenameState( StateName oldName, StateName newName )
+    {
+        foreach ( State state in AllStates )
+        {
+            if ( state.Name == oldName )
+            {
+                state.Name = newName;
+            }
+        }
+
+        foreach ( Transition transition in Transitions )
+        {
+            if ( transition.From.Name == oldName )
+            {
+                transition.From.Name = newName;
+            }
+
+            if ( transition.To.Name == newName )
+            {
+                transition.To.Name = newName;
+            }
+        }
     }
 }

@@ -6,7 +6,7 @@ public class NonDeterminedFiniteAutomata : IFiniteAutomata
 {
     public HashSet<State> AllStates { get; }
     public HashSet<Argument> Alphabet { get; }
-    public HashSet<Transition> Transitions { get; }
+    public ISet<Transition> Transitions { get; }
 
     public NonDeterminedFiniteAutomata( 
         IEnumerable<Argument> alphabet,
@@ -103,5 +103,29 @@ public class NonDeterminedFiniteAutomata : IFiniteAutomata
         }
 
         return closures;
+    } 
+
+    public void RenameState( StateName oldName, StateName newName )
+    {
+        foreach ( State state in AllStates )
+        {
+            if ( state.Name == oldName )
+            {
+                state.Name = newName;
+            }
+        }
+
+        foreach ( Transition transition in Transitions )
+        {
+            if ( transition.From.Name == oldName )
+            {
+                transition.From.Name = newName;
+            }
+
+            if ( transition.To.Name == newName )
+            {
+                transition.To.Name = newName;
+            }
+        }
     }
 }

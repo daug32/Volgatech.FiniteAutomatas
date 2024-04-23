@@ -7,18 +7,18 @@ namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementati
 internal class DfaMinimizer
 {
     private readonly DeterminedFiniteAutomata _automata;
-    private readonly Dictionary<string, Dictionary<Argument, string>> _transitions;
+    private readonly Dictionary<StateName, Dictionary<Argument, StateName>> _transitions;
     
     public DfaMinimizer( DeterminedFiniteAutomata automata )
     {
         _automata = automata;
 
-        _transitions = _automata.AllStates.ToDictionary( x => x.Name, x => new Dictionary<Argument, string>() );
+        _transitions = _automata.AllStates.ToDictionary( x => x.Name, x => new Dictionary<Argument, StateName>() );
         foreach ( Transition transition in _automata.Transitions )
         {
             if ( !_transitions.ContainsKey( transition.From.Name ) )
             {
-                _transitions[transition.From.Name] = new Dictionary<Argument, string>();
+                _transitions[transition.From.Name] = new Dictionary<Argument, StateName>();
             }
 
             _transitions[transition.From.Name].Add( transition.Argument, transition.To.Name );

@@ -125,7 +125,7 @@ public class FiniteAutomataImageVisualizer
         foreach ( State state in statesToDraw )
         {
             string style = "filled";
-            string label = state.Name;
+            string label = state.Name.ToString();
             string shape = state.IsTerminateState ? "doublecircle" : "circle";
             string fillcolor = BuildFillColor( state );
 

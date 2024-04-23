@@ -4,7 +4,7 @@ namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementati
 
 internal class MinimizationGroup
 {
-    private readonly Dictionary<string, State> _states = new();
+    private readonly Dictionary<StateName, State> _states = new();
 
     public MinimizationGroup()
     {
@@ -34,7 +34,7 @@ internal class MinimizationGroup
         _states.Add( state.Name, state );
     }
 
-    public void Remove( string stateName )
+    public void Remove( StateName stateName )
     {
         if ( !_states.Remove( stateName ) )
         {
@@ -43,7 +43,7 @@ internal class MinimizationGroup
         }
     }
 
-    public bool Contains( string stateName ) => _states.ContainsKey( stateName );
+    public bool Contains( StateName stateName ) => _states.ContainsKey( stateName );
 
     public int Count => _states.Count;
 

@@ -39,14 +39,14 @@ internal static class MinimizationGroupsConvertor
 
     public static DeterminedFiniteAutomata ToFiniteAutomata(
         List<MinimizationGroup> groups,
-        ISet<Transition> oldTransitions )
+        IEnumerable<Transition> oldTransitions )
     {
-        var states = new Dictionary<string, State>( groups.Count );
-        var oldStateNameToNewStateName = new Dictionary<string, string>();
+        var states = new Dictionary<StateName, State>( groups.Count );
+        var oldStateNameToNewStateName = new Dictionary<StateName, StateName>();
         var index = 0;
         foreach ( MinimizationGroup group in groups )
         {
-            var newName = index++.ToString();
+            var newName = new StateName( index++.ToString() );
 
             var isStart = false;
             var isEnd = false;

@@ -8,8 +8,8 @@ internal class FiniteAutomataDictionary
 {
     public static NonDeterminedFiniteAutomata ForSymbol( Argument argument )
     {
-        var start = new State( "0", isStart: true );
-        var end = new State( "1", isEnd: true );
+        var start = new State( new StateName( "0" ), isStart: true );
+        var end = new State( new StateName( "1" ), isEnd: true );
 
         return new NonDeterminedFiniteAutomata(
             alphabet: new[] { argument },
@@ -90,30 +90,31 @@ internal class FiniteAutomataDictionary
             endStateName = UpdateNamesAndGetBiggest( biggestRight + 2, left!.AllStates ) + 1;
             UpdateNamesAndGetBiggest( 1, right!.AllStates );
         }
+        
+        var transitions = left.Transitions.Union( right.Transitions ).ToHashSet();
 
-        var newStart = new State( "0", true );
+        var newStart = new State( new StateName( "0" ), true );
         left.AllStates.Add( newStart );
 
-        var newEnd = new State( endStateName.ToString(), isEnd: true );
+        var newEnd = new State( new StateName( endStateName.ToString() ), isEnd: true );
         left.AllStates.Add( newEnd );
 
         State leftOldStart = left.AllStates.First( x => x.IsStart );
         leftOldStart.IsStart = false;
-        left.Transitions.Add( new Transition( newStart, to: leftOldStart, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( newStart, to: leftOldStart, argument: Argument.Epsilon ) );
 
         State rightOldStart = right.AllStates.First( x => x.IsStart );
         rightOldStart.IsStart = false;
-        right.Transitions.Add( new Transition( newStart, to: rightOldStart, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( newStart, to: rightOldStart, argument: Argument.Epsilon ) );
 
         State leftOldEnd = left.AllStates.First( x => x.IsEnd );
         leftOldEnd.IsEnd = false;
-        left.Transitions.Add( new Transition( leftOldEnd, to: newEnd, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( leftOldEnd, to: newEnd, argument: Argument.Epsilon ) );
 
         State rightOldEnd = right.AllStates.First( x => x.IsEnd );
         rightOldEnd.IsEnd = false;
-        right.Transitions.Add( new Transition( rightOldEnd, to: newEnd, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition( rightOldEnd, to: newEnd, argument: Argument.Epsilon ) );
 
-        var transitions = left.Transitions.Union( right.Transitions ).ToHashSet();
         return new NonDeterminedFiniteAutomata(
             allStates: left.AllStates.Union( right.AllStates ),
             transitions: transitions,
@@ -126,14 +127,14 @@ internal class FiniteAutomataDictionary
 
         int endStateName = UpdateNamesAndGetBiggest( 1, left.AllStates ) + 1;
 
-        var newStart = new State( "0", true );
+        var newStart = new State( new StateName( "0" ), true );
         left.AllStates.Add( newStart );
 
         State oldStart = left.AllStates.First( x => x.IsStart );
         oldStart.IsStart = false;
         left.Transitions.Add( new Transition( from: newStart, to: oldStart, argument: Argument.Epsilon ) );
 
-        var newEnd = new State( endStateName.ToString(), isEnd: true );
+        var newEnd = new State( new StateName( endStateName.ToString() ), isEnd: true );
         left.AllStates.Add( newEnd );
 
         State oldEnd = left.AllStates.First( x => x.IsEnd );
@@ -151,8 +152,8 @@ internal class FiniteAutomataDictionary
         var max = 0;
         foreach ( State state in states )
         {
-            int newName = Int32.Parse( state.Name ) + offset;
-            state.Name = newName.ToString();
+            int newName = Int32.Parse( state.Name.Value ) + offset;
+            state.Name = new StateName( newName.ToString() );
             max = max > newName
                 ? max
                 : newName;
@@ -163,6 +164,6 @@ internal class FiniteAutomataDictionary
 
     private static int FindMaxName( IEnumerable<State> states )
     {
-        return states.Select( x => Int32.Parse( x.Name ) ).Max();
+        return states.Select( x => Int32.Parse( x.Name.Value ) ).Max();
     }
 }

@@ -32,7 +32,7 @@ internal class FiniteAutomataConsoleVisualizer
 
     private IEnumerable<List<string>> BuildRows( string[] columns, VisualizationOptions options )
     {
-        foreach ( State state in _automata.AllStates.OrderBy( x => Int32.TryParse( x.Name, out int value )
+        foreach ( State state in _automata.AllStates.OrderBy( x => Int32.TryParse( x.Name.Value, out int value )
                      ? value
                      : -1 ) )
         {
@@ -42,7 +42,7 @@ internal class FiniteAutomataConsoleVisualizer
             {
                 if ( column == "Id" )
                 {
-                    items.Add( state.Name );
+                    items.Add( state.Name.ToString() );
                     continue;
                 }
 
@@ -69,7 +69,7 @@ internal class FiniteAutomataConsoleVisualizer
                         x.From.Equals( state ) && x.Argument == new Argument( column ) )
                     .Select( x =>
                     {
-                        string transitionLabel = x.To.Name; 
+                        string transitionLabel = x.To.Name.ToString(); 
                         if ( x.AdditionalData != null )
                         {
                             transitionLabel = $"{transitionLabel}/{x.AdditionalData}";
