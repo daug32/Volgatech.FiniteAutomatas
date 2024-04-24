@@ -1,24 +1,26 @@
 ﻿namespace FiniteAutomatas.Domain.Models.ValueObjects;
 
-public class Argument : IComparable
+public class Argument<T> : IComparable
 {
-    public readonly string Value;
+    public static readonly Dictionary<Type, IComparable> Comparers = new();  
+        
+    public readonly T? Value;
 
-    public static Argument Epsilon => new( "" );
+    public static Argument<T> Epsilon => new( default );
 
-    public Argument( string value )
+    public Argument( T? value )
     {
         Value = value;
     }
 
     public override bool Equals( object? obj )
     {
-        return obj is Argument other && Equals( other );
+        return obj is Argument<T> other && Equals( other );
     }
 
-    public bool Equals( Argument other )
+    public bool Equals( Argument<T> other )
     {
-        return Value == other.Value;
+        return Value.Equals( other.Value );
     }
 
     public override int GetHashCode()
@@ -28,28 +30,28 @@ public class Argument : IComparable
 
     public override string ToString()
     {
-        return Value;
+        return Value.ToString();
     }
 
     public int CompareTo( object? obj )
     {
-        if ( obj is not Argument other )
+        if ( obj is not Argument<T> other )
         {
             throw new ArgumentException();
         }
 
-        return String.CompareOrdinal( Value, other.Value );
+        return Comparer<T>.Default.Compare( Value, other.Value );
     }
 
-    public static bool operator ==( Argument a, Argument b )
+    public static bool operator ==( Argument<T> a, Argument<T> b )
     {
         return a.Equals( b );
     }
 
-    public static bool operator !=( Argument a, Argument b )
+    public static bool operator !=( Argument<T> a, Argument<T> b )
     {
         return !a.Equals( b );
     }
 
-    public Argument Copy() => new Argument( Value );
+    public Argument<T> Copy() => new Argument<T>( Value );
 }

@@ -1,17 +1,17 @@
 ﻿namespace FiniteAutomatas.Domain.Models.ValueObjects;
 
-public class Transition
+public class Transition<T>
 {
-    public State From { get; set; }
-    public Argument Argument { get; }
-    public State To { get; set; }
+    public StateId From { get; set; }
+    public Argument<T> Argument { get; }
+    public StateId To { get; set; }
 
     public string? AdditionalData { get; }
 
     public Transition(
-        State from,
-        Argument argument,
-        State to,
+        StateId from,
+        Argument<T> argument,
+        StateId to,
         string? additionalData = null )
     {
         From = from;
@@ -22,10 +22,10 @@ public class Transition
 
     public override bool Equals( object? obj )
     {
-        return obj is Transition other && Equals( other );
+        return obj is Transition<T> other && Equals( other );
     }
 
-    public bool Equals( Transition other )
+    public bool Equals( Transition<T> other )
     {
         return From == other.From && To == other.To && Argument == other.Argument;
     }
@@ -40,15 +40,13 @@ public class Transition
         return $"(From: {From}, To: {To}, Argument: {Argument})";
     }
 
-    public static bool operator ==( Transition a, Transition b )
+    public static bool operator ==( Transition<T> a, Transition<T> b )
     {
         return a.Equals( b );
     }
 
-    public static bool operator !=( Transition a, Transition b )
+    public static bool operator !=( Transition<T> a, Transition<T> b )
     {
         return !a.Equals( b );
     }
-
-    public Transition Copy() => new( From.Copy(), Argument.Copy(), To.Copy() );
 }

@@ -4,28 +4,28 @@ using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementation;
 
-internal class DfaMinimizer
+internal class DfaMinimizer<T>
 {
-    private readonly FiniteAutomata _automata;
-    private readonly Dictionary<string, Dictionary<Argument, string>> _transitions;
+    private readonly DeterminedFiniteAutomata<T> _automata;
+    private readonly Dictionary<StateId, Dictionary<Argument<T>, StateId>> _transitions;
     
-    public DfaMinimizer( FiniteAutomata automata )
+    public DfaMinimizer( DeterminedFiniteAutomata<T> automata )
     {
         _automata = automata;
 
-        _transitions = _automata.AllStates.ToDictionary( x => x.Name, x => new Dictionary<Argument, string>() );
-        foreach ( Transition transition in _automata.Transitions )
+        _transitions = _automata.AllStates.ToDictionary( x => x.Id, x => new Dictionary<Argument<T>, StateId>() );
+        foreach ( Transition<T> transition in _automata.Transitions )
         {
-            if ( !_transitions.ContainsKey( transition.From.Name ) )
+            if ( !_transitions.ContainsKey( transition.From ) )
             {
-                _transitions[transition.From.Name] = new Dictionary<Argument, string>();
+                _transitions[transition.From] = new Dictionary<Argument<T>, StateId>();
             }
 
-            _transitions[transition.From.Name].Add( transition.Argument, transition.To.Name );
+            _transitions[transition.From].Add( transition.Argument, transition.To );
         }
     }
     
-    public FiniteAutomata Minimize()
+    public DeterminedFiniteAutomata<T> Minimize()
     {
         return MinimizationGroupsConvertor.ToFiniteAutomata(
             FindEquivalentStates(),
@@ -60,7 +60,7 @@ internal class DfaMinimizer
                         continue;
                     }
 
-                    currentGroup.Remove( current.Name );
+                    currentGroup.Remove( current.Id );
 
                     bool addedToGroup = false;
                     foreach ( MinimizationGroup createdGroup in createdGroups )
@@ -106,15 +106,15 @@ internal class DfaMinimizer
             return false;
         }
 
-        foreach ( Argument argument in _automata.Alphabet )
+        foreach ( Argument<T> argument in _automata.Alphabet )
         {
-            MinimizationGroup? firstGroup = groups.SingleOrDefault( x => x.Any( groupItem => groupItem.Name == _transitions[first.Name][argument] ) );
+            MinimizationGroup? firstGroup = groups.SingleOrDefault( x => x.Any( groupItem => groupItem.Id == _transitions[first.Id][argument] ) );
             if ( firstGroup is null )
             {
                 return false;
             }
             
-            MinimizationGroup? secondGroup = groups.SingleOrDefault( x => x.Any( groupItem => groupItem.Name == _transitions[second.Name][argument] ) );
+            MinimizationGroup? secondGroup = groups.SingleOrDefault( x => x.Any( groupItem => groupItem.Id == _transitions[second.Id][argument] ) );
             if ( secondGroup is null )
             {
                 return false;

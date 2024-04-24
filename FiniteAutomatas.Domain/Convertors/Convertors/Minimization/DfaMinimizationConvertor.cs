@@ -3,10 +3,11 @@ using FiniteAutomatas.Domain.Models.Automatas;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization;
 
-public class DfaMinimizationConvertor : IAutomataConvertor<FiniteAutomata>
+public class DfaMinimizationConvertor<T> : IAutomataConvertor<DeterminedFiniteAutomata<T>, T, DeterminedFiniteAutomata<T>>
 {
-    public FiniteAutomata Convert( FiniteAutomata automata )
+    public DeterminedFiniteAutomata<T> Convert( DeterminedFiniteAutomata<T> automata )
     {
-        return new DfaMinimizer( automata ).Minimize();
+        DeterminedFiniteAutomata<T> dfa = new DfaMinimizer<T>( automata ).Minimize();
+        return dfa;
     }
 }

@@ -7,22 +7,20 @@ using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Visualizations.Implementation;
 
-public class FiniteAutomataImageVisualizer
+public class FiniteAutomataImageVisualizer<T>
 {
     private readonly string _graphvizPath = "./Graphviz/bin/dot.exe";
     private readonly string _graphName = "graphName";
     
-    private readonly FiniteAutomata _automata;
+    private readonly IFiniteAutomata<T> _automata;
 
-    public FiniteAutomataImageVisualizer( FiniteAutomata automata )
+    public FiniteAutomataImageVisualizer( IFiniteAutomata<T> automata )
     {
         _automata = automata;
     }
 
     public async Task ToImage( string path, VisualizationOptions? options = null )
     {
-        options ??= new VisualizationOptions();
-
         var tempDataPath = $"{path}.dot";
 
         await File.WriteAllTextAsync( 
@@ -93,17 +91,17 @@ public class FiniteAutomataImageVisualizer
 
     private IEnumerable<string> BuildTransitions( HashSet<State> statesToDraw )
     {
-        foreach ( Transition transition in _automata.Transitions )
+        foreach ( Transition<T> transition in _automata.Transitions )
         {
-            if ( !statesToDraw.Contains( transition.To ) )
+            if ( !statesToDraw.Any( x => x.Id == transition.To ) )
             {
                 continue;
             }
 
-            string label = transition.Argument == Argument.Epsilon
+            string label = transition.Argument == Argument<T>.Epsilon
                 ? "Eps"
-                : transition.Argument.Value;
-            yield return $"{transition.From.Name} -> {transition.To.Name} [label=\"{label}\"];";
+                : transition.Argument.Value!.ToString()!;
+            yield return $"{transition.From} -> {transition.To} [label=\"{label}\"];";
         }
     }
 
@@ -127,11 +125,11 @@ public class FiniteAutomataImageVisualizer
         foreach ( State state in statesToDraw )
         {
             string style = "filled";
-            string label = state.Name;
+            string label = state.Id.ToString();
             string shape = state.IsTerminateState ? "doublecircle" : "circle";
             string fillcolor = BuildFillColor( state );
 
-            yield return $"{state.Name} [style=\"{style}\" fillcolor=\"{fillcolor}\" label=\"{label}\" shape=\"{shape}\"];";
+            yield return $"{state.Id} [style=\"{style}\" fillcolor=\"{fillcolor}\" label=\"{label}\" shape=\"{shape}\"];";
         }
     }
 

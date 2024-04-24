@@ -1,11 +1,12 @@
 using FiniteAutomatas.Domain.Convertors;
-using FiniteAutomatas.Domain.Convertors.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors.Minimization;
+using FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.Automatas.Extensions;
 using FiniteAutomatas.Domain.Models.ValueObjects;
+using FiniteAutomatas.RegularExpressions;
 
-namespace FiniteAutomatas.RegularExpressions.Tests;
+namespace FiniteAutomatas.Tests;
 
 public class RegexTests
 {
@@ -82,13 +83,12 @@ public class RegexTests
     public void Test( RegexTestData testData )
     {
         // Arrange
-        FiniteAutomata regex = null!;
+        DeterminedFiniteAutomata<char> regex = null!;
         Assert.DoesNotThrow( 
             () => regex = new RegexToNfaParser()
                 .Parse( testData.Regex )
-                .Convert( new NfaToDfaConvertor() )
-                .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
-                .Convert( new DfaMinimizationConvertor() ),
+                .Convert( new NfaToDfaConvertor<char>() )
+                .Convert( new DfaMinimizationConvertor<char>() ),
             $"Regex: {testData.Regex}" );
 
         // Act & Assert
@@ -98,24 +98,24 @@ public class RegexTests
             {
                 var result = FiniteAutomataRunResult.Unknown;
                 Assert.DoesNotThrow(
-                    () => result = regex.RunForAllSymbols( successTest.Select( x => new Argument( x.ToString() ) ) ),
+                    () => result = regex.Run( successTest.Select( x => new Argument<char>( x ) ) ),
                     $"Regex: {testData.Regex}, Test: {successTest}" );
                 Assert.That(
                     result.IsSuccess(),
                     Is.True,
-                    $"Regex: {testData.Regex}, Test: {successTest}. Must be success" );
+                    $"Regex: {testData.Regex}, Test: {successTest}. Must be success but got {result}" );
             }
 
             foreach ( string failTest in testData.FailTests )
             {
                 var result = FiniteAutomataRunResult.Unknown;
                 Assert.DoesNotThrow( 
-                    () => result = regex.RunForAllSymbols( failTest.Select( x => new Argument( x.ToString() ) ) ),
+                    () => result = regex.Run( failTest.Select( x => new Argument<char>( x ) ) ),
                     $"Regex: {testData.Regex}, Test: {failTest}" );
                 Assert.That(
                     result.IsSuccess(),
                     Is.False,
-                    $"Regex: {testData.Regex}, Test: {failTest}. Must be failed" );
+                    $"Regex: {testData.Regex}, Test: {failTest}. Must be failed but got {result}" );
             }
         } );
         

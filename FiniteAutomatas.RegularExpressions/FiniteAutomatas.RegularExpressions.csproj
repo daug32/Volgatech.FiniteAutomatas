@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\FiniteAutomatas.Domain\FiniteAutomatas.Domain.csproj" />
+      <ProjectReference Include="..\FluentAssertions\FluentAssertions.csproj" />
     </ItemGroup>
 
 </Project>

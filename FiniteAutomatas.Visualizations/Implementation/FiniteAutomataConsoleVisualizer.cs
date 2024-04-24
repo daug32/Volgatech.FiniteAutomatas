@@ -4,22 +4,22 @@ using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Visualizations.Implementation;
 
-internal class FiniteAutomataConsoleVisualizer
+internal class FiniteAutomataConsoleVisualizer<T>
 {
-    private readonly FiniteAutomata _automata;
+    private readonly IFiniteAutomata<T> _automata;
 
-    public FiniteAutomataConsoleVisualizer( FiniteAutomata automata )
+    public FiniteAutomataConsoleVisualizer( IFiniteAutomata<T> automata )
     {
         _automata = automata;
     }
 
-    public void Print()
+    public void Print( VisualizationOptions options )
     {
         // Create columns
-        string[] columns = BuildColumns().ToArray();
+        string[] columns = BuildColumns( options ).ToArray();
 
         // Create rows
-        var rows = BuildRows( columns ).ToArray();
+        var rows = BuildRows( columns, options ).ToArray();
 
         var table = new ConsoleTable( columns );
         foreach ( var row in rows )
@@ -30,11 +30,9 @@ internal class FiniteAutomataConsoleVisualizer
         table.Write();
     }
 
-    private IEnumerable<List<string>> BuildRows( string[] columns )
+    private IEnumerable<List<string>> BuildRows( string[] columns, VisualizationOptions options )
     {
-        foreach ( State state in _automata.AllStates.OrderBy( x => Int32.TryParse( x.Name, out int value )
-                     ? value
-                     : -1 ) )
+        foreach ( State state in _automata.AllStates.OrderBy( x => x.ToString() ) )
         {
             var items = new List<string>();
 
@@ -42,7 +40,7 @@ internal class FiniteAutomataConsoleVisualizer
             {
                 if ( column == "Id" )
                 {
-                    items.Add( state.Name );
+                    items.Add( state.Id.ToString() );
                     continue;
                 }
 
@@ -58,21 +56,23 @@ internal class FiniteAutomataConsoleVisualizer
                     continue;
                 }
 
-                if ( column == "IsError" )
+                if ( options.DrawErrorState && column == "IsError" )
                 {
                     items.Add( state.IsError.ToString() );
                     continue;
                 }
 
                 var transitions = _automata.Transitions
-                    .Where( x =>
-                        x.From.Equals( state ) && x.Argument == new Argument( column ) )
-                    .Select( x =>
+                    .Where( transition =>
+                        transition.From == state.Id &&
+                        transition.Argument.ToString() == column &&
+                        ( !_automata.GetState( transition.To ).IsError || _automata.GetState( transition.To ).IsError && options.DrawErrorState ) )
+                    .Select( transition =>
                     {
-                        string transitionLabel = x.To.Name; 
-                        if ( x.AdditionalData != null )
+                        string transitionLabel = transition.To.ToString(); 
+                        if ( transition.AdditionalData != null )
                         {
-                            transitionLabel = $"{transitionLabel}/{x.AdditionalData}";
+                            transitionLabel = $"{transitionLabel}/{transition.AdditionalData}";
                         }
 
                         return transitionLabel;
@@ -86,14 +86,18 @@ internal class FiniteAutomataConsoleVisualizer
         }
     }
 
-    private IEnumerable<string> BuildColumns()
+    private IEnumerable<string> BuildColumns( VisualizationOptions options )
     {
         var result = new List<string>();
         result.Add( "Id" );
         result.Add( "IsStart" );
         result.Add( "IsEnd" );
-        result.Add( "IsError" );
-        result.AddRange( _automata.Alphabet.Select( x => x.Value ).Order() );
+        if ( options.DrawErrorState )
+        {
+            result.Add( "IsError" );
+        }
+
+        result.AddRange( _automata.Alphabet.Select( x => x.Value!.ToString() ).Order()! );
 
         return result;
     }

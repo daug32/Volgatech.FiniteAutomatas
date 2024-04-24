@@ -1,6 +1,6 @@
 ﻿using FiniteAutomatas.Domain.Convertors;
-using FiniteAutomatas.Domain.Convertors.Convertors;
 using FiniteAutomatas.Domain.Convertors.Convertors.Minimization;
+using FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Visualizations;
 
@@ -17,32 +17,25 @@ public class Program
             
             try
             {
-                System.Console.WriteLine( "Creating an NFA..." );
-                FiniteAutomata nfa = await new RegexToNfaParser()
+                System.Console.WriteLine( "Creating a DFA..." );
+                DeterminedFiniteAutomata<char> dfa = new RegexToNfaParser()
                     .Parse( regex )
-                    .PrintToConsole()
-                    .PrintToImageAsync( @".\nfa.png" );
+                    .Convert( new NfaToDfaConvertor<char>() )
+                    .Convert( new DfaMinimizationConvertor<char>() );
 
-                System.Console.WriteLine( "Converting NFA into DFA..." );
-                FiniteAutomata dfa = await nfa
-                    .Convert( new NfaToDfaConvertor() )
-                    .PrintToConsole( "DFA" )
-                    .PrintToImageAsync( @".\dfa1.png" );
-                    
-                System.Console.WriteLine( "DFA normalization..." );
-                FiniteAutomata normalizedDfa = dfa
-                    .Convert( new SetErrorStateOnEmptyTransitionsConvertor() )
-                    .PrintToConsole( "Normalized DFA" );
-                    
-                System.Console.WriteLine( "DFA minimization..." );
-                FiniteAutomata minimizedDfa = await normalizedDfa
-                    .Convert( new DfaMinimizationConvertor() )
-                    .PrintToConsole( "Minimized DFA" )
-                    .PrintToImageAsync( @".\dfa3Minimized.png", new VisualizationOptions()
+                System.Console.WriteLine( "Printing DFA..." );
+                await dfa
+                    .PrintToConsole<DeterminedFiniteAutomata<char>, char>( new VisualizationOptions()
+                    {
+                        DrawErrorState = false
+                    } )
+                    .PrintToImageAsync<DeterminedFiniteAutomata<char>, char>( @".\dfa3Minimized.png", new VisualizationOptions()
                     {
                         DrawErrorState = false,
                         TimeoutInMilliseconds = 15_000
                     } );
+
+                System.Console.WriteLine( "Success" );
             }
             catch ( Exception ex )
             {

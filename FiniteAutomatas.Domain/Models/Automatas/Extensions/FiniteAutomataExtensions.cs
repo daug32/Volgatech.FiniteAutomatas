@@ -1,16 +1,17 @@
 ﻿using FiniteAutomatas.Domain.Models.ValueObjects;
+using FiniteAutomatas.Domain.Models.ValueObjects.Implementation;
 
 namespace FiniteAutomatas.Domain.Models.Automatas.Extensions;
 
 public static class FiniteAutomataExtensions
 {
-    public static FiniteAutomataRunResult RunForAllSymbols( this FiniteAutomata automata, IEnumerable<Argument> arguments )
+    public static FiniteAutomataRunResult Run<T>( this IFiniteAutomata<T> automata, IEnumerable<Argument<T>> arguments )
     {
         State currentState = automata.AllStates.First( x => x.IsStart );
 
-        foreach ( Argument argument in arguments )
+        foreach ( Argument<T> argument in arguments )
         {
-            HashSet<State> states = automata.Move( currentState, argument ); 
+            HashSet<StateId> states = automata.Move( currentState.Id, argument ); 
             if ( states.Count > 1 )
             {
                 throw new ArgumentException( "Can only process DFA automatas" );
@@ -21,7 +22,7 @@ public static class FiniteAutomataExtensions
                 return FiniteAutomataRunResult.FinishedOnError;
             }
 
-            currentState = states.Single();
+            currentState = automata.GetState( states.Single() );
         }
 
         if ( currentState.IsEnd )
@@ -36,17 +37,42 @@ public static class FiniteAutomataExtensions
 
         return FiniteAutomataRunResult.FinishedOnIntermediate;
     }
-}
 
-public enum FiniteAutomataRunResult
-{
-    Unknown,
-    FinishedOnSuccess,
-    FinishedOnIntermediate,
-    FinishedOnError,
-}
+    private static void StandardizeIds<T>( this IFiniteAutomata<T> automata )
+    {
+        var states = automata.AllStates.ToList();
+        states.Sort( ( a, b ) =>
+        {
+            if ( a.IsStart )
+            {
+                return -1;
+            }
 
-public static class FiniteAutomataRunResultExtensions
-{
-    public static bool IsSuccess( this FiniteAutomataRunResult result ) => result == FiniteAutomataRunResult.FinishedOnSuccess;
+            if ( b.IsStart )
+            {
+                return 1;
+            }
+
+            return a.Id.CompareTo( b.Id );
+        } );
+
+        var stateOldIdToNewId = new Dictionary<StateId, StateId>();
+        
+        var stateIdIncrementor = new StateIdIncrementer( new StateId( 0 ) );
+        foreach ( State state in states )
+        {
+            stateOldIdToNewId[state.Id] = stateIdIncrementor.Next();
+        }
+
+        foreach ( State state in automata.AllStates )
+        {
+            state.Id = stateOldIdToNewId[state.Id];
+        }
+        
+        foreach ( Transition<T> transition in automata.Transitions )
+        {
+            transition.From = stateOldIdToNewId[transition.From];
+            transition.To = stateOldIdToNewId[transition.To];
+        }
+    }
 }

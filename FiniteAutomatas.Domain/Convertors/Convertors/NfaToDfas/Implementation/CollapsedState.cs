@@ -1,11 +1,10 @@
 ﻿using FiniteAutomatas.Domain.Models.ValueObjects;
 
-namespace FiniteAutomatas.Domain.Convertors.Convertors.Implementation.Models;
+namespace FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas.Implementation;
 
 internal class CollapsedState
 {
     public string Name { get; }
-    public bool IsTerminateState => IsEnd || IsError;
     public bool IsError { get; set; }
     public bool IsStart { get; set; }
     public bool IsEnd { get; set; }
@@ -14,7 +13,7 @@ internal class CollapsedState
 
     public CollapsedState( State state )
     {
-        Name = state.Name;
+        Name = state.Id.ToString();
         IsStart = state.IsStart;
         IsEnd = state.IsEnd;
         IsError = state.IsError;
@@ -23,7 +22,7 @@ internal class CollapsedState
 
     public CollapsedState( HashSet<State> states, bool isStart, bool isEnd )
     {
-        Name = String.Join( "_", states.Select( x => x.Name ).OrderBy( x => x ) );
+        Name = String.Join( "_", states.Select( x => x.Id.ToString() ).OrderBy( x => x ) );
         IsEnd = isEnd;
         IsStart = isStart;
 
@@ -36,9 +35,9 @@ internal class CollapsedState
         }
     }
 
-    public State ToState()
+    public State ToState( StateId id )
     {
-        return new State( Name, IsStart, IsEnd );
+        return new State( id, IsStart, IsEnd, IsError );
     }
 
     public override bool Equals( object? obj )
