@@ -2,22 +2,22 @@
 
 namespace FiniteAutomatas.Domain.Models.Automatas;
 
-public class NonDeterminedFiniteAutomata : IFiniteAutomata
+public class NonDeterminedFiniteAutomata<T> : IFiniteAutomata<T>
 {
     public IReadOnlyCollection<State> AllStates { get; }
-    public IReadOnlyCollection<Argument> Alphabet { get; }
-    public IReadOnlyCollection<Transition> Transitions { get; }
+    public IReadOnlyCollection<Argument<T>> Alphabet { get; }
+    public IReadOnlyCollection<Transition<T>> Transitions { get; }
 
     public NonDeterminedFiniteAutomata( 
-        IEnumerable<Argument> alphabet,
-        IEnumerable<Transition> transitions, 
+        IEnumerable<Argument<T>> alphabet,
+        IEnumerable<Transition<T>> transitions, 
         IEnumerable<State> allStates )
     {
         Alphabet = alphabet.ToHashSet();
         AllStates = allStates.ToHashSet();
         Transitions = transitions.ToHashSet();
         
-        foreach ( Transition transition in Transitions )
+        foreach ( Transition<T> transition in Transitions )
         {
             if ( !AllStates.Any( x => x.Id == transition.From ) )
             {
@@ -42,9 +42,9 @@ public class NonDeterminedFiniteAutomata : IFiniteAutomata
         }
     }
 
-    HashSet<StateId> IFiniteAutomata.Move( StateId from, Argument argument ) => Move( from, argument );
+    HashSet<StateId> IFiniteAutomata<T>.Move( StateId from, Argument<T> argument ) => Move( from, argument );
 
-    public HashSet<StateId> Move( StateId from, Argument argument, HashSet<StateId>? epsClosures = null )
+    public HashSet<StateId> Move( StateId from, Argument<T> argument, HashSet<StateId>? epsClosures = null )
     {
         epsClosures ??= EpsClosure( from ).ToHashSet();
         return Transitions
@@ -111,12 +111,12 @@ public class NonDeterminedFiniteAutomata : IFiniteAutomata
 
             processedStates.Add( state );
             
-            var stateTransitions = new Queue<Transition>( Transitions.Where( transition => transition.From == state ) );
+            var stateTransitions = new Queue<Transition<T>>( Transitions.Where( transition => transition.From == state ) );
 
             while ( stateTransitions.Any() )
             {
-                Transition transition = stateTransitions.Dequeue();
-                if ( transition.Argument != Argument.Epsilon )
+                Transition<T> transition = stateTransitions.Dequeue();
+                if ( transition.Argument != Argument<T>.Epsilon )
                 {
                     continue;
                 }

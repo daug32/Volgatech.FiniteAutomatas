@@ -2,22 +2,22 @@
 
 namespace FiniteAutomatas.Domain.Models.Automatas;
 
-public class DeterminedFiniteAutomata : IFiniteAutomata
+public class DeterminedFiniteAutomata<T> : IFiniteAutomata<T>
 {
-    public IReadOnlyCollection<Argument> Alphabet { get; private init; }
+    public IReadOnlyCollection<Argument<T>> Alphabet { get; private init; }
     public IReadOnlyCollection<State> AllStates { get; private init; }
-    public IReadOnlyCollection<Transition> Transitions { get; private init; } 
+    public IReadOnlyCollection<Transition<T>> Transitions { get; private init; } 
 
     public DeterminedFiniteAutomata( 
-        IEnumerable<Argument> alphabet,
-        IEnumerable<Transition> transitions, 
+        IEnumerable<Argument<T>> alphabet,
+        IEnumerable<Transition<T>> transitions, 
         IEnumerable<State> allStates )
     {
         Alphabet = alphabet.ToHashSet();
         AllStates = allStates.ToHashSet();
         Transitions = transitions.ToHashSet();
         
-        foreach ( Transition transition in Transitions )
+        foreach ( Transition<T> transition in Transitions )
         {
             if ( !AllStates.Any( x => x.Id == transition.From ) )
             {
@@ -66,7 +66,7 @@ public class DeterminedFiniteAutomata : IFiniteAutomata
         return AllStates.Single( x => x.Id == stateId );
     }
 
-    public HashSet<StateId> Move( StateId from, Argument argument ) 
+    public HashSet<StateId> Move( StateId from, Argument<T> argument ) 
     {
         return Transitions
             .Where( transition =>

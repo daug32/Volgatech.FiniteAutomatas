@@ -27,12 +27,12 @@ public class DfaCreationTests
         int expectedNumberOfStates )
     {
         // Arrange
-        DeterminedFiniteAutomata regexFa = new RegexToNfaParser()
+        DeterminedFiniteAutomata<char> regexFa = new RegexToNfaParser()
             .Parse( regex )
-            .Convert( new NfaToDfaConvertor() );
+            .Convert( new NfaToDfaConvertor<char>() );
         
         // Act
-        DeterminedFiniteAutomata minimizedFa = regexFa.Convert( new DfaMinimizationConvertor() );
+        DeterminedFiniteAutomata<char> minimizedFa = regexFa.Convert( new DfaMinimizationConvertor<char>() );
 
         // Assert
         
@@ -49,10 +49,10 @@ public class DfaCreationTests
         foreach ( State state in minimizedFa.AllStates )
         {
             bool hasTransitionsForAllArguments = true;
-            foreach ( Argument argument in minimizedFa.Alphabet )
+            foreach ( Argument<char> argument in minimizedFa.Alphabet )
             {
                 bool hasTransitionForArgument = false;
-                foreach ( Transition transition in minimizedFa.Transitions )
+                foreach ( Transition<char> transition in minimizedFa.Transitions )
                 {
                     if ( transition.From != state.Id || transition.Argument != argument )
                     {

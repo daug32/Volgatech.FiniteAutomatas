@@ -7,14 +7,14 @@ using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Visualizations.Implementation;
 
-public class FiniteAutomataImageVisualizer
+public class FiniteAutomataImageVisualizer<T>
 {
     private readonly string _graphvizPath = "./Graphviz/bin/dot.exe";
     private readonly string _graphName = "graphName";
     
-    private readonly IFiniteAutomata _automata;
+    private readonly IFiniteAutomata<T> _automata;
 
-    public FiniteAutomataImageVisualizer( IFiniteAutomata automata )
+    public FiniteAutomataImageVisualizer( IFiniteAutomata<T> automata )
     {
         _automata = automata;
     }
@@ -91,16 +91,16 @@ public class FiniteAutomataImageVisualizer
 
     private IEnumerable<string> BuildTransitions( HashSet<State> statesToDraw )
     {
-        foreach ( Transition transition in _automata.Transitions )
+        foreach ( Transition<T> transition in _automata.Transitions )
         {
             if ( !statesToDraw.Any( x => x.Id == transition.To ) )
             {
                 continue;
             }
 
-            string label = transition.Argument == Argument.Epsilon
+            string label = transition.Argument == Argument<T>.Epsilon
                 ? "Eps"
-                : transition.Argument.Value;
+                : transition.Argument.Value!.ToString()!;
             yield return $"{transition.From} -> {transition.To} [label=\"{label}\"];";
         }
     }

@@ -18,18 +18,18 @@ public class Program
             try
             {
                 System.Console.WriteLine( "Creating a DFA..." );
-                DeterminedFiniteAutomata dfa = new RegexToNfaParser()
+                DeterminedFiniteAutomata<char> dfa = new RegexToNfaParser()
                     .Parse( regex )
-                    .Convert( new NfaToDfaConvertor() )
-                    .Convert( new DfaMinimizationConvertor() );
+                    .Convert( new NfaToDfaConvertor<char>() )
+                    .Convert( new DfaMinimizationConvertor<char>() );
 
                 System.Console.WriteLine( "Printing DFA..." );
                 await dfa
-                    .PrintToConsole( new VisualizationOptions()
+                    .PrintToConsole<DeterminedFiniteAutomata<char>, char>( new VisualizationOptions()
                     {
                         DrawErrorState = false
                     } )
-                    .PrintToImageAsync( @".\dfa3Minimized.png", new VisualizationOptions()
+                    .PrintToImageAsync<DeterminedFiniteAutomata<char>, char>( @".\dfa3Minimized.png", new VisualizationOptions()
                     {
                         DrawErrorState = false,
                         TimeoutInMilliseconds = 15_000

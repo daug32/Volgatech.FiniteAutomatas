@@ -5,12 +5,12 @@ using FiniteAutomatas.Domain.Models.ValueObjects.Implementation;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas;
 
-public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata, DeterminedFiniteAutomata>
+public class NfaToDfaConvertor<T> : IAutomataConvertor<NonDeterminedFiniteAutomata<T>, T, DeterminedFiniteAutomata<T>>
 {
-    public DeterminedFiniteAutomata Convert( NonDeterminedFiniteAutomata automata )
+    public DeterminedFiniteAutomata<T> Convert( NonDeterminedFiniteAutomata<T> automata )
     {
         // Result data
-        var dfaTransitions = new List<(CollapsedState from, Argument argument, CollapsedState to)>();
+        var dfaTransitions = new List<(CollapsedState from, Argument<T> argument, CollapsedState to)>();
         var errorState = new State( new StateId( -1 ), isError: true );
         
         // For optimization
@@ -22,7 +22,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
         stateToEpsClosures[errorState] = new EpsClosure( new HashSet<State>() { errorState } );
 
         // Algorithm data
-        var alphabet = automata.Alphabet.Where( x => x != Argument.Epsilon ).ToHashSet();
+        var alphabet = automata.Alphabet.Where( x => x != Argument<T>.Epsilon ).ToHashSet();
         var queue = new Queue<CollapsedState>();
         queue.Enqueue( new CollapsedState( automata.AllStates.First( x => x.IsStart ) ) );
         var processedStates = new HashSet<CollapsedState>();
@@ -41,7 +41,7 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
                 fromState.IsEnd |= epsClosure.HasEnd;
             }
 
-            foreach ( Argument argument in alphabet )
+            foreach ( Argument<T> argument in alphabet )
             {
                 var achievableStatesIds = fromState.States
                     .SelectMany( state => automata.Move(
@@ -69,18 +69,18 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
             }
         }
 
-        DeterminedFiniteAutomata dfa = BuildDfa( dfaTransitions );
+        DeterminedFiniteAutomata<T> dfa = BuildDfa( dfaTransitions );
         return dfa;
     }
 
-    private static DeterminedFiniteAutomata BuildDfa( List<(CollapsedState from, Argument argument, CollapsedState to)> rawTransitions )
+    private static DeterminedFiniteAutomata<T> BuildDfa( List<(CollapsedState from, Argument<T> argument, CollapsedState to)> rawTransitions )
     {
         var stateIdIncrementor = new StateIdIncrementer( new StateId( 0 ) );
         
         var states = new Dictionary<CollapsedState, State>();
-        var transitions = new List<Transition>();
-        var alphabet = new HashSet<Argument>();
-        foreach ( (CollapsedState from, Argument argument, CollapsedState to) rawTransition in rawTransitions )
+        var transitions = new List<Transition<T>>();
+        var alphabet = new HashSet<Argument<T>>();
+        foreach ( (CollapsedState from, Argument<T> argument, CollapsedState to) rawTransition in rawTransitions )
         {
             State fromState; 
             if ( states.ContainsKey( rawTransition.from ) )
@@ -106,10 +106,10 @@ public class NfaToDfaConvertor : IAutomataConvertor<NonDeterminedFiniteAutomata,
 
             alphabet.Add( rawTransition.argument );
             
-            transitions.Add( new Transition( fromState.Id, rawTransition.argument, toState.Id ) );
+            transitions.Add( new Transition<T>( fromState.Id, rawTransition.argument, toState.Id ) );
         }
 
-        return new DeterminedFiniteAutomata(
+        return new DeterminedFiniteAutomata<T>(
             alphabet,
             transitions,
             states.Values );

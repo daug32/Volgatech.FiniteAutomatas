@@ -4,28 +4,28 @@ using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementation;
 
-internal class DfaMinimizer
+internal class DfaMinimizer<T>
 {
-    private readonly DeterminedFiniteAutomata _automata;
-    private readonly Dictionary<StateId, Dictionary<Argument, StateId>> _transitions;
+    private readonly DeterminedFiniteAutomata<T> _automata;
+    private readonly Dictionary<StateId, Dictionary<Argument<T>, StateId>> _transitions;
     
-    public DfaMinimizer( DeterminedFiniteAutomata automata )
+    public DfaMinimizer( DeterminedFiniteAutomata<T> automata )
     {
         _automata = automata;
 
-        _transitions = _automata.AllStates.ToDictionary( x => x.Id, x => new Dictionary<Argument, StateId>() );
-        foreach ( Transition transition in _automata.Transitions )
+        _transitions = _automata.AllStates.ToDictionary( x => x.Id, x => new Dictionary<Argument<T>, StateId>() );
+        foreach ( Transition<T> transition in _automata.Transitions )
         {
             if ( !_transitions.ContainsKey( transition.From ) )
             {
-                _transitions[transition.From] = new Dictionary<Argument, StateId>();
+                _transitions[transition.From] = new Dictionary<Argument<T>, StateId>();
             }
 
             _transitions[transition.From].Add( transition.Argument, transition.To );
         }
     }
     
-    public DeterminedFiniteAutomata Minimize()
+    public DeterminedFiniteAutomata<T> Minimize()
     {
         return MinimizationGroupsConvertor.ToFiniteAutomata(
             FindEquivalentStates(),
@@ -106,7 +106,7 @@ internal class DfaMinimizer
             return false;
         }
 
-        foreach ( Argument argument in _automata.Alphabet )
+        foreach ( Argument<T> argument in _automata.Alphabet )
         {
             MinimizationGroup? firstGroup = groups.SingleOrDefault( x => x.Any( groupItem => groupItem.Id == _transitions[first.Id][argument] ) );
             if ( firstGroup is null )

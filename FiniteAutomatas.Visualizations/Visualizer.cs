@@ -5,34 +5,34 @@ namespace FiniteAutomatas.Visualizations;
 
 public static class Visualizer
 {
-    public static T PrintToImage<T>( 
-        this T automata,
+    public static TAutomata PrintToImage<TAutomata, TAutomataType>( 
+        this TAutomata automata,
         string path,
         VisualizationOptions? options = null )
-        where T : DeterminedFiniteAutomata
+        where TAutomata : IFiniteAutomata<TAutomataType>
     {
-        Task task = new FiniteAutomataImageVisualizer( automata ).ToImage( path, options );
+        Task task = new FiniteAutomataImageVisualizer<TAutomataType>( automata ).ToImage( path, options );
         task.Wait();
 
         return automata;
     }
     
-    public static async Task<T> PrintToImageAsync<T>( 
-        this T automata,
+    public static async Task<TAutomata> PrintToImageAsync<TAutomata, TAutomataType>( 
+        this TAutomata automata,
         string path,
         VisualizationOptions? options = null )
-        where T : IFiniteAutomata
+        where TAutomata : IFiniteAutomata<TAutomataType>
     {
-        await new FiniteAutomataImageVisualizer( automata ).ToImage( path, options ?? new VisualizationOptions() );
+        await new FiniteAutomataImageVisualizer<TAutomataType>( automata ).ToImage( path, options ?? new VisualizationOptions() );
         return automata;
     }
 
-    public static T PrintToConsole<T>(
-        this T automata,
+    public static TAutomata PrintToConsole<TAutomata, TAutomataType>(
+        this TAutomata automata,
         VisualizationOptions? options = null )
-        where T : IFiniteAutomata
+        where TAutomata : IFiniteAutomata<TAutomataType>
     {
-        new FiniteAutomataConsoleVisualizer( automata ).Print( options ?? new VisualizationOptions() );
+        new FiniteAutomataConsoleVisualizer<TAutomataType>( automata ).Print( options ?? new VisualizationOptions() );
         return automata;
     }
 }

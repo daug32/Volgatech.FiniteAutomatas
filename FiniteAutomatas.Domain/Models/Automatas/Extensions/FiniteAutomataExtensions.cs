@@ -5,11 +5,11 @@ namespace FiniteAutomatas.Domain.Models.Automatas.Extensions;
 
 public static class FiniteAutomataExtensions
 {
-    public static FiniteAutomataRunResult Run( this IFiniteAutomata automata, IEnumerable<Argument> arguments )
+    public static FiniteAutomataRunResult Run<T>( this IFiniteAutomata<T> automata, IEnumerable<Argument<T>> arguments )
     {
         State currentState = automata.AllStates.First( x => x.IsStart );
 
-        foreach ( Argument argument in arguments )
+        foreach ( Argument<T> argument in arguments )
         {
             HashSet<StateId> states = automata.Move( currentState.Id, argument ); 
             if ( states.Count > 1 )
@@ -38,7 +38,7 @@ public static class FiniteAutomataExtensions
         return FiniteAutomataRunResult.FinishedOnIntermediate;
     }
 
-    private static void StandardizeIds( this IFiniteAutomata automata )
+    private static void StandardizeIds<T>( this IFiniteAutomata<T> automata )
     {
         var states = automata.AllStates.ToList();
         states.Sort( ( a, b ) =>
@@ -69,7 +69,7 @@ public static class FiniteAutomataExtensions
             state.Id = stateOldIdToNewId[state.Id];
         }
         
-        foreach ( Transition transition in automata.Transitions )
+        foreach ( Transition<T> transition in automata.Transitions )
         {
             transition.From = stateOldIdToNewId[transition.From];
             transition.To = stateOldIdToNewId[transition.To];

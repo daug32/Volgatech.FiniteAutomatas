@@ -9,7 +9,7 @@ namespace FiniteAutomatas.RegularExpressions;
 
 public class RegexToNfaParser
 {
-    public bool TryParse( string regex, out NonDeterminedFiniteAutomata? automata )
+    public bool TryParse( string regex, out NonDeterminedFiniteAutomata<char>? automata )
     {
         try
         {
@@ -23,16 +23,16 @@ public class RegexToNfaParser
         }
     }
 
-    public NonDeterminedFiniteAutomata Parse( string regex )
+    public NonDeterminedFiniteAutomata<char> Parse( string regex )
     {
         RegexNode node = RegexNode.Parse( regex );
 
         var stack = GetItemsToProcess( node );
-        var nodesAutomatas = new Dictionary<RegexNode, NonDeterminedFiniteAutomata>();
+        var nodesAutomatas = new Dictionary<RegexNode, NonDeterminedFiniteAutomata<char>>();
         while ( stack.Any() )
         {
             RegexNode curr = stack.Pop();
-            NonDeterminedFiniteAutomata automata = FiniteAutomataDictionary.Convert(
+            NonDeterminedFiniteAutomata<char> automata = FiniteAutomataDictionary.Convert(
                 curr,
                 curr.LeftOperand != null
                     ? nodesAutomatas[curr.LeftOperand]

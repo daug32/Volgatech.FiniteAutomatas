@@ -2,13 +2,13 @@
 
 namespace FiniteAutomatas.Domain.Convertors;
 
-public interface IFiniteAutomataConvertor<out TOutput>
+public interface IFiniteAutomataConvertor<TInputType, out TOutput>
 {
-    TOutput Convert( IFiniteAutomata automata );
+    TOutput Convert( IFiniteAutomata<TInputType> automata );
 }
 
-public interface IAutomataConvertor<in TInput, out TOutput> 
-    where TInput : IFiniteAutomata
+public interface IAutomataConvertor<in TInput, TInputType, out TOutput> 
+    where TInput : IFiniteAutomata<TInputType>
 {
     TOutput Convert( TInput automata );
 }

@@ -38,9 +38,9 @@ internal static class MinimizationGroupsConvertor
         }.Where( x => x.Any() ).ToList();
     }
 
-    public static DeterminedFiniteAutomata ToFiniteAutomata(
+    public static DeterminedFiniteAutomata<T> ToFiniteAutomata<T>(
         List<MinimizationGroup> groups,
-        IEnumerable<Transition> oldTransitions )
+        IEnumerable<Transition<T>> oldTransitions )
     {
         var stateIdIncrementer = new StateIdIncrementer( groups.SelectMany( x => x.GetStates() ) );
         var states = new Dictionary<StateId, State>( groups.Count );
@@ -69,13 +69,13 @@ internal static class MinimizationGroupsConvertor
             states.Add( collapsedState.Id, collapsedState );
         }
 
-        var alphabet = new HashSet<Argument>();
-        var transitions = new HashSet<Transition>();
-        foreach ( Transition transition in oldTransitions )
+        var alphabet = new HashSet<Argument<T>>();
+        var transitions = new HashSet<Transition<T>>();
+        foreach ( Transition<T> transition in oldTransitions )
         {
             State from = states[oldStateNameToNewStateName[transition.From]];
             State to = states[oldStateNameToNewStateName[transition.To]];
-            Argument argument = transition.Argument;
+            Argument<T> argument = transition.Argument;
 
             bool hasThisTransition = transitions.Any( transition =>
                 transition.From == from.Id && 
@@ -86,11 +86,11 @@ internal static class MinimizationGroupsConvertor
                 continue;
             }
 
-            transitions.Add( new Transition( from.Id, to: to.Id, argument: argument ) );
+            transitions.Add( new Transition<T>( from.Id, to: to.Id, argument: argument ) );
             alphabet.Add( argument );
         }
 
-        return new DeterminedFiniteAutomata(
+        return new DeterminedFiniteAutomata<T>(
             alphabet,
             transitions,
             states.Values );

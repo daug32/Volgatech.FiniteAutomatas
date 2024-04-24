@@ -8,10 +8,10 @@ namespace FiniteAutomatas.RegularExpressions.Implementation.Utils;
 
 internal class FiniteAutomataDictionary
 {
-    public static NonDeterminedFiniteAutomata Convert(
+    public static NonDeterminedFiniteAutomata<char> Convert(
         RegexNode current,
-        NonDeterminedFiniteAutomata? left,
-        NonDeterminedFiniteAutomata? right)
+        NonDeterminedFiniteAutomata<char>? left,
+        NonDeterminedFiniteAutomata<char>? right)
     {
         RegexSymbol regexSymbol = current.Value;
         switch ( regexSymbol.Type )
@@ -19,7 +19,7 @@ internal class FiniteAutomataDictionary
             case RegexSymbolType.Symbol:
                 left.ThrowIfNotNull();
                 right.ThrowIfNotNull();
-                return ForSymbol( new Argument( regexSymbol.Value.ThrowIfNull()!.Value ) );
+                return ForSymbol( new Argument<char>( regexSymbol.Value.ThrowIfNull()!.Value ) );
             
             case RegexSymbolType.ZeroOrMore:
                 right.ThrowIfNotNull();
@@ -32,16 +32,16 @@ internal class FiniteAutomataDictionary
         }
     }
 
-    private static NonDeterminedFiniteAutomata ForSymbol( Argument argument )
+    private static NonDeterminedFiniteAutomata<char> ForSymbol( Argument<char> argument )
     {
         var start = new State( new StateId( 0 ), isStart: true );
         var end = new State( new StateId( 1 ), isEnd: true );
 
-        return new NonDeterminedFiniteAutomata(
+        return new NonDeterminedFiniteAutomata<char>(
             alphabet: new[] { argument },
             transitions: new[]
             {
-                new Transition(
+                new Transition<char>(
                     from: start.Id,
                     to: end.Id,
                     argument: argument )
@@ -49,9 +49,9 @@ internal class FiniteAutomataDictionary
             allStates: new[] { start, end } );
     }
 
-    private static NonDeterminedFiniteAutomata ForAnd(
-        NonDeterminedFiniteAutomata? left,
-        NonDeterminedFiniteAutomata? right )
+    private static NonDeterminedFiniteAutomata<char> ForAnd(
+        NonDeterminedFiniteAutomata<char>? left,
+        NonDeterminedFiniteAutomata<char>? right )
     {
         left = left.ThrowIfNull();
         right = right.ThrowIfNull();
@@ -73,7 +73,7 @@ internal class FiniteAutomataDictionary
         State rightOldStart = right.AllStates.First( x => x.IsStart );
         rightOldStart.IsStart = false;
 
-        foreach ( Transition rightTransition in right.Transitions )
+        foreach ( Transition<char> rightTransition in right.Transitions )
         {
             if ( rightTransition.From == rightOldStart.Id )
             {
@@ -88,15 +88,15 @@ internal class FiniteAutomataDictionary
 
         var transitions = left.Transitions.Union( right.Transitions ).ToHashSet();
         
-        return new NonDeterminedFiniteAutomata(
+        return new NonDeterminedFiniteAutomata<char>(
             transitions.Select( x => x.Argument ).ToHashSet(),
             transitions,
             left.AllStates.Union( right.AllStates ) );
     }
 
-    private static NonDeterminedFiniteAutomata ForOr(
-        NonDeterminedFiniteAutomata? left,
-        NonDeterminedFiniteAutomata? right )
+    private static NonDeterminedFiniteAutomata<char> ForOr(
+        NonDeterminedFiniteAutomata<char>? left,
+        NonDeterminedFiniteAutomata<char>? right )
     {
         left = left.ThrowIfNull();
         right = right.ThrowIfNull();
@@ -122,36 +122,36 @@ internal class FiniteAutomataDictionary
         var newEnd = new State( new StateId( endStateName ), isEnd: true );
         states.Add( newEnd );
 
-        var transitions = new List<Transition>();
+        var transitions = new List<Transition<char>>();
         transitions.AddRange( left.Transitions );
         transitions.AddRange( right.Transitions );
 
         State leftOldStart = left.AllStates.First( x => x.IsStart );
         leftOldStart.IsStart = false;
-        transitions.Add( new Transition( newStart.Id, to: leftOldStart.Id, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition<char>( newStart.Id, to: leftOldStart.Id, argument: Argument<char>.Epsilon ) );
 
         State rightOldStart = right.AllStates.First( x => x.IsStart );
         rightOldStart.IsStart = false;
-        transitions.Add( new Transition( newStart.Id, to: rightOldStart.Id, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition<char>( newStart.Id, to: rightOldStart.Id, argument: Argument<char>.Epsilon ) );
 
         State leftOldEnd = left.AllStates.First( x => x.IsEnd );
         leftOldEnd.IsEnd = false;
-        transitions.Add( new Transition( leftOldEnd.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition<char>( leftOldEnd.Id, to: newEnd.Id, argument: Argument<char>.Epsilon ) );
 
         State rightOldEnd = right.AllStates.First( x => x.IsEnd );
         rightOldEnd.IsEnd = false;
-        transitions.Add( new Transition( rightOldEnd.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition<char>( rightOldEnd.Id, to: newEnd.Id, argument: Argument<char>.Epsilon ) );
         
         states.AddRange( left.AllStates );
         states.AddRange( right.AllStates );
 
-        return new NonDeterminedFiniteAutomata(
+        return new NonDeterminedFiniteAutomata<char>(
             allStates: states,
             transitions: transitions,
             alphabet: transitions.Select( x => x.Argument ).ToHashSet() );
     }
 
-    private static NonDeterminedFiniteAutomata ForZeroOrMore( NonDeterminedFiniteAutomata? left )
+    private static NonDeterminedFiniteAutomata<char> ForZeroOrMore( NonDeterminedFiniteAutomata<char>? left )
     {
         left = left.ThrowIfNull();
         
@@ -167,25 +167,25 @@ internal class FiniteAutomataDictionary
         
         State oldStart = states.First( x => x.IsStart );
         oldStart.IsStart = false;
-        transitions.Add( new Transition( from: newStart.Id, to: oldStart.Id, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition<char>( from: newStart.Id, to: oldStart.Id, argument: Argument<char>.Epsilon ) );
 
         var newEnd = new State( newEndId, isEnd: true );
         states.Add( newEnd );
         
         State oldEnd = states.First( x => x.IsEnd );
         oldEnd.IsEnd = false;
-        transitions.Add( new Transition( from: oldEnd.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition<char>( from: oldEnd.Id, to: newEnd.Id, argument: Argument<char>.Epsilon ) );
 
-        transitions.Add( new Transition( from: oldEnd.Id, to: oldStart.Id, argument: Argument.Epsilon ) );
-        transitions.Add( new Transition( from: newStart.Id, to: newEnd.Id, argument: Argument.Epsilon ) );
+        transitions.Add( new Transition<char>( from: oldEnd.Id, to: oldStart.Id, argument: Argument<char>.Epsilon ) );
+        transitions.Add( new Transition<char>( from: newStart.Id, to: newEnd.Id, argument: Argument<char>.Epsilon ) );
 
-        return new NonDeterminedFiniteAutomata( 
+        return new NonDeterminedFiniteAutomata<char>( 
             transitions.Select( x => x.Argument ).ToHashSet(),
             transitions,
             states );
     }
 
-    private static int UpdateNamesAndGetBiggest( int offset, IFiniteAutomata automata )
+    private static int UpdateNamesAndGetBiggest( int offset, IFiniteAutomata<char> automata )
     {
         var max = 0;
 
@@ -201,7 +201,7 @@ internal class FiniteAutomataDictionary
                 : newId.Value;
         }
 
-        foreach ( Transition transition in automata.Transitions )
+        foreach ( Transition<char> transition in automata.Transitions )
         {
             transition.From = oldStateIdToNewStateId[transition.From];
             transition.To = oldStateIdToNewStateId[transition.To];

@@ -4,11 +4,11 @@ using FiniteAutomatas.Domain.Models.ValueObjects;
 
 namespace FiniteAutomatas.Visualizations.Implementation;
 
-internal class FiniteAutomataConsoleVisualizer
+internal class FiniteAutomataConsoleVisualizer<T>
 {
-    private readonly IFiniteAutomata _automata;
+    private readonly IFiniteAutomata<T> _automata;
 
-    public FiniteAutomataConsoleVisualizer( IFiniteAutomata automata )
+    public FiniteAutomataConsoleVisualizer( IFiniteAutomata<T> automata )
     {
         _automata = automata;
     }
@@ -65,7 +65,7 @@ internal class FiniteAutomataConsoleVisualizer
                 var transitions = _automata.Transitions
                     .Where( transition =>
                         transition.From == state.Id &&
-                        transition.Argument == new Argument( column ) )
+                        transition.Argument.ToString() == column )
                     .Select( x =>
                     {
                         string transitionLabel = x.To.ToString(); 
@@ -96,7 +96,7 @@ internal class FiniteAutomataConsoleVisualizer
             result.Add( "IsError" );
         }
 
-        result.AddRange( _automata.Alphabet.Select( x => x.Value ).Order() );
+        result.AddRange( _automata.Alphabet.Select( x => x.Value!.ToString() ).Order()! );
 
         return result;
     }
