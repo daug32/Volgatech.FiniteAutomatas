@@ -18,7 +18,8 @@ public class DfaCreationTests
         new object[] { "abc", 4 },
         new object[] { "a*b*c*", 3 },
         new object[] { "(x|y)*(ab|ac*)*|(x|y)*(a*b*c)*|(x|y)(ab)*", 10 },
-        new object[] { "a*", 1 }
+        new object[] { "a*", 1 },
+        new object[] { " ", 2 }
     };
     
     [TestCaseSource( nameof( _testData ) )]
