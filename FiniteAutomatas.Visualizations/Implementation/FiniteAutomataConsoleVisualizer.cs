@@ -32,7 +32,7 @@ internal class FiniteAutomataConsoleVisualizer<T>
 
     private IEnumerable<List<string>> BuildRows( string[] columns, VisualizationOptions options )
     {
-        foreach ( State state in _automata.AllStates.OrderBy( x => x.Id.Value ) )
+        foreach ( State state in _automata.AllStates.OrderBy( x => x.ToString() ) )
         {
             var items = new List<string>();
 
@@ -65,13 +65,14 @@ internal class FiniteAutomataConsoleVisualizer<T>
                 var transitions = _automata.Transitions
                     .Where( transition =>
                         transition.From == state.Id &&
-                        transition.Argument.ToString() == column )
-                    .Select( x =>
+                        transition.Argument.ToString() == column &&
+                        ( !_automata.GetState( transition.To ).IsError || _automata.GetState( transition.To ).IsError && options.DrawErrorState ) )
+                    .Select( transition =>
                     {
-                        string transitionLabel = x.To.ToString(); 
-                        if ( x.AdditionalData != null )
+                        string transitionLabel = transition.To.ToString(); 
+                        if ( transition.AdditionalData != null )
                         {
-                            transitionLabel = $"{transitionLabel}/{x.AdditionalData}";
+                            transitionLabel = $"{transitionLabel}/{transition.AdditionalData}";
                         }
 
                         return transitionLabel;
