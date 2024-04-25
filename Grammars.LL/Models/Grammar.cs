@@ -1,6 +1,6 @@
-﻿using FiniteAutomatas.Grammars.LeftRoRightOne.Models.ValueObjects;
+﻿using Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
 
-namespace FiniteAutomatas.Grammars.LeftRoRightOne.Models;
+namespace Grammars.Grammars.LeftRoRightOne.Models;
 
 public class Grammar
 {

@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
-using FiniteAutomatas.Grammars.LeftRoRightOne.Models;
-using FiniteAutomatas.Grammars.LeftRoRightOne.Models.ValueObjects;
-using FiniteAutomatas.Grammars.LeftToRightOne.Console.Parsers.Implementation;
+using Grammars.Grammars.LeftRoRightOne.Models;
+using Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
+using Grammars.LL.Console.Parsers.Implementation;
 
-namespace FiniteAutomatas.Grammars.LeftToRightOne.Console.Parsers;
+namespace Grammars.LL.Console.Parsers;
 
 public class GrammarParser
 {

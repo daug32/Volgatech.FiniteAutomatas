@@ -5,12 +5,11 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AssemblyName>FiniteAutomatas.Grammars.LeftToRightOne.Console</AssemblyName>
-        <RootNamespace>FiniteAutomatas.Grammars.LeftToRightOne.Console</RootNamespace>
+        <PackageId>Grammars.LL.Console</PackageId>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FiniteAutomatas.Grammars.LeftRoRightOne\FiniteAutomatas.Grammars.LeftRoRightOne.csproj" />
+      <ProjectReference Include="..\Grammars.LL\Grammars.LL.csproj" />
       <ProjectReference Include="..\FluentAssertions\FluentAssertions.csproj" />
       <ProjectReference Include="..\LinqExtensions\LinqExtensions.csproj" />
     </ItemGroup>

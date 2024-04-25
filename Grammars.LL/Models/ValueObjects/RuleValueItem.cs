@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using FluentAssertions;
 
-namespace FiniteAutomatas.Grammars.LeftRoRightOne.Models.ValueObjects;
+namespace Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
 
 /// <summary>
 /// Represents a symbol in a grammar rule:<br/>

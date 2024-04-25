@@ -1,7 +1,7 @@
-﻿using FiniteAutomatas.Grammars.LeftRoRightOne.Models.ValueObjects;
+﻿using Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
 using LinqExtensions;
 
-namespace FiniteAutomatas.Grammars.LeftToRightOne.Console.Parsers.Implementation;
+namespace Grammars.LL.Console.Parsers.Implementation;
 
 public class RuleNameParser
 {

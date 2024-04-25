@@ -1,4 +1,4 @@
-﻿namespace FiniteAutomatas.Grammars.LeftRoRightOne.Models.ValueObjects;
+﻿namespace Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
 
 public class RuleValue
 {

@@ -1,8 +1,8 @@
-﻿using FiniteAutomatas.Grammars.LeftRoRightOne.Models;
-using FiniteAutomatas.Grammars.LeftRoRightOne.Models.ValueObjects;
-using FiniteAutomatas.Grammars.LeftToRightOne.Console.Parsers;
+﻿using Grammars.Grammars.LeftRoRightOne.Models;
+using Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
+using Grammars.LL.Console.Parsers;
 
-namespace FiniteAutomatas.Grammars.LeftToRightOne.Console;
+namespace Grammars.LL.Console;
 
 public class Program
 {
@@ -11,7 +11,7 @@ public class Program
     public static void Main()
     {
         Grammar grammar = _grammarParser.ParseFromFile(
-            @"D:\Development\Projects\FiniteAutomatas\FiniteAutomatas.Grammars.LeftToRightOne.Console\Grammars\common.txt" );
+            @"D:\Development\Projects\FiniteAutomatas\Grammars.LL.Console\Grammars\common.txt" );
 
         foreach ( GrammarRule rule in grammar.Rules.Values )
         {
