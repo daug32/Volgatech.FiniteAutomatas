@@ -1,12 +1,19 @@
-﻿using FiniteAutomatas.Grammar.LeftToRightOne.Console.Models;
+﻿using System.Diagnostics;
+using FiniteAutomatas.Grammar.LeftToRightOne.Console.Models;
+using FiniteAutomatas.Grammar.LeftToRightOne.Console.Parsers.Implementation;
 
 namespace FiniteAutomatas.Grammar.LeftToRightOne.Console.Parsers;
 
 public class GrammarRulesParser
 {
-    private readonly string _fullFilePath;
-    private readonly string _ruleNameSeparator = "->";
-    private readonly char _ruleValueSeparator = ',';
+    private const char CommentIdentifier = '#';
+    private const string RuleNameSeparator = "->";
+    private const char RuleValueSeparator = ',';
+
+    private readonly GrammarRuleNameParser _ruleNameParser = new();
+    private readonly GrammarRuleValueParser _ruleValueParser = new();
+
+    private readonly string _fullFilePath; 
 
     public GrammarRulesParser( string fullFilePath )
     {
@@ -18,89 +25,137 @@ public class GrammarRulesParser
         _fullFilePath = fullFilePath;
     }
 
-    public Dictionary<GrammarRuleName, List<GrammarRule>> Parse()
+    public Dictionary<GrammarRuleName, GrammarRule> Parse()
     {
-        var result = new Dictionary<GrammarRuleName, List<GrammarRule>>();
+        var result = new List<GrammarRule>();
         using var reader = new StreamReader( _fullFilePath );
 
-        string? line = reader.ReadLine();
-        while ( !String.IsNullOrWhiteSpace( line ) )
-        {
-            TryParseRuleName( line, out int lastIndex );
+        GrammarRule? lastRule = null;
 
-            line = reader.ReadLine();
+        int lineNumber = 0;
+        for ( string? line = reader.ReadLine(); line != null; line = reader.ReadLine() )
+        {
+            lineNumber++;
+
+            // Empty line
+            if ( String.IsNullOrWhiteSpace( line ) )
+            {
+                continue;
+            }
+            
+            // Comment
+            if ( IsComment( line ) )
+            {
+                continue;
+            }
+
+            GrammarRuleLineParseResult lineParseResult = ParseGrammarRule( line );
+            if ( !lineParseResult.HasData )
+            {
+                continue;
+            }
+
+            // Rule name was declared previously, rule values are enumerating
+            if ( lineParseResult.RuleName is null )
+            {
+                if ( lastRule is null )
+                {
+                    throw new FormatException( $"Rule values are enumerated without declaring a ruleName. Line: {lineNumber}" );
+                }
+                
+                lastRule.Values.AddRange( lineParseResult.Rules ?? throw new UnreachableException() );
+                continue;
+            }
+
+            var rule = new GrammarRule( lineParseResult.RuleName );
+            if ( lineParseResult.Rules is not null )
+            {
+                rule.Values = lineParseResult.Rules;
+            }
+
+            result.Add( rule );
+            lastRule = rule;
         }
+
+        return result.ToDictionary(
+            x => x.Name, 
+            x => x );
+    }
+
+    private GrammarRuleLineParseResult ParseGrammarRule( string line )
+    {
+        var result = new GrammarRuleLineParseResult();
+        
+        int ruleDeclarationIndex = line.IndexOf( RuleNameSeparator, StringComparison.Ordinal );
+
+        int lineSymbolIndex = 0;
+        if ( ruleDeclarationIndex >= 0 )
+        {
+            result.RuleName = _ruleNameParser.Parse( line, ruleDeclarationIndex, out int lastLineReadSymbolIndex );
+            lineSymbolIndex = lastLineReadSymbolIndex + RuleNameSeparator.Length;
+        }
+        
+        result.Rules = ParseRules( line, lineSymbolIndex );
 
         return result;
     }
 
-    private GrammarRuleName? TryParseRuleName( string line, out int lastIndex )
+    private bool IsComment( string line )
     {
-        System.Console.WriteLine( $"Line: \"{line}\"" );
-
-        int ruleDeclarationIndex = line.IndexOf( _ruleNameSeparator, StringComparison.Ordinal );
-
-        var rawRuleName = new List<char>( ruleDeclarationIndex + 1 );
-        
-        var possibleRawValues = new List<List<char>>();
-        var lastRawValue = new List<char>();
-        for ( int i = 0; i < line.Length; i++ )
+        foreach ( char symbol in line )
         {
-            char symbol = line[i];
-
-            // Whitespaces do not count
             if ( Char.IsWhiteSpace( symbol ) )
             {
                 continue;
             }
 
-            // Skip if still read ruleName 
-            if ( i < ruleDeclarationIndex )
+            return symbol == CommentIdentifier;
+        }
+
+        return false;
+    }
+
+    private List<GrammarRuleValue> ParseRules( string line, int lineSymbolIndex )
+    {
+        var possibleValues = new List<GrammarRuleValue>();
+
+        bool isReadingValue = false;
+        var lastRawValue = new List<char>();
+        for ( ; lineSymbolIndex < line.Length; lineSymbolIndex++ )
+        {
+            char symbol = line[lineSymbolIndex];
+
+            // Whitespaces do not count if don't read a rule value
+            if ( !isReadingValue && Char.IsWhiteSpace( symbol ) )
             {
-                rawRuleName.Add( symbol );
                 continue;
             }
 
-            if ( i < ruleDeclarationIndex + _ruleNameSeparator.Length )
+            // If a separator, commit current rule and create a new one
+            if ( symbol == RuleValueSeparator )
             {
-                continue;
-            }
-
-            // If a separator, commit current rule, create a new one
-            if ( symbol == _ruleValueSeparator )
-            {
+                isReadingValue = false;
+                
                 if ( lastRawValue.Any() )
                 {
-                    possibleRawValues.Add( lastRawValue );
+                    possibleValues.Add( _ruleValueParser.Parse( lastRawValue ) );
                     lastRawValue = new List<char>();
                 }
 
                 continue;
             }
-            
+
+            isReadingValue = true;
+
             // We are reading a rule value
             lastRawValue.Add( symbol );
         }
 
         if ( lastRawValue.Any() )
         {
-            possibleRawValues.Add( lastRawValue );
+            possibleValues.Add( _ruleValueParser.Parse( lastRawValue ) );
         }
 
-        var rules = possibleRawValues
-            .Select( x => new string( x.ToArray() ) )
-            .ToList();
-
-        var ruleName = rawRuleName.Any()
-            ? new string( rawRuleName.ToArray() )
-            : "";
-        System.Console.WriteLine( $"\tRuleName: \"{ruleName}\"" );
-        foreach ( var rule in rules )
-        {
-            System.Console.WriteLine( $"\t\tRule: \"{rule}\"" );
-        }
-
-        lastIndex = 0;
-        return null;
+        return possibleValues;
     }
 }

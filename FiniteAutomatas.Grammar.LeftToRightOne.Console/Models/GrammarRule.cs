@@ -3,6 +3,7 @@
 public class GrammarRule
 {
     public readonly GrammarRuleName Name;
+    public List<GrammarRuleValue> Values = new();
 
     public GrammarRule( GrammarRuleName name )
     {
