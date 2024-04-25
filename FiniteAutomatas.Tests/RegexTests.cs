@@ -3,7 +3,6 @@ using FiniteAutomatas.Domain.Convertors.Convertors.Minimization;
 using FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas;
 using FiniteAutomatas.Domain.Models.Automatas;
 using FiniteAutomatas.Domain.Models.Automatas.Extensions;
-using FiniteAutomatas.Domain.Models.ValueObjects;
 using FiniteAutomatas.RegularExpressions;
 
 namespace FiniteAutomatas.Tests;

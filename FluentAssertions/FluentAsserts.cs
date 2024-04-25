@@ -14,7 +14,7 @@ public static class FluentAsserts
         }
     }
 
-    public static string ThrowIfNullOrEmpty( this string? value ) => String.IsNullOrWhiteSpace( value )
+    public static string ThrowIfNullOrWhiteSpace( this string? value ) => String.IsNullOrWhiteSpace( value )
         ? throw new ArgumentException( "Value must not be null or empty" )
         : value;
 }

@@ -19,7 +19,7 @@ public class FiniteAutomataImageVisualizer<T>
         _automata = automata;
     }
 
-    public async Task ToImage( string path, VisualizationOptions? options = null )
+    public async Task ToImage( string path, VisualizationOptions options )
     {
         var tempDataPath = $"{path}.dot";
 

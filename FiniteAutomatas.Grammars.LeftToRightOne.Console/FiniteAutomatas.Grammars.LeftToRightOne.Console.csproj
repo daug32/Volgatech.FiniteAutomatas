@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>FiniteAutomatas.Grammars.LeftToRightOne.Console</AssemblyName>
+        <RootNamespace>FiniteAutomatas.Grammars.LeftToRightOne.Console</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FiniteAutomatas.Grammars.LeftRoRightOne\FiniteAutomatas.Grammars.LeftRoRightOne.csproj" />
+      <ProjectReference Include="..\FluentAssertions\FluentAssertions.csproj" />
+      <ProjectReference Include="..\LinqExtensions\LinqExtensions.csproj" />
+    </ItemGroup>
+
+</Project>
