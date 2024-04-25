@@ -2,76 +2,39 @@
 
 namespace FiniteAutomatas.Domain.Models.Automatas;
 
-public class DeterminedFiniteAutomata<T> : IFiniteAutomata<T>
+public class DeterminedFiniteAutomata<T> : BaseFiniteAutomata<T>
 {
-    public IReadOnlyCollection<Argument<T>> Alphabet { get; private init; }
-    public IReadOnlyCollection<State> AllStates { get; private init; }
-    public IReadOnlyCollection<Transition<T>> Transitions { get; private init; } 
-
-    public DeterminedFiniteAutomata( 
+    public DeterminedFiniteAutomata(
         IEnumerable<Argument<T>> alphabet,
-        IEnumerable<Transition<T>> transitions, 
+        IEnumerable<Transition<T>> transitions,
         IEnumerable<State> allStates )
+        : base( alphabet, transitions, allStates )
     {
-        Alphabet = alphabet.ToHashSet();
-        AllStates = allStates.ToHashSet();
-        Transitions = transitions.ToHashSet();
+        var statesTransitions = AllStates.ToDictionary(
+            x => x.Id,
+            x => Alphabet.ToHashSet() );
         
-        foreach ( Transition<T> transition in Transitions )
+        foreach ( var transition in Transitions )
         {
-            if ( !AllStates.Any( x => x.Id == transition.From ) )
+            if ( transition.Argument == Argument<T>.Epsilon )
             {
-                throw new ArgumentException( 
-                    $"Some of the transitions has a state that is not presented in the {nameof( AllStates )}. " + 
-                    $"Transition: {transition}. State: {transition.From}" );
+                throw new ArgumentException( "DFA automata must not have epsilon transitions" );
             }
 
-            if ( !AllStates.Any( x => x.Id == transition.To ) )
+            if ( !statesTransitions[transition.From].Contains( transition.Argument ) )
             {
-                throw new ArgumentException( 
-                    $"Some of the transitions has a state that is not presented in the {nameof( AllStates )}. " + 
-                    $"Transition: {transition}. State: {transition.To}" );
+                throw new ArgumentException( "DFA automata's state must contain only one transition per argument" );
             }
 
-            if ( !Alphabet.Contains( transition.Argument ) )
-            {
-                throw new ArgumentException( 
-                    $"Some of the transitions has an argument that is not presented in the {nameof( Alphabet )}. " + 
-                    $"Transition: {transition}. Argument: {transition.Argument}" );
-            }
+            statesTransitions[transition.From].Remove( transition.Argument );
         }
     }
 
-    public HashSet<State> GetStates( HashSet<StateId> stateIds )
-    {
-        var result = new HashSet<State>();
-        foreach ( State state in AllStates )
-        {
-            if ( stateIds.Contains( state.Id ) )
-            {
-                result.Add( state );
-            }
-        }
-
-        if ( result.Count != stateIds.Count )
-        {
-            throw new ArgumentException( "Can't find states with given ids" );
-        }
-
-        return result;
-    }
-
-    public State GetState( StateId stateId )
-    {
-        return AllStates.Single( x => x.Id == stateId );
-    }
-
-    public HashSet<StateId> Move( StateId from, Argument<T> argument ) 
+    public override HashSet<StateId> Move( StateId from, Argument<T> argument )
     {
         return Transitions
             .Where( transition =>
-                transition.Argument == argument &&
-                transition.From == from )
+                transition.Argument == argument && transition.From == from )
             .Select( transition => transition.To )
             .ToHashSet();
     }

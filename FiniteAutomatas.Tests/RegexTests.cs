@@ -98,7 +98,7 @@ public class RegexTests
             {
                 var result = FiniteAutomataRunResult.Unknown;
                 Assert.DoesNotThrow(
-                    () => result = regex.Run( successTest.Select( x => new Argument<char>( x ) ) ),
+                    () => result = regex.RunRegex( successTest ),
                     $"Regex: {testData.Regex}, Test: {successTest}" );
                 Assert.That(
                     result.IsSuccess(),
@@ -110,7 +110,7 @@ public class RegexTests
             {
                 var result = FiniteAutomataRunResult.Unknown;
                 Assert.DoesNotThrow( 
-                    () => result = regex.Run( failTest.Select( x => new Argument<char>( x ) ) ),
+                    () => result = regex.RunRegex( failTest ),
                     $"Regex: {testData.Regex}, Test: {failTest}" );
                 Assert.That(
                     result.IsSuccess(),
