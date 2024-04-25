@@ -6,8 +6,8 @@ namespace FiniteAutomatas.RegularExpressions;
 
 public static class FiniteAutomataExtensions
 {
-    public static FiniteAutomataRunResult RunRegex( this DeterminedFiniteAutomata<char> automata, string regex )
+    public static FiniteAutomataRunResult RunRegex( this DeterminedFiniteAutomata<char> finiteAutomata, string regex )
     {
-        return automata.Run( regex.Select( x => new Argument<char>( x ) ) );
+        return finiteAutomata.Run( regex.Select( x => new Argument<char>( x ) ) );
     }
 }

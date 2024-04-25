@@ -9,7 +9,7 @@ public static class Visualizer
         this TAutomata automata,
         string path,
         VisualizationOptions? options = null )
-        where TAutomata : IFiniteAutomata<TAutomataType>
+        where TAutomata : IAutomata<TAutomataType>
     {
         Task task = new FiniteAutomataImageVisualizer<TAutomataType>( automata ).ToImage( path, options );
         task.Wait();
@@ -21,7 +21,7 @@ public static class Visualizer
         this TAutomata automata,
         string path,
         VisualizationOptions? options = null )
-        where TAutomata : IFiniteAutomata<TAutomataType>
+        where TAutomata : IAutomata<TAutomataType>
     {
         await new FiniteAutomataImageVisualizer<TAutomataType>( automata ).ToImage( path, options ?? new VisualizationOptions() );
         return automata;
@@ -30,7 +30,7 @@ public static class Visualizer
     public static TAutomata PrintToConsole<TAutomata, TAutomataType>(
         this TAutomata automata,
         VisualizationOptions? options = null )
-        where TAutomata : IFiniteAutomata<TAutomataType>
+        where TAutomata : IAutomata<TAutomataType>
     {
         new FiniteAutomataConsoleVisualizer<TAutomataType>( automata ).Print( options ?? new VisualizationOptions() );
         return automata;

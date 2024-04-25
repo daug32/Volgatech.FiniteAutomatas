@@ -2,7 +2,7 @@
 
 namespace FiniteAutomatas.Domain.Models.Automatas;
 
-public class DeterminedFiniteAutomata<T> : BaseFiniteAutomata<T>
+public class DeterminedFiniteAutomata<T> : BaseAutomata<T>
 {
     public DeterminedFiniteAutomata(
         IEnumerable<Argument<T>> alphabet,

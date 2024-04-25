@@ -6,15 +6,15 @@ namespace FiniteAutomatas.Domain.Convertors.Convertors.Minimization.Implementati
 
 internal class DfaMinimizer<T>
 {
-    private readonly DeterminedFiniteAutomata<T> _automata;
+    private readonly DeterminedFiniteAutomata<T> _finiteAutomata;
     private readonly Dictionary<StateId, Dictionary<Argument<T>, StateId>> _transitions;
     
-    public DfaMinimizer( DeterminedFiniteAutomata<T> automata )
+    public DfaMinimizer( DeterminedFiniteAutomata<T> finiteAutomata )
     {
-        _automata = automata;
+        _finiteAutomata = finiteAutomata;
 
-        _transitions = _automata.AllStates.ToDictionary( x => x.Id, x => new Dictionary<Argument<T>, StateId>() );
-        foreach ( Transition<T> transition in _automata.Transitions )
+        _transitions = _finiteAutomata.AllStates.ToDictionary( x => x.Id, x => new Dictionary<Argument<T>, StateId>() );
+        foreach ( Transition<T> transition in _finiteAutomata.Transitions )
         {
             if ( !_transitions.ContainsKey( transition.From ) )
             {
@@ -29,12 +29,12 @@ internal class DfaMinimizer<T>
     {
         return MinimizationGroupsConvertor.ToFiniteAutomata(
             FindEquivalentStates(),
-            _automata.Transitions );
+            _finiteAutomata.Transitions );
     }
 
     private List<MinimizationGroup> FindEquivalentStates()
     {
-        List<MinimizationGroup> groups = MinimizationGroupsConvertor.ParseFromStates( _automata.AllStates );
+        List<MinimizationGroup> groups = MinimizationGroupsConvertor.ParseFromStates( _finiteAutomata.AllStates );
 
         bool hasChanges = true;
         while ( hasChanges )
@@ -106,7 +106,7 @@ internal class DfaMinimizer<T>
             return false;
         }
 
-        foreach ( Argument<T> argument in _automata.Alphabet )
+        foreach ( Argument<T> argument in _finiteAutomata.Alphabet )
         {
             MinimizationGroup? firstGroup = groups.SingleOrDefault( x => x.Any( groupItem => groupItem.Id == _transitions[first.Id][argument] ) );
             if ( firstGroup is null )

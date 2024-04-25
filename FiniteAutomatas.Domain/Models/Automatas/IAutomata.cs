@@ -2,7 +2,7 @@
 
 namespace FiniteAutomatas.Domain.Models.Automatas;
 
-public interface IFiniteAutomata<T>
+public interface IAutomata<T>
 {
     IReadOnlyCollection<State> AllStates { get; }
     IReadOnlyCollection<Argument<T>> Alphabet { get; }

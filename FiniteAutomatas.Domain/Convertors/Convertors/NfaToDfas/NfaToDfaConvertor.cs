@@ -7,24 +7,24 @@ namespace FiniteAutomatas.Domain.Convertors.Convertors.NfaToDfas;
 
 public class NfaToDfaConvertor<T> : IAutomataConvertor<NonDeterminedFiniteAutomata<T>, T, DeterminedFiniteAutomata<T>>
 {
-    public DeterminedFiniteAutomata<T> Convert( NonDeterminedFiniteAutomata<T> automata )
+    public DeterminedFiniteAutomata<T> Convert( NonDeterminedFiniteAutomata<T> finiteAutomata )
     {
         // Result data
         var dfaTransitions = new List<(CollapsedState from, Argument<T> argument, CollapsedState to)>();
         var errorState = new State( new StateId( -1 ), isError: true );
         
         // For optimization
-        Dictionary<State, EpsClosure> stateToEpsClosures = automata
+        Dictionary<State, EpsClosure> stateToEpsClosures = finiteAutomata
             .EpsClosure()
             .ToDictionary( 
-                x => automata.GetState( x.Key),
-                x => new EpsClosure( automata.GetStates( x.Value ) ) );
+                x => finiteAutomata.GetState( x.Key),
+                x => new EpsClosure( finiteAutomata.GetStates( x.Value ) ) );
         stateToEpsClosures[errorState] = new EpsClosure( new HashSet<State>() { errorState } );
 
         // Algorithm data
-        var alphabet = automata.Alphabet.Where( x => x != Argument<T>.Epsilon ).ToHashSet();
+        var alphabet = finiteAutomata.Alphabet.Where( x => x != Argument<T>.Epsilon ).ToHashSet();
         var queue = new Queue<CollapsedState>();
-        queue.Enqueue( new CollapsedState( automata.AllStates.First( x => x.IsStart ) ) );
+        queue.Enqueue( new CollapsedState( finiteAutomata.AllStates.First( x => x.IsStart ) ) );
         var processedStates = new HashSet<CollapsedState>();
         
         // Algorithm
@@ -44,12 +44,12 @@ public class NfaToDfaConvertor<T> : IAutomataConvertor<NonDeterminedFiniteAutoma
             foreach ( Argument<T> argument in alphabet )
             {
                 var achievableStatesIds = fromState.States
-                    .SelectMany( state => automata.Move(
+                    .SelectMany( state => finiteAutomata.Move(
                         state.Id,
                         argument,
                         stateToEpsClosures[state].Closures ) )
                     .ToHashSet();
-                HashSet<State> achievableStates = automata.GetStates( achievableStatesIds ).ToHashSet();
+                HashSet<State> achievableStates = finiteAutomata.GetStates( achievableStatesIds ).ToHashSet();
                 if ( !achievableStates.Any() )
                 {
                     achievableStates.Add( errorState );

@@ -6,9 +6,9 @@ namespace FiniteAutomatas.Visualizations.Implementation;
 
 internal class FiniteAutomataConsoleVisualizer<T>
 {
-    private readonly IFiniteAutomata<T> _automata;
+    private readonly IAutomata<T> _automata;
 
-    public FiniteAutomataConsoleVisualizer( IFiniteAutomata<T> automata )
+    public FiniteAutomataConsoleVisualizer( IAutomata<T> automata )
     {
         _automata = automata;
     }

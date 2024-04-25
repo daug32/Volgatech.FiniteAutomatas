@@ -5,7 +5,7 @@ namespace FiniteAutomatas.Domain.Models.Automatas.Extensions;
 
 public static class FiniteAutomataExtensions
 {
-    public static FiniteAutomataRunResult Run<T>( this IFiniteAutomata<T> automata, IEnumerable<Argument<T>> arguments )
+    public static FiniteAutomataRunResult Run<T>( this IAutomata<T> automata, IEnumerable<Argument<T>> arguments )
     {
         State currentState = automata.AllStates.First( x => x.IsStart );
 
@@ -38,7 +38,7 @@ public static class FiniteAutomataExtensions
         return FiniteAutomataRunResult.FinishedOnIntermediate;
     }
 
-    private static void StandardizeIds<T>( this IFiniteAutomata<T> automata )
+    private static void StandardizeIds<T>( this IAutomata<T> automata )
     {
         var states = automata.AllStates.ToList();
         states.Sort( ( a, b ) =>

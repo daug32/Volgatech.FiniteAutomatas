@@ -32,7 +32,7 @@ public class RegexToNfaParser
         while ( stack.Any() )
         {
             RegexNode curr = stack.Pop();
-            NonDeterminedFiniteAutomata<char> automata = FiniteAutomataDictionary.Convert(
+            NonDeterminedFiniteAutomata<char> finiteAutomata = FiniteAutomataDictionary.Convert(
                 curr,
                 curr.LeftOperand != null
                     ? nodesAutomatas[curr.LeftOperand]
@@ -41,7 +41,7 @@ public class RegexToNfaParser
                     ? nodesAutomatas[curr.RightOperand]
                     : null );
 
-            nodesAutomatas[curr] = automata;
+            nodesAutomatas[curr] = finiteAutomata;
         }
 
         return nodesAutomatas[node];

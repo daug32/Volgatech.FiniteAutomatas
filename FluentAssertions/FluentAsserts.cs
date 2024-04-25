@@ -13,4 +13,8 @@ public static class FluentAsserts
             throw new ArgumentException( "Argument was not expected to be passed", nameof( value ) );
         }
     }
+
+    public static string ThrowIfNullOrEmpty( this string? value ) => String.IsNullOrWhiteSpace( value )
+        ? throw new ArgumentException( "Value must not be null or empty" )
+        : value;
 }

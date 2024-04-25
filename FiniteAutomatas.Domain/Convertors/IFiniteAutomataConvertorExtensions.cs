@@ -6,7 +6,7 @@ namespace FiniteAutomatas.Domain.Convertors;
 public static class IFiniteAutomataConvertorExtensions
 {
     public static TOutput Convert<TOutput, TAutomataType>(
-        this IFiniteAutomata<TAutomataType> automata, 
+        this IAutomata<TAutomataType> automata, 
         IFiniteAutomataConvertor<TAutomataType, TOutput> convertor )
     {
         return convertor.Convert( automata );
@@ -15,7 +15,7 @@ public static class IFiniteAutomataConvertorExtensions
     public static TOutput Convert<TInput, TInputType, TOutput>(
         this TInput automata, 
         IAutomataConvertor<TInput, TInputType, TOutput> convertor )
-        where TInput : IFiniteAutomata<TInputType>
+        where TInput : IAutomata<TInputType>
     {
         return convertor.Convert( automata );
     }

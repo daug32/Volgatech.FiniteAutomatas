@@ -2,13 +2,13 @@
 
 namespace FiniteAutomatas.Domain.Models.Automatas;
 
-public abstract class BaseFiniteAutomata<T> : IFiniteAutomata<T>
+public abstract class BaseAutomata<T> : IAutomata<T>
 {
     public IReadOnlyCollection<State> AllStates { get; }
     public IReadOnlyCollection<Argument<T>> Alphabet { get; }
     public IReadOnlyCollection<Transition<T>> Transitions { get; }
     
-    public BaseFiniteAutomata( 
+    public BaseAutomata( 
         IEnumerable<Argument<T>> alphabet,
         IEnumerable<Transition<T>> transitions, 
         IEnumerable<State> allStates )

@@ -185,7 +185,7 @@ internal class FiniteAutomataDictionary
             states );
     }
 
-    private static int UpdateNamesAndGetBiggest( int offset, IFiniteAutomata<char> automata )
+    private static int UpdateNamesAndGetBiggest( int offset, IAutomata<char> automata )
     {
         var max = 0;
 
