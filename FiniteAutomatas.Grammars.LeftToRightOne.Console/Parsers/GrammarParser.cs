@@ -30,12 +30,31 @@ public class GrammarParser
         for ( string? line = reader.ReadLine(); line != null; line = reader.ReadLine() )
         {
             lineNumber++;
-            GrammarRule? newRule = ParseLine( line, lineNumber, lastRule );
+
+            GrammarRule? newRule;
+            try
+            {
+                newRule = ParseLine( line, lineNumber, lastRule );
+            }
+            catch ( Exception ex )
+            {
+                throw new AggregateException( $"\nLine({lineNumber}): \"{line}\"\n", ex );
+            }
+
             if ( newRule is not null )
             {
-                rules.Add( lastRule! );
+                if ( lastRule is not null )
+                {
+                    rules.Add( lastRule! );
+                }
+
                 lastRule = newRule;
             }
+        }
+
+        if ( lastRule is not null )
+        {
+            rules.Add( lastRule );
         }
 
         return new Grammar( rules );
