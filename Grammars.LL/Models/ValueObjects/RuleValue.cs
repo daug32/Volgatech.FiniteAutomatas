@@ -2,11 +2,11 @@
 
 public class RuleValue
 {
-    public readonly List<RuleValueItem> Items;
+    public readonly IReadOnlyList<RuleValueItem> Items;
 
-    public RuleValue( List<RuleValueItem> items )
+    public RuleValue( IEnumerable<RuleValueItem> items )
     {
-        Items = items;
+        Items = items.ToList();
     }
 
     public override bool Equals( object? obj ) => obj is RuleValue other && Equals( other );

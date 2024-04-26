@@ -4,10 +4,14 @@ namespace Grammars.Grammars.LeftRoRightOne.Models;
 
 public class Grammar
 {
+    public RuleName StartRule { get; }
     public IReadOnlyDictionary<RuleName, GrammarRule> Rules { get; }
 
-    public Grammar( IEnumerable<GrammarRule> rules )
+    public Grammar(
+        RuleName startRule,
+        IEnumerable<GrammarRule> rules )
     {
+        StartRule = startRule;
         Rules = rules.ToDictionary(
             x => x.Name,
             x => x );

@@ -2,6 +2,7 @@
 using Grammars.Grammars.LeftRoRightOne.Models;
 using Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
 using Grammars.LL.Console.Parsers.Implementation;
+using Grammars.LL.Console.Parsers.Implementation.Models;
 
 namespace Grammars.LL.Console.Parsers;
 
@@ -23,15 +24,15 @@ public class GrammarParser
         
         using var reader = new StreamReader( fullFilePath );
         
-        var rules = new List<GrammarRule>();
+        var rules = new List<GrammarRuleParseResult>();
 
         int lineNumber = 0;
-        GrammarRule? lastRule = null;
+        GrammarRuleParseResult? lastRule = null;
         for ( string? line = reader.ReadLine(); line != null; line = reader.ReadLine() )
         {
             lineNumber++;
 
-            GrammarRule? newRule;
+            GrammarRuleParseResult? newRule;
             try
             {
                 newRule = ParseLine( line, lineNumber, lastRule );
@@ -57,10 +58,12 @@ public class GrammarParser
             rules.Add( lastRule );
         }
 
-        return new Grammar( rules );
+        return new Grammar(
+            startRule: rules.First().RuleName,
+            rules: rules.Select( x => new GrammarRule( x.RuleName, x.Values ) ) );
     }
 
-    private GrammarRule? ParseLine( string line, int lineNumber, GrammarRule? lastRule )
+    private GrammarRuleParseResult? ParseLine( string line, int lineNumber, GrammarRuleParseResult? lastRule )
     {
         // Empty line
         if ( String.IsNullOrWhiteSpace( line ) )
@@ -93,7 +96,7 @@ public class GrammarParser
             return null;
         }
 
-        var rule = new GrammarRule( lineParseResult.RuleName );
+        var rule = new GrammarRuleParseResult( lineParseResult.RuleName );
         if ( lineParseResult.Rules is not null )
         {
             rule.Values = lineParseResult.Rules;
