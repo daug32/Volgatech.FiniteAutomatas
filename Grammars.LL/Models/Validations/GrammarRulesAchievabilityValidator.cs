@@ -5,7 +5,7 @@ namespace Grammars.Grammars.LeftRoRightOne.Models.Validations;
 public class GrammarRulesAchievabilityValidator
 {
     // If a non terminal rule is achievable, then all its values are achievable
-    public IEnumerable<RuleName> Check(
+    public IEnumerable<RuleName> CheckAndGetFailed(
         RuleName startRule,
         IDictionary<RuleName, GrammarRule> rules )
     {
@@ -40,9 +40,15 @@ public class GrammarRulesAchievabilityValidator
 
 public class GrammarRulesDeclarationCheck 
 {
-    public IEnumerable<RuleName> Check( IDictionary<RuleName, GrammarRule> rules )
+    public IEnumerable<RuleName> CheckAndGetFailed(
+        RuleName startRule,
+        IDictionary<RuleName, GrammarRule> rules )
     {
         var nonDeclared = new HashSet<RuleName>();
+        if ( !rules.ContainsKey( startRule ) )
+        {
+            nonDeclared.Add( startRule );
+        }
 
         foreach ( GrammarRule rule in rules.Values )
         {
@@ -67,4 +73,38 @@ public class GrammarRulesDeclarationCheck
     }
 }
 
-public class GrammarRules
+public class GrammarRulesProductivityCheck
+{
+    public IEnumerable<RuleName> CheckAndGetFailed(
+        RuleName startRule,
+        IDictionary<RuleName, GrammarRule> rules )
+    {
+        var productiveRules = new HashSet<RuleName>();
+
+        while ( true )
+        {
+            bool hasChanges = false;
+            
+            foreach ( GrammarRule grammarRule in rules.Values )
+            {
+                foreach ( RuleValue ruleValue in grammarRule.Values )
+                {
+                    bool containOnlyProductiveOrTerminalSymbols = ruleValue.Items.All( x => 
+                        x.Type != RuleValueItemType.NonTerminalSymbol ||
+                        productiveRules.Contains( x.RuleName! ) );
+
+                    if ( !containOnlyProductiveOrTerminalSymbols )
+                    {
+                        continue;
+                    }
+
+                    hasChanges = true;
+                    productiveRules.Add( grammarRule.Name );
+                    break;
+                }
+            }
+            
+            
+        }
+    }
+}
