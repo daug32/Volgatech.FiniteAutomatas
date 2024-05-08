@@ -25,9 +25,7 @@ public class RuleName
         Value = value;
     }
 
-    public override bool Equals( object? obj ) => obj is RuleName other && Equals( other );
-
-    public bool Equals( RuleName other ) => other.Value == Value;
+    public override bool Equals( object? obj ) => obj is RuleName other && other.Value.Equals( Value );
     
     public static bool operator == ( RuleName a, RuleName b ) => a.Equals( b );
 
@@ -35,5 +33,5 @@ public class RuleName
 
     public override int GetHashCode() => Value.GetHashCode();
 
-    public override string ToString() => $"<{Value}>";
+    public override string ToString() => Value;
 }

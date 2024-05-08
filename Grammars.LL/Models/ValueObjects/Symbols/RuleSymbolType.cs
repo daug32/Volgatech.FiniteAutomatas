@@ -1,8 +1,7 @@
 ﻿namespace Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
 
-public enum RuleValueItemType
+public enum RuleSymbolType
 {
-    WhiteSpace,
     TerminalSymbol,
     NonTerminalSymbol
 }

@@ -10,10 +10,10 @@ public class Program
     
     public static void Main()
     {
-        Grammar grammar = _grammarParser.ParseFromFile(
+        LlOneGrammar llOneGrammar = _grammarParser.ParseFile(
             @"D:\Development\Projects\FiniteAutomatas\Grammars.LL.Console\Grammars\common.txt" );
 
-        foreach ( GrammarRule rule in grammar.Rules.Values )
+        foreach ( GrammarRule rule in llOneGrammar.Rules.Values )
         {
             System.Console.WriteLine( $"Rule: \"{rule.Name}\"" );
             foreach ( RuleValue ruleValue in rule.Values )

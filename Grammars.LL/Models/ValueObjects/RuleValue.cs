@@ -2,31 +2,31 @@
 
 public class RuleValue
 {
-    public readonly IReadOnlyList<RuleValueItem> Items;
+    public readonly IReadOnlyList<RuleSymbol> Symbols;
 
-    public RuleValue( IEnumerable<RuleValueItem> items )
+    public RuleValue( IEnumerable<RuleSymbol> items )
     {
-        Items = items.ToList();
+        Symbols = items.ToList();
     }
 
     public override bool Equals( object? obj ) => obj is RuleValue other && Equals( other );
 
     public override int GetHashCode()
     {
-        return Items.GetHashCode();
+        return Symbols.GetHashCode();
     }
 
     public bool Equals( RuleValue other )
     {
-        if ( other.Items.Count != Items.Count )
+        if ( other.Symbols.Count != Symbols.Count )
         {
             return false;
         }
 
-        for ( var i = 0; i < Items.Count; i++ )
+        for ( var i = 0; i < Symbols.Count; i++ )
         {
-            RuleValueItem item = Items[i];
-            RuleValueItem otherItem = other.Items[i];
+            RuleSymbol item = Symbols[i];
+            RuleSymbol otherItem = other.Symbols[i];
 
             if ( !item.Equals( otherItem ) )
             {
@@ -41,5 +41,5 @@ public class RuleValue
 
     public static bool operator !=( RuleValue a, RuleValue b ) => !a.Equals( b );
 
-    public override string ToString() => String.Join( "", Items );
+    public override string ToString() => String.Join( "", Symbols );
 }

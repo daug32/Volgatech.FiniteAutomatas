@@ -15,18 +15,18 @@ public class GrammarParser
     private readonly RuleNameParser _ruleNameParser = new();
     private readonly RuleValueParser _ruleValueParser = new();
 
-    public Grammar ParseFromFile( string fullFilePath )
+    public LlOneGrammar ParseFile( string fullFilePath )
     {
         if ( !File.Exists( fullFilePath ) )
         {
             throw new ArgumentException( $"File was not found. FilePath: {Path.GetFileName( fullFilePath )}" );
         }
-        
+
         using var reader = new StreamReader( fullFilePath );
-        
+
         var rules = new List<GrammarRuleParseResult>();
 
-        int lineNumber = 0;
+        var lineNumber = 0;
         GrammarRuleParseResult? lastRule = null;
         for ( string? line = reader.ReadLine(); line != null; line = reader.ReadLine() )
         {
@@ -58,9 +58,9 @@ public class GrammarParser
             rules.Add( lastRule );
         }
 
-        return new Grammar(
-            startRule: rules.First().RuleName,
-            rules: rules.Select( x => new GrammarRule( x.RuleName, x.Values ) ) );
+        return new LlOneGrammar(
+            rules.First().RuleName,
+            rules.Select( x => new GrammarRule( x.RuleName, x.Values ) ) );
     }
 
     private GrammarRuleParseResult? ParseLine( string line, int lineNumber, GrammarRuleParseResult? lastRule )
@@ -70,7 +70,7 @@ public class GrammarParser
         {
             return null;
         }
-            
+
         // Comment
         if ( IsComment( line ) )
         {
@@ -91,7 +91,7 @@ public class GrammarParser
             {
                 throw new FormatException( $"Rule values are enumerated without declaring a ruleName. Line: {lineNumber}" );
             }
-                
+
             lastRule.Values.AddRange( lineParseResult.Rules ?? throw new UnreachableException() );
             return null;
         }
@@ -123,31 +123,32 @@ public class GrammarParser
     private GrammarLineParseResult ParseGrammarRule( string line )
     {
         var result = new GrammarLineParseResult();
-        
+
         int ruleDeclarationIndex = line.IndexOf( RuleNameSeparator, StringComparison.Ordinal );
 
-        int lineSymbolIndex = 0;
+        var index = 0;
         if ( ruleDeclarationIndex >= 0 )
         {
             result.RuleName = _ruleNameParser.ParseFromLine( line, ruleDeclarationIndex, out int lastLineReadSymbolIndex );
-            lineSymbolIndex = lastLineReadSymbolIndex + RuleNameSeparator.Length;
+            index = lastLineReadSymbolIndex + RuleNameSeparator.Length;
         }
-        
-        result.Rules = ParseRules( line, lineSymbolIndex );
+
+        result.Rules = ParseRules( line, index );
 
         return result;
     }
 
-    private List<RuleValue> ParseRules( string line, int lineSymbolIndex )
+    // "S -> BEGIN <exp> END., BEGIN END." => { {BEGIN, <exp>, END, .}, {BEGIN, END, .} }  
+    private List<RuleValue> ParseRules( string line, int startIndex )
     {
         var possibleValues = new List<RuleValue>();
 
-        bool isReadingValue = false;
+        var isReadingValue = false;
         var lastRawValue = new List<char>();
-        for ( ; lineSymbolIndex < line.Length; lineSymbolIndex++ )
+        for ( ; startIndex < line.Length; startIndex++ )
         {
-            char symbol = line[lineSymbolIndex];
-
+            char symbol = line[startIndex];
+            
             // Whitespaces do not count if don't read a rule value
             if ( !isReadingValue && Char.IsWhiteSpace( symbol ) )
             {
@@ -158,7 +159,7 @@ public class GrammarParser
             if ( symbol == RuleValueSeparator )
             {
                 isReadingValue = false;
-                
+
                 if ( lastRawValue.Any() )
                 {
                     possibleValues.Add( _ruleValueParser.Parse( lastRawValue ) );

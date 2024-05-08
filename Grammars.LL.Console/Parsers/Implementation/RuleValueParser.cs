@@ -5,14 +5,38 @@ namespace Grammars.LL.Console.Parsers.Implementation;
 
 public class RuleValueParser
 {
+    // "BEGIN <exp> END." -> { BEGIN, <exp>, END, . }
     public RuleValue Parse( List<char> symbols )
     {
-        var items = new List<RuleValueItem>();
+        var items = new List<RuleSymbol>();
 
         bool isNonTerminalSymbolParsing = false;
         List<char> lastWord = new();
-        foreach ( char symbol in symbols )
+        for ( var i = 0; i < symbols.Count; i++ )
         {
+            char symbol = symbols[i];
+
+            if ( symbol == ParsingSettings.EndSymbol )
+            {
+                if ( isNonTerminalSymbolParsing )
+                {
+                    throw new ArgumentException( "End symbol can not be used in the non terminal symbol name" );
+                }
+                
+                if ( lastWord.Any() )
+                {
+                    items.Add(
+                        RuleSymbol.TerminalSymbol(
+                            TerminalSymbol.Word(
+                                lastWord.ConvertToString() ) ) );
+                    lastWord.Clear();
+                }
+                
+                items.Add( RuleSymbol.TerminalSymbol( TerminalSymbol.End() ) );
+                
+                continue;
+            }
+
             if ( Char.IsWhiteSpace( symbol ) )
             {
                 // Non terminal symbol can have spaces in their names
@@ -25,17 +49,21 @@ public class RuleValueParser
                 // If we already parsed a terminal word, commit
                 if ( lastWord.Any() )
                 {
-                    items.Add( RuleValueItem.TerminalSymbol( lastWord.ConvertToString() ) );
+                    items.Add(
+                        RuleSymbol.TerminalSymbol(
+                            TerminalSymbol.Word( lastWord.ConvertToString() ) ) );
                     lastWord.Clear();
                 }
 
                 // Commit whitespace symbol
-                items.Add( RuleValueItem.WhiteSpace() );
+                items.Add( 
+                    RuleSymbol.TerminalSymbol(
+                        TerminalSymbol.WhiteSpace() ) );
                 continue;
             }
 
             // We are starting to parse a non terminal symbol
-            if ( symbol == RuleName.RuleNameOpenSymbol )
+            if ( symbol == ParsingSettings.RuleNameOpenSymbol )
             {
                 // We already started to parse a non terminal symbol, throw exception
                 if ( isNonTerminalSymbolParsing )
@@ -46,17 +74,19 @@ public class RuleValueParser
                 // If we had any terminal symbols before, commit them
                 if ( lastWord.Any() )
                 {
-                    items.Add( RuleValueItem.TerminalSymbol( lastWord.ConvertToString() ) );
+                    items.Add( 
+                        RuleSymbol.TerminalSymbol(
+                            TerminalSymbol.Word( lastWord.ConvertToString() ) ) );
                     lastWord.Clear();
                 }
-                
+
                 isNonTerminalSymbolParsing = true;
-                
+
                 continue;
             }
 
             // We are finishing to parse a non terminal symbol
-            if ( symbol == RuleName.RuleNameCloseSymbol )
+            if ( symbol == ParsingSettings.RuleNameCloseSymbol )
             {
                 // We didn't start to parse a non terminal, throw exception
                 if ( !isNonTerminalSymbolParsing )
@@ -68,14 +98,17 @@ public class RuleValueParser
                 if ( !lastWord.Any() )
                 {
                     throw new ArgumentException( "Non terminal symbol can not be empty" );
-                } 
+                }
 
                 // Commit non terminal
-                items.Add( RuleValueItem.NonTerminalSymbol( new RuleName( lastWord.ConvertToString() ) ) );
+                items.Add( 
+                    RuleSymbol.NonTerminalSymbol(
+                        new RuleName( 
+                            lastWord.ConvertToString() ) ) );
                 lastWord.Clear();
 
                 isNonTerminalSymbolParsing = false;
-                
+
                 continue;
             }
 
@@ -90,7 +123,9 @@ public class RuleValueParser
         
         if ( lastWord.Any() )
         {
-            items.Add( RuleValueItem.TerminalSymbol( lastWord.ConvertToString() ) );
+            items.Add( 
+                RuleSymbol.TerminalSymbol(
+                    TerminalSymbol.Word( lastWord.ConvertToString() ) ) );
             lastWord.Clear();
         }
         
