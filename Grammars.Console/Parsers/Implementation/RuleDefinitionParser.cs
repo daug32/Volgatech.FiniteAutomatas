@@ -129,6 +129,15 @@ public class RuleDefinitionParser
                     TerminalSymbol.Word( lastWord.ConvertToString() ) ) );
             lastWord.Clear();
         }
+
+        // Similar to trim function 
+        // If last symbols is a whitespace, remove it
+        // "a b | a c" -> { {a, b}, {a, c} }
+        if ( items.Last().Type == RuleSymbolType.TerminalSymbol && 
+             items.Last().Symbol!.Type == TerminalSymbolType.WhiteSpace )
+        {
+            items.RemoveAt( items.Count - 1 );
+        }
         
         return new RuleDefinition( items );
     }

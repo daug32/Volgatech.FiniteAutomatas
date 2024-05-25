@@ -55,9 +55,28 @@ public class GrammarParser
             rules.Add( lastRule );
         }
 
-        return new LlOneGrammar(
-            rules.First().RuleName,
-            rules.Select( x => new GrammarRule( x.RuleName, x.RuleDefinitions ) ) );
+        return BuildGrammar( rules );
+    }
+
+    private static CommonGrammar BuildGrammar( List<GrammarRuleParseResult> rules )
+    {
+        var rulesDictionary = new Dictionary<RuleName, List<RuleDefinition>>();
+        foreach ( var rule in rules )
+        {
+            if ( rulesDictionary.ContainsKey( rule.RuleName ) )
+            {
+                rulesDictionary[rule.RuleName].AddRange( rule.RuleDefinitions );
+            }
+            else
+            {
+                rulesDictionary.Add( rule.RuleName, rule.RuleDefinitions );
+            }
+        }
+        
+        RuleName startRule = rules.First().RuleName;
+        var grammarRules = rulesDictionary.Select( x => new GrammarRule( x.Key, x.Value ) );
+        
+        return new CommonGrammar( startRule, grammarRules );
     }
 
     private GrammarRuleParseResult? ParseLine( string line, int lineNumber, GrammarRuleParseResult? lastRule )
@@ -135,7 +154,7 @@ public class GrammarParser
         return result;
     }
 
-    // "S -> BEGIN <exp> END., BEGIN END." => { {BEGIN, <exp>, END, .}, {BEGIN, END, .} }  
+    // "<S> -> BEGIN <exp> END. | BEGIN END." => { { BEGIN, <exp>, END. }, { BEGIN, END. } }  
     private List<RuleDefinition> ParseRules( string line, int startIndex )
     {
         var possibleValues = new List<RuleDefinition>();
@@ -153,7 +172,7 @@ public class GrammarParser
             }
 
             // If a separator, commit current rule and create a new one
-            if ( symbol == ParsingSettings.RuleValueSeparator )
+            if ( symbol == ParsingSettings.RuleDefinitionsSeparator )
             {
                 isReadingValue = false;
 

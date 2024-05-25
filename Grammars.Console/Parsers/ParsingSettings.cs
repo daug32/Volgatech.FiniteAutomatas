@@ -12,5 +12,5 @@ public static class ParsingSettings
     
     public const char CommentIdentifier = '#';
     public const string RuleNameSeparator = "->";
-    public const char RuleValueSeparator = '|';
+    public const char RuleDefinitionsSeparator = '|';
 }

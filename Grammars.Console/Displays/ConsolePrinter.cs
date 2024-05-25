@@ -19,7 +19,7 @@ public static class ConsolePrinter
                     "", 
                     ruleDefinition.Symbols.Select( symbol => symbol.Type == RuleSymbolType.NonTerminalSymbol
                         ? $"<{symbol.RuleName}>"
-                        : symbol.Symbol!.Value ) );
+                        : symbol.Symbol!.ToString() ) );
 
                 System.Console.WriteLine( $"\t\"{serializedRuleDefinition}\"" );
             }
