@@ -1,3 +1,1 @@
-﻿<A> -> <B> | <C>
-<B> -> c b | m b
-<C> -> c c | m c
+﻿<A> -> a b | a c | n

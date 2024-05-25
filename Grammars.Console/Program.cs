@@ -17,6 +17,7 @@ public class Program
             .ToConsole()
             // .Convert( new ToLlOneGrammarConvertor() )
             // .ToConsole()
-            .Convert( new LeftFactorizationConvertor() );
+            .Convert( new LeftFactorizationConvertor() )
+            .ToConsole();
     }
 }

@@ -4,23 +4,23 @@ using LinqExtensions;
 
 namespace Grammars.Common.Convertors.LeftFactorization;
 
-public class UnitableDefinitionGroups
+public class UnitableDefinitionsGroups
 {
     public HashSet<RuleSymbol> Headings;
-    public List<ConcreteDefinition> ConcreteDefinitions;
+    public List<RuleDefinition> Definitions;
 
-    public UnitableDefinitionGroups( HashSet<RuleSymbol> headings, IEnumerable<ConcreteDefinition> concreteDefinitions )
+    public UnitableDefinitionsGroups( HashSet<RuleSymbol> headings, IEnumerable<RuleDefinition> concreteDefinitions )
     {
         Headings = headings;
-        ConcreteDefinitions = concreteDefinitions.ToList();
+        Definitions = concreteDefinitions.ToList();
     }
 
-    public static List<UnitableDefinitionGroups> Create(
+    public static List<UnitableDefinitionsGroups> Create(
         RuleName targetRuleName,
         CommonGrammar grammar,
         Dictionary<RuleDefinition, GuidingSymbolsSet> definitionsToHeadings )
     {
-        var groups = new List<UnitableDefinitionGroups>();
+        var groups = new List<UnitableDefinitionsGroups>();
         
         GrammarRule rule = grammar.Rules[targetRuleName];
         LinkedList<RuleDefinition> definitionsToProcess = new LinkedList<RuleDefinition>().AddRangeToTail( rule.Definitions );
@@ -28,13 +28,13 @@ public class UnitableDefinitionGroups
         while( definitionsToProcess.Any() )
         {
             RuleDefinition firstDefinition = definitionsToProcess.DequeueFirst();
+            GuidingSymbolsSet firstDefinitionHeadings = definitionsToHeadings[firstDefinition];
+            
             if ( firstDefinition.Symbols[0].Type == RuleSymbolType.NonTerminalSymbol && 
                  firstDefinition.Symbols[0].RuleName == targetRuleName )
             {
                 continue;
             }
-
-            GuidingSymbolsSet firstDefinitionHeadings = definitionsToHeadings[firstDefinition];
             
             var toUnite = new List<RuleDefinition>();
             HashSet<RuleSymbol> toUniteCommonHeadings = firstDefinitionHeadings.GuidingSymbols.ToHashSet();
@@ -61,11 +61,11 @@ public class UnitableDefinitionGroups
                 continue;
             }
 
-            groups.Add( new UnitableDefinitionGroups( 
+            groups.Add( new UnitableDefinitionsGroups( 
                 toUniteCommonHeadings,
                 toUnite
                     .With( firstDefinition )
-                    .Select( definition => new ConcreteDefinition( rule.Name, definition ) ) ) );
+                    .Select( definition => new RuleDefinition( definition.Symbols ) ) ) );
         }
 
         return groups;
