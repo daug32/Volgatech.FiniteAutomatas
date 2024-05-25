@@ -3,11 +3,11 @@
 public class GrammarRule
 {
     public readonly RuleName Name;
-    public readonly IReadOnlyList<RuleValue> Values;
+    public readonly IReadOnlyList<RuleDefinition> Definitions;
 
-    public GrammarRule( RuleName name, IEnumerable<RuleValue> values )
+    public GrammarRule( RuleName name, IEnumerable<RuleDefinition> values )
     {
         Name = name;
-        Values = values.ToList();
+        Definitions = values.ToList();
     }
 }

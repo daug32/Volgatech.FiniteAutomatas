@@ -15,7 +15,7 @@ public class Program
         foreach ( GrammarRule rule in llOneGrammar.Rules.Values )
         {
             System.Console.WriteLine( $"Rule: \"{rule.Name}\"" );
-            foreach ( RuleValue ruleValue in rule.Values )
+            foreach ( RuleDefinition ruleValue in rule.Definitions )
             {
                 System.Console.WriteLine( $"\t\"{ruleValue}\"" );
             }

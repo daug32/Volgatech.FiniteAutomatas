@@ -13,7 +13,7 @@ public class GrammarParser
     private const char RuleValueSeparator = ',';
 
     private readonly RuleNameParser _ruleNameParser = new();
-    private readonly RuleValueParser _ruleValueParser = new();
+    private readonly RuleDefinitionParser _ruleDefinitionParser = new();
 
     public LlOneGrammar ParseFile( string fullFilePath )
     {
@@ -60,7 +60,7 @@ public class GrammarParser
 
         return new LlOneGrammar(
             rules.First().RuleName,
-            rules.Select( x => new GrammarRule( x.RuleName, x.Values ) ) );
+            rules.Select( x => new GrammarRule( x.RuleName, x.RuleDefinitions ) ) );
     }
 
     private GrammarRuleParseResult? ParseLine( string line, int lineNumber, GrammarRuleParseResult? lastRule )
@@ -92,14 +92,14 @@ public class GrammarParser
                 throw new FormatException( $"Rule values are enumerated without declaring a ruleName. Line: {lineNumber}" );
             }
 
-            lastRule.Values.AddRange( lineParseResult.Rules ?? throw new UnreachableException() );
+            lastRule.RuleDefinitions.AddRange( lineParseResult.Rules ?? throw new UnreachableException() );
             return null;
         }
 
         var rule = new GrammarRuleParseResult( lineParseResult.RuleName );
         if ( lineParseResult.Rules is not null )
         {
-            rule.Values = lineParseResult.Rules;
+            rule.RuleDefinitions = lineParseResult.Rules;
         }
 
         return rule;
@@ -139,9 +139,9 @@ public class GrammarParser
     }
 
     // "S -> BEGIN <exp> END., BEGIN END." => { {BEGIN, <exp>, END, .}, {BEGIN, END, .} }  
-    private List<RuleValue> ParseRules( string line, int startIndex )
+    private List<RuleDefinition> ParseRules( string line, int startIndex )
     {
-        var possibleValues = new List<RuleValue>();
+        var possibleValues = new List<RuleDefinition>();
 
         var isReadingValue = false;
         var lastRawValue = new List<char>();
@@ -162,7 +162,7 @@ public class GrammarParser
 
                 if ( lastRawValue.Any() )
                 {
-                    possibleValues.Add( _ruleValueParser.Parse( lastRawValue ) );
+                    possibleValues.Add( _ruleDefinitionParser.Parse( lastRawValue ) );
                     lastRawValue = new List<char>();
                 }
 
@@ -177,7 +177,7 @@ public class GrammarParser
 
         if ( lastRawValue.Any() )
         {
-            possibleValues.Add( _ruleValueParser.Parse( lastRawValue ) );
+            possibleValues.Add( _ruleDefinitionParser.Parse( lastRawValue ) );
         }
 
         return possibleValues;

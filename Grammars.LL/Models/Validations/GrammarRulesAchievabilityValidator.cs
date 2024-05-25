@@ -25,7 +25,7 @@ internal class GrammarRulesAchievabilityValidator
             uncheckedRules.Remove( ruleName );
 
             GrammarRule rule = rules[ruleName];
-            foreach ( RuleValue ruleValue in rule.Values )
+            foreach ( RuleDefinition ruleValue in rule.Definitions )
             {
                 foreach ( RuleSymbol symbol in ruleValue.Symbols )
                 {

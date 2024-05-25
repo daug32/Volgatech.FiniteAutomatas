@@ -25,24 +25,24 @@ public class LlOneGrammar
     {
         var result = new HashSet<RuleSymbol>();
         
-        var queue = new Queue<RuleValue>();
-        queue.EnqueueRange( Rules[ruleName].Values );
-        var processed = new HashSet<RuleValue>();
+        var queue = new Queue<RuleDefinition>();
+        queue.EnqueueRange( Rules[ruleName].Definitions );
+        var processed = new HashSet<RuleDefinition>();
 
         while ( queue.Any() )
         {
-            RuleValue ruleValue = queue.Dequeue();
-            if ( processed.Contains( ruleValue ) )
+            RuleDefinition ruleDefinition = queue.Dequeue();
+            if ( processed.Contains( ruleDefinition ) )
             {
                 continue;
             }
 
-            processed.Add( ruleValue );
+            processed.Add( ruleDefinition );
 
-            RuleSymbol headerSymbol = ruleValue.Symbols.First();
+            RuleSymbol headerSymbol = ruleDefinition.Symbols.First();
             if ( headerSymbol.Type == RuleSymbolType.NonTerminalSymbol )
             {
-                queue.EnqueueRange( Rules[headerSymbol.RuleName!].Values );
+                queue.EnqueueRange( Rules[headerSymbol.RuleName!].Definitions );
                 continue;
             }
 

@@ -16,7 +16,7 @@ internal class GrammarRulesDeclarationCheck
 
         foreach ( GrammarRule rule in rules.Values )
         {
-            foreach ( RuleValue ruleValue in rule.Values )
+            foreach ( RuleDefinition ruleValue in rule.Definitions )
             {
                 foreach ( RuleSymbol valueItem in ruleValue.Symbols )
                 {

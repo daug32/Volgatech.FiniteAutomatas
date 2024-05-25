@@ -1,22 +1,22 @@
 ﻿namespace Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
 
-public class RuleValue
+public class RuleDefinition
 {
     public readonly IReadOnlyList<RuleSymbol> Symbols;
 
-    public RuleValue( IEnumerable<RuleSymbol> items )
+    public RuleDefinition( IEnumerable<RuleSymbol> items )
     {
         Symbols = items.ToList();
     }
 
-    public override bool Equals( object? obj ) => obj is RuleValue other && Equals( other );
+    public override bool Equals( object? obj ) => obj is RuleDefinition other && Equals( other );
 
     public override int GetHashCode()
     {
         return Symbols.GetHashCode();
     }
 
-    public bool Equals( RuleValue other )
+    public bool Equals( RuleDefinition other )
     {
         if ( other.Symbols.Count != Symbols.Count )
         {
@@ -37,9 +37,9 @@ public class RuleValue
         return true;
     }
     
-    public static bool operator == ( RuleValue a, RuleValue b ) => a.Equals( b );
+    public static bool operator == ( RuleDefinition a, RuleDefinition b ) => a.Equals( b );
 
-    public static bool operator !=( RuleValue a, RuleValue b ) => !a.Equals( b );
+    public static bool operator !=( RuleDefinition a, RuleDefinition b ) => !a.Equals( b );
 
     public override string ToString() => String.Join( "", Symbols );
 }

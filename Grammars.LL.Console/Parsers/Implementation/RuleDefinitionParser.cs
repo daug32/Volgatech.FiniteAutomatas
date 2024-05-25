@@ -3,10 +3,10 @@ using LinqExtensions;
 
 namespace Grammars.LL.Console.Parsers.Implementation;
 
-public class RuleValueParser
+public class RuleDefinitionParser
 {
     // "BEGIN <exp> END." -> { BEGIN, <exp>, END, . }
-    public RuleValue Parse( List<char> symbols )
+    public RuleDefinition Parse( List<char> symbols )
     {
         var items = new List<RuleSymbol>();
 
@@ -129,6 +129,6 @@ public class RuleValueParser
             lastWord.Clear();
         }
         
-        return new RuleValue( items );
+        return new RuleDefinition( items );
     }
 }
