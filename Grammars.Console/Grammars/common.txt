@@ -1,1 +1,1 @@
-﻿<A> -> a b | a c | n
+﻿<A> -> a b | a c | d b | d c

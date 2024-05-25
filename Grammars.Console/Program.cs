@@ -1,5 +1,6 @@
 ﻿using Grammars.Common.Convertors;
 using Grammars.Common.Convertors.LeftFactorization;
+using Grammars.Common.Convertors.Semantics;
 using Grammars.Console.Parsers;
 using Grammars.Console.Displays;
 using Grammars.LL.Convertors;
@@ -18,6 +19,7 @@ public class Program
             // .Convert( new ToLlOneGrammarConvertor() )
             // .ToConsole()
             .Convert( new LeftFactorizationConvertor() )
+            .Convert( new RuleNamesConvertor() )
             .ToConsole();
     }
 }

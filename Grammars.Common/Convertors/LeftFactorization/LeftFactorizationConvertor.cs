@@ -33,7 +33,7 @@ internal class LeftFactorizationHandler
             var currentRuleDefinitions = rule.Definitions.ToList();
             foreach ( UnitableDefinitionsGroups definitionGroup in unitableDefinitionsGroups )
             {
-                var newRuleName = new RuleName( DateTime.Now.Ticks.ToString() );
+                var newRuleName = RuleName.Random();
                 var newRuleDefinitions = new List<RuleDefinition>();
                 
                 RuleSymbol heading = definitionGroup.Headings.First();

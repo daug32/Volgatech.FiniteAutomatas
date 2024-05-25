@@ -85,7 +85,7 @@ internal class LeftRecursionRemover
             targetRuleName,
             new List<RuleDefinition>() );
         var newRule = new GrammarRule( 
-            new RuleName( targetRuleName.Value + '`' ), 
+            RuleName.Random(), 
             new List<RuleDefinition>() );
 
         foreach ( RuleDefinition definition in groupedDefinitions.WithoutLeftRecursion )

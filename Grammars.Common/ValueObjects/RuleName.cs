@@ -9,6 +9,8 @@ public class RuleName
     
     public readonly string Value;
 
+    public static RuleName Random() => new( DateTime.Now.Ticks.ToString() );
+
     public RuleName( string value )
     {
         value = value.ThrowIfNullOrWhiteSpace();
