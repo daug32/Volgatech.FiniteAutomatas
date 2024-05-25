@@ -1,6 +1,7 @@
-﻿using Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
+﻿using Grammars.LL.Models.ValueObjects;
+using Grammars.LL.Models.ValueObjects.Symbols;
 
-namespace Grammars.Grammars.LeftRoRightOne.Models.Validations;
+namespace Grammars.LL.Models.Validations;
 
 internal class GrammarRulesAchievabilityValidator
 {

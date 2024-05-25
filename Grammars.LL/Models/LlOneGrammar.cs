@@ -1,13 +1,14 @@
-﻿using Grammars.Grammars.LeftRoRightOne.Models.Validations;
-using Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
+﻿using Grammars.LL.Models.Validations;
+using Grammars.LL.Models.ValueObjects;
+using Grammars.LL.Models.ValueObjects.Symbols;
 using LinqExtensions;
 
-namespace Grammars.Grammars.LeftRoRightOne.Models;
+namespace Grammars.LL.Models;
 
 public class LlOneGrammar
 {
     public RuleName StartRule { get; }
-    public IDictionary<RuleName, GrammarRule> Rules { get; }
+    public IDictionary<RuleName, GrammarRule> Rules { get; private set; }
 
     public LlOneGrammar(
         RuleName startRule,
@@ -50,6 +51,31 @@ public class LlOneGrammar
         }
 
         return result;
+    }
+
+    internal LlOneGrammar Copy()
+    {
+        var rules = new List<GrammarRule>();
+        foreach ( GrammarRule rule in Rules.Values )
+        {
+            var definitions = new List<RuleDefinition>();
+            foreach ( RuleDefinition definition in rule.Definitions )
+            {
+                var ruleSymbols = new List<RuleSymbol>();
+                foreach ( RuleSymbol ruleSymbol in definition.Symbols )
+                {
+                    ruleSymbols.Add( ruleSymbol.Type == RuleSymbolType.NonTerminalSymbol
+                        ? RuleSymbol.NonTerminalSymbol( ruleSymbol.RuleName! )
+                        : RuleSymbol.TerminalSymbol( ruleSymbol.Symbol! ) ); 
+                }
+                
+                definitions.Add( new RuleDefinition( ruleSymbols ) );
+            }
+            
+            rules.Add( new GrammarRule( new RuleName( rule.Name.Value ), definitions ) );
+        }
+
+        return new LlOneGrammar( new RuleName( StartRule.Value ), rules );
     }
 
     private void ValidateOrThrow()

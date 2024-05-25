@@ -1,16 +1,13 @@
 ﻿using System.Diagnostics;
-using Grammars.Grammars.LeftRoRightOne.Models;
-using Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
 using Grammars.LL.Console.Parsers.Implementation;
 using Grammars.LL.Console.Parsers.Implementation.Models;
+using Grammars.LL.Models;
+using Grammars.LL.Models.ValueObjects;
 
 namespace Grammars.LL.Console.Parsers;
 
 public class GrammarParser
 {
-    private const char CommentIdentifier = '#';
-    private const string RuleNameSeparator = "->";
-    private const char RuleValueSeparator = ',';
 
     private readonly RuleNameParser _ruleNameParser = new();
     private readonly RuleDefinitionParser _ruleDefinitionParser = new();
@@ -114,7 +111,7 @@ public class GrammarParser
                 continue;
             }
 
-            return symbol == CommentIdentifier;
+            return symbol == ParsingSettings.CommentIdentifier;
         }
 
         return false;
@@ -124,13 +121,13 @@ public class GrammarParser
     {
         var result = new GrammarLineParseResult();
 
-        int ruleDeclarationIndex = line.IndexOf( RuleNameSeparator, StringComparison.Ordinal );
+        int ruleDeclarationIndex = line.IndexOf( ParsingSettings.RuleNameSeparator, StringComparison.Ordinal );
 
         var index = 0;
         if ( ruleDeclarationIndex >= 0 )
         {
             result.RuleName = _ruleNameParser.ParseFromLine( line, ruleDeclarationIndex, out int lastLineReadSymbolIndex );
-            index = lastLineReadSymbolIndex + RuleNameSeparator.Length;
+            index = lastLineReadSymbolIndex + ParsingSettings.RuleNameSeparator.Length;
         }
 
         result.Rules = ParseRules( line, index );
@@ -156,7 +153,7 @@ public class GrammarParser
             }
 
             // If a separator, commit current rule and create a new one
-            if ( symbol == RuleValueSeparator )
+            if ( symbol == ParsingSettings.RuleValueSeparator )
             {
                 isReadingValue = false;
 

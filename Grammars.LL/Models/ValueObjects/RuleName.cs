@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 
-namespace Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
+namespace Grammars.LL.Models.ValueObjects;
 
 public class RuleName
 {
@@ -27,9 +27,9 @@ public class RuleName
 
     public override bool Equals( object? obj ) => obj is RuleName other && other.Value.Equals( Value );
     
-    public static bool operator == ( RuleName a, RuleName b ) => a.Equals( b );
+    public static bool operator == ( RuleName? a, RuleName? b ) => a?.Equals( b ) ?? b == null;
 
-    public static bool operator !=( RuleName a, RuleName b ) => !a.Equals( b );
+    public static bool operator !=( RuleName? a, RuleName? b ) => !a?.Equals( b ) ?? b == null;
 
     public override int GetHashCode() => Value.GetHashCode();
 

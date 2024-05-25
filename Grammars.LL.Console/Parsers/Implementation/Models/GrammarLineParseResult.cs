@@ -1,4 +1,4 @@
-﻿using Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
+﻿using Grammars.LL.Models.ValueObjects;
 
 namespace Grammars.LL.Console.Parsers.Implementation;
 

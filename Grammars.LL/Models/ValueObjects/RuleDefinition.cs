@@ -1,4 +1,6 @@
-﻿namespace Grammars.Grammars.LeftRoRightOne.Models.ValueObjects;
+﻿using Grammars.LL.Models.ValueObjects.Symbols;
+
+namespace Grammars.LL.Models.ValueObjects;
 
 public class RuleDefinition
 {
