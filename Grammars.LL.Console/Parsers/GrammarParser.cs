@@ -19,7 +19,7 @@ public class GrammarParser
     {
         if ( !File.Exists( fullFilePath ) )
         {
-            throw new ArgumentException( $"File was not found. FilePath: {Path.GetFileName( fullFilePath )}" );
+            throw new ArgumentException( $"File was not found. FilePath: {Path.GetFullPath( fullFilePath )}" );
         }
 
         using var reader = new StreamReader( fullFilePath );

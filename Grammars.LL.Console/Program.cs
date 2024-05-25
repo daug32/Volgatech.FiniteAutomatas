@@ -10,8 +10,7 @@ public class Program
     
     public static void Main()
     {
-        LlOneGrammar llOneGrammar = _grammarParser.ParseFile(
-            @"D:\Development\Projects\FiniteAutomatas\Grammars.LL.Console\Grammars\common.txt" );
+        LlOneGrammar llOneGrammar = _grammarParser.ParseFile( @"../../../Grammars/common.txt" );
 
         foreach ( GrammarRule rule in llOneGrammar.Rules.Values )
         {
