@@ -1,5 +1,5 @@
-﻿using Grammars.LL.Models.ValueObjects;
-using Grammars.LL.Models.ValueObjects.Symbols;
+﻿using Grammars.Common.ValueObjects;
+using Grammars.Common.ValueObjects.Symbols;
 
 namespace Grammars.LL.Models.Validations;
 

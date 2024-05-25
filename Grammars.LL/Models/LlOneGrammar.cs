@@ -1,24 +1,16 @@
-﻿using Grammars.LL.Models.Validations;
-using Grammars.LL.Models.ValueObjects;
-using Grammars.LL.Models.ValueObjects.Symbols;
+﻿using Grammars.Common;
+using Grammars.Common.ValueObjects;
+using Grammars.Common.ValueObjects.Symbols;
+using Grammars.LL.Models.Validations;
 using LinqExtensions;
 
 namespace Grammars.LL.Models;
 
-public class LlOneGrammar
+public class LlOneGrammar : CommonGrammar
 {
-    public RuleName StartRule { get; }
-    public IDictionary<RuleName, GrammarRule> Rules { get; private set; }
-
-    public LlOneGrammar(
-        RuleName startRule,
-        IEnumerable<GrammarRule> rules )
+    public LlOneGrammar( RuleName startRule, IEnumerable<GrammarRule> rules )
+        : base( startRule, rules )
     {
-        StartRule = startRule;
-        Rules = rules.ToDictionary(
-            x => x.Name,
-            x => x );
-
         ValidateOrThrow();
     }
 
@@ -53,31 +45,6 @@ public class LlOneGrammar
         return result;
     }
 
-    internal LlOneGrammar Copy()
-    {
-        var rules = new List<GrammarRule>();
-        foreach ( GrammarRule rule in Rules.Values )
-        {
-            var definitions = new List<RuleDefinition>();
-            foreach ( RuleDefinition definition in rule.Definitions )
-            {
-                var ruleSymbols = new List<RuleSymbol>();
-                foreach ( RuleSymbol ruleSymbol in definition.Symbols )
-                {
-                    ruleSymbols.Add( ruleSymbol.Type == RuleSymbolType.NonTerminalSymbol
-                        ? RuleSymbol.NonTerminalSymbol( ruleSymbol.RuleName! )
-                        : RuleSymbol.TerminalSymbol( ruleSymbol.Symbol! ) ); 
-                }
-                
-                definitions.Add( new RuleDefinition( ruleSymbols ) );
-            }
-            
-            rules.Add( new GrammarRule( new RuleName( rule.Name.Value ), definitions ) );
-        }
-
-        return new LlOneGrammar( new RuleName( StartRule.Value ), rules );
-    }
-
     private void ValidateOrThrow()
     {
         var errors = new List<Exception>();
@@ -89,8 +56,6 @@ public class LlOneGrammar
         errors.AddRange( new GrammarRulesDeclarationCheck()
             .CheckAndGetFailed( StartRule, Rules )
             .Select( x => new ArgumentException( $"Rule was not declared. RuleName: {x.Value}" ) ) );
-        
-        // Add determination check: All rule values of the same rule must start from different symbols
 
         if ( errors.Any() )
         {
