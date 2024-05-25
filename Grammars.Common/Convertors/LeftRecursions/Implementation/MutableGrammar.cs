@@ -2,15 +2,11 @@
 
 namespace Grammars.Common.Convertors.LeftRecursions.Implementation;
 
-internal class MutableGrammar
+internal class MutableGrammar : CommonGrammar
 {
-    public RuleName StartRule;
-    public Dictionary<RuleName, GrammarRule> Rules = new();
-
     public MutableGrammar( CommonGrammar grammar )
+        : base( grammar.StartRule, grammar.Rules.Values )
     {
-        StartRule = grammar.StartRule;
-        Rules = grammar.Rules.ToDictionary( x => x.Key, x => x.Value );
     }
 
     public void Replace( GrammarRule rule )

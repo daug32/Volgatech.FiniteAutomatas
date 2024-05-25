@@ -25,14 +25,22 @@ public class TerminalSymbol
 
     public override int GetHashCode() => HashCode.Combine( Value, ( int )Type );
 
-    public static bool operator == ( TerminalSymbol a, TerminalSymbol b ) => a.Equals( b );
+    public static bool operator ==( TerminalSymbol? a, TerminalSymbol? b )
+    {
+        if ( a is null )
+        {
+            return b is null;
+        }
+        
+        return a.Equals( b );
+    }
 
-    public static bool operator !=( TerminalSymbol a, TerminalSymbol b ) => !a.Equals( b );
+    public static bool operator !=( TerminalSymbol? a, TerminalSymbol? b ) => !( a == b );
 
     public override string ToString() => Type switch
     {
-        TerminalSymbolType.End => "end",
-        TerminalSymbolType.WhiteSpace => "space",
+        TerminalSymbolType.End => "⊥",
+        TerminalSymbolType.WhiteSpace => " ",
         TerminalSymbolType.Word => Value ?? throw new UnreachableException(),
         _ => throw new ArgumentOutOfRangeException()
     };

@@ -6,6 +6,9 @@ namespace Grammars.Common.Convertors.LeftRecursions.Implementation;
 
 internal class LeftRecursionRemover
 {
+    // See https://www.youtube.com/watch?v=SV3RgUsmPcU&lc=UgwHTljtg7Pwy0xqAJF4AaABAg
+    // for better algorithm description
+    
     public CommonGrammar RemoveLeftRecursion( CommonGrammar grammar )
     {
         List<RuleName> allRules = grammar.Rules.Keys.ToList();

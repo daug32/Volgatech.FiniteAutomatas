@@ -14,3 +14,39 @@ public static class IEnumerableExtensions
         }
     }
 }
+
+public static class LinkedListExtensions
+{
+    public static LinkedList<T> AddRangeToTail<T>( this LinkedList<T> collection, IEnumerable<T> items )
+    {
+        foreach ( T item in items )
+        {
+            collection.AddLast( item );
+        }
+        
+        return collection;
+    }
+
+    public static T GetByIndex<T>( this LinkedList<T> collection, int index )
+    {
+        var current = collection.First;
+        for ( int i = 0; i <= index; i++ )
+        {
+            current = current?.Next;
+        }
+
+        if ( current == null )
+        {
+            throw new IndexOutOfRangeException();
+        }
+
+        return current.Value;
+    }
+
+    public static T DequeueFirst<T>( this LinkedList<T> collection )
+    {
+        T a = collection.First();
+        collection.RemoveFirst();
+        return a;
+    }
+}

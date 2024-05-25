@@ -37,11 +37,30 @@ public class RuleSymbol
         Symbol = symbol;
     }
 
-    public override bool Equals( object? obj ) => 
-        obj is RuleSymbol other &&
-        other.Type.Equals( Type ) &&
-        other.Symbol!.Equals( Symbol ) &&
-        other.RuleName!.Equals( RuleName );
+    public override bool Equals( object? obj )
+    {
+        if ( obj is not RuleSymbol other )
+        {
+            return false;
+        }
+
+        if ( other.Type != Type )
+        {
+            return false;
+        }
+
+        if ( Symbol != null )
+        {
+            return Symbol.Equals( other.Symbol );
+        }
+
+        if ( RuleName != null )
+        {
+            return RuleName.Equals( other.RuleName );
+        }
+
+        throw new UnreachableException();
+    }
 
     public static bool operator == ( RuleSymbol a, RuleSymbol b ) => a.Equals( b );
 
@@ -51,8 +70,8 @@ public class RuleSymbol
 
     public override string ToString() => Type switch
     {
-        RuleSymbolType.TerminalSymbol => $"<t:{Symbol}>" ?? throw new UnreachableException(),
-        RuleSymbolType.NonTerminalSymbol => $"<nt:{RuleName!.Value}>" ?? throw new UnreachableException(),
+        RuleSymbolType.TerminalSymbol => Symbol?.ToString() ?? throw new UnreachableException(),
+        RuleSymbolType.NonTerminalSymbol => RuleName?.ToString() ?? throw new UnreachableException(),
         _ => throw new UnreachableException()
     };
 }

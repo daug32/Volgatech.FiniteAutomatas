@@ -1,4 +1,5 @@
 ﻿using Grammars.Common.Convertors;
+using Grammars.Common.Convertors.LeftFactorization;
 using Grammars.Console.Parsers;
 using Grammars.Console.Displays;
 using Grammars.LL.Convertors;
@@ -14,7 +15,8 @@ public class Program
         var grammar = _grammarParser
             .ParseFile( @"../../../Grammars/common.txt" )
             .ToConsole()
-            .Convert( new ToLlOneGrammarConvertor() )
-            .ToConsole();
+            // .Convert( new ToLlOneGrammarConvertor() )
+            // .ToConsole()
+            .Convert( new LeftFactorizationConvertor() );
     }
 }
