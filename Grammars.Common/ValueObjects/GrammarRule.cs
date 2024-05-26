@@ -3,7 +3,7 @@
 public class GrammarRule
 {
     public readonly RuleName Name;
-    public List<RuleDefinition> Definitions { get; }
+    public List<RuleDefinition> Definitions;
 
     public GrammarRule( RuleName name, IEnumerable<RuleDefinition> definitions )
     {

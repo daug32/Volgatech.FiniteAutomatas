@@ -6,6 +6,6 @@ public class InlineNonTerminalsConvertor : IGrammarConvertor
 {
     public CommonGrammar Convert( CommonGrammar grammar )
     {
-        return new BeggingNonTerminalsInliner().Inline( grammar );
+        return new NonTerminalsInliner().Inline( grammar );
     }
 }

@@ -11,7 +11,8 @@ public class RuleDefinition
         Symbols = items.ToList();
     }
 
-    public RuleSymbolType FirstSymbolType() => Symbols.First().Type;
+    public RuleSymbol FirstSymbol() => Symbols.First();
+    public RuleSymbolType FirstSymbolType() => FirstSymbol().Type;
 
     public RuleDefinition Copy() => new( Symbols );
 
@@ -42,7 +43,7 @@ public class RuleDefinition
 
         return true;
     }
-    
+
     public static bool operator == ( RuleDefinition a, RuleDefinition b ) => a.Equals( b );
 
     public static bool operator !=( RuleDefinition a, RuleDefinition b ) => !a.Equals( b );

@@ -1,8 +1,9 @@
 using Grammars.Common.ValueObjects;
+using Grammars.Common.ValueObjects.Symbols;
 
 namespace Grammars.Common.Convertors.LeftFactorization.Implementation.Inlinings;
 
-internal class BeggingNonTerminalsInliner
+internal class NonTerminalsInliner
 {
     public CommonGrammar Inline( CommonGrammar grammar )
     {
@@ -23,16 +24,13 @@ internal class BeggingNonTerminalsInliner
 
                 IEnumerable<ConcreteDefinition> definitionsToProcess = concreteDefinitions.Where( x => x.CanInline( definitionToInline ) );
                 
-                bool hasInlinings = false;
                 foreach ( ConcreteDefinition definition in definitionsToProcess )
                 {
-                    hasInlinings = true;
+                    hasChanges = true;
                     definition.Inline( definitionToInline );
                 }
 
-                hasChanges = hasChanges || hasInlinings;
-
-                if ( hasInlinings )
+                if ( CanBeRemoved( definitionToInline, concreteDefinitions ) )
                 {
                     concreteDefinitions.RemoveAt( index );
                     index--;
@@ -40,8 +38,32 @@ internal class BeggingNonTerminalsInliner
             }
         }
 
-        var grammarRules = concreteDefinitions.Select( x => new GrammarRule( x.RuleName, x.Definitions ) );
+        return new CommonGrammar(
+            grammar.StartRule, 
+            concreteDefinitions.Select( x => new GrammarRule( x.RuleName, x.Definitions ) ) );
+    }
 
-        return new CommonGrammar( grammar.StartRule, grammarRules );
+    private bool CanBeRemoved( ConcreteDefinition definitionToRemove, IEnumerable<ConcreteDefinition> allDefinitions )
+    {
+        if ( definitionToRemove.IsStartRule )
+        {
+            return false;
+        }
+        
+        foreach ( ConcreteDefinition rule in allDefinitions )
+        {
+            foreach ( RuleDefinition definition in rule.Definitions )
+            {
+                foreach ( RuleSymbol symbol in definition.Symbols )
+                {
+                    if ( symbol.RuleName == definitionToRemove.RuleName )
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 }

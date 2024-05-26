@@ -20,6 +20,19 @@ public class CommonGrammar
         {
             throw new ArgumentException( $"StartRule was not found. StartRuleName: {startRule}" );
         }
+
+        var symbols = Rules.Values
+            .SelectMany( rule => rule.Definitions.SelectMany( definition => definition.Symbols ) )
+            .Where( x => x.Type == RuleSymbolType.NonTerminalSymbol )
+            .ToHashSet();
+
+        foreach ( RuleSymbol symbol in symbols )
+        {
+            if ( !Rules.ContainsKey( symbol.RuleName! ) )
+            {
+                throw new ArgumentException( $"Grammar doesn't have a definition for rule. RuleName: {symbol}" );
+            }
+        }
     }
 
     public GuidingSymbolsSet GetGuidingSymbolsSet( RuleName ruleName, RuleDefinition definition ) =>

@@ -7,12 +7,14 @@ namespace Grammars.Common.Convertors.LeftFactorization.Implementation.Inlinings;
 internal class ConcreteDefinition
 {
     public readonly RuleName RuleName;
+    public readonly bool IsStartRule;
     public bool StartsWithTerminal => Definitions.All( x => x.FirstSymbolType() == RuleSymbolType.TerminalSymbol );
     public List<RuleDefinition> Definitions;
 
-    public ConcreteDefinition( RuleName ruleName, IEnumerable<RuleDefinition> definitions )
+    public ConcreteDefinition( RuleName ruleName, bool isStartRule, IEnumerable<RuleDefinition> definitions )
     {
         RuleName = ruleName;
+        IsStartRule = isStartRule;
         Definitions = definitions.ToList();
     }
 
@@ -70,7 +72,10 @@ internal class ConcreteDefinition
     public static List<ConcreteDefinition> CreateFromGrammar( CommonGrammar grammar )
     {
         return grammar.Rules.Values
-            .Select( rule => new ConcreteDefinition( rule.Name, rule.Definitions ) )
+            .Select( rule => new ConcreteDefinition( 
+                rule.Name, 
+                grammar.StartRule == rule.Name, 
+                rule.Definitions ) )
             .ToList();
     }
 }
