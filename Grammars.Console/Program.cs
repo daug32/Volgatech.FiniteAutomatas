@@ -32,7 +32,11 @@ public class Program
             
             .Convert( new LeftFactorizationConvertor() )
             .Convert( new RuleNamesConvertor() )
-            .ToConsole( "Left factoring" );
+            .ToConsole( "Left factoring" )
+            
+            .Convert( new InlineNonTerminalsConvertor() )
+            .Convert( new RuleNamesConvertor() )
+            .ToConsole( "Inlining" );
     }
 }
 

@@ -47,12 +47,9 @@ internal class LeftFactorizationHandler
                     RuleSymbol firstSymbol = oldDefinitionToMigrate.Symbols.First();
                     if ( firstSymbol.Type == RuleSymbolType.NonTerminalSymbol )
                     {
-                        throw new NotSupportedException(
-                            "LeftFactorization can not be performed "
-                            + "because can not get prefixes from the given non terminal symbol. "
-                            + $"{nameof( BeggingNonTerminalsInliner )} had to prepare data but something went wrong. "
-                            + $"NonTerminalSymbol: {firstSymbol}. "
-                            + "Possible invalid data example: A -> B | a c; B -> a b " );
+                        // Я не ебу почему но оно так надо
+                        newRuleDefinitions.Add( oldDefinitionToMigrate.Copy() );
+                        continue;
                     }
 
                     var migratedDefinition = oldDefinitionToMigrate.Symbols.ToList().WithoutFirst();
