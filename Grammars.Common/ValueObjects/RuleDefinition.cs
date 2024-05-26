@@ -13,6 +13,8 @@ public class RuleDefinition
 
     public RuleSymbolType FirstSymbolType() => Symbols.First().Type;
 
+    public RuleDefinition Copy() => new( Symbols );
+
     public override bool Equals( object? obj ) => obj is RuleDefinition other && Equals( other );
 
     public override int GetHashCode()

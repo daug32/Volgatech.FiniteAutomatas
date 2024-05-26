@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Grammars.Common.Convertors.LeftFactorization.Implementation.Inlinings;
-using Grammars.Common.Convertors.LeftRecursions.Implementation;
 using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 using LinqExtensions;
@@ -9,19 +8,19 @@ namespace Grammars.Common.Convertors.LeftFactorization.Implementation;
 
 internal class LeftFactorizationHandler
 {
-    public CommonGrammar Factorize( MutableGrammar mutableGrammar )
+    public CommonGrammar Factorize( CommonGrammar grammar )
     {
-        Queue<RuleName> rulesToProcess = new Queue<RuleName>().EnqueueRange( mutableGrammar.Rules.Keys );
+        Queue<RuleName> rulesToProcess = new Queue<RuleName>().EnqueueRange( grammar.Rules.Keys );
 
         while ( rulesToProcess.Any() )
         {
-            GrammarRule rule = mutableGrammar.Rules[rulesToProcess.Dequeue()];
+            GrammarRule rule = grammar.Rules[rulesToProcess.Dequeue()];
             
-            Dictionary<RuleDefinition, GuidingSymbolsSet> definitionsToHeadings = BuildDefinitionsToHeadings( mutableGrammar, rule );
+            Dictionary<RuleDefinition, GuidingSymbolsSet> definitionsToHeadings = BuildDefinitionsToHeadings( grammar, rule );
 
             List<UnitableDefinitionsGroups> unitableDefinitionsGroups = UnitableDefinitionsGroups.Create(
                 rule.Name,
-                mutableGrammar,
+                grammar,
                 definitionsToHeadings );
 
             var currentRuleDefinitions = rule.Definitions.ToList();
@@ -67,14 +66,14 @@ internal class LeftFactorizationHandler
                     newRuleDefinitions.Add( new RuleDefinition( migratedDefinition ) );
                 }
                 
-                mutableGrammar.Rules.Add( newRuleName, new GrammarRule( newRuleName, newRuleDefinitions ) );
+                grammar.Rules.Add( newRuleName, new GrammarRule( newRuleName, newRuleDefinitions ) );
                 rulesToProcess.Enqueue( newRuleName );
             }
 
-            mutableGrammar.Rules[rule.Name] = new GrammarRule( rule.Name, currentRuleDefinitions );
+            grammar.Rules[rule.Name] = new GrammarRule( rule.Name, currentRuleDefinitions );
         }
 
-        return mutableGrammar.ToGrammar();
+        return grammar;
     }
 
     private bool NeedToBeRemoved( RuleDefinition definition, List<RuleDefinition> definitionToRemove )
@@ -90,7 +89,7 @@ internal class LeftFactorizationHandler
         return false;
     }
 
-    private static Dictionary<RuleDefinition, GuidingSymbolsSet> BuildDefinitionsToHeadings( MutableGrammar grammar, GrammarRule rule )
+    private static Dictionary<RuleDefinition, GuidingSymbolsSet> BuildDefinitionsToHeadings( CommonGrammar grammar, GrammarRule rule )
     {
         return rule.Definitions.ToDictionary(
             x => x,

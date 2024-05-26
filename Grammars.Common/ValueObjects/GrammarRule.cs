@@ -18,8 +18,5 @@ public class GrammarRule
         Definitions = Definitions.ToList().With( definition );
     }
 
-    public void RemoveDefinition( RuleDefinition definition )
-    {
-        Definitions = Definitions.Where( x => !x.Equals( definition ) ).ToList();
-    }
+    public GrammarRule Copy() => new GrammarRule( Name, Definitions.Select( x => x.Copy() ) );
 }

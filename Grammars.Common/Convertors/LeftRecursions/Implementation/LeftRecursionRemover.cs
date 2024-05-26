@@ -12,12 +12,11 @@ internal class LeftRecursionRemover
     public CommonGrammar RemoveLeftRecursion( CommonGrammar grammar )
     {
         List<RuleName> allRules = grammar.Rules.Keys.ToList();
-        MutableGrammar mutableGrammar = new MutableGrammar( grammar );
 
         int mainIterator = 0;
         while ( true )
         {
-            ReplaceLeftRecursionByNewRule( allRules[mainIterator], mutableGrammar );
+            ReplaceLeftRecursionByNewRule( allRules[mainIterator], grammar );
             
             if ( mainIterator == allRules.Count - 1 )
             {
@@ -28,14 +27,14 @@ internal class LeftRecursionRemover
 
             for ( int secondIterator = 0; secondIterator < mainIterator; secondIterator++ )
             {
-                GrammarRule mainRule = mutableGrammar.Rules[allRules[mainIterator]];
-                GrammarRule secondRule = mutableGrammar.Rules[allRules[secondIterator]];
+                GrammarRule mainRule = grammar.Rules[allRules[mainIterator]];
+                GrammarRule secondRule = grammar.Rules[allRules[secondIterator]];
 
-                mutableGrammar.Replace( new GrammarRule( mainRule.Name, ReplaceHeadingRules( mainRule, secondRule ) ) );
+                grammar.Rules[mainRule.Name] = new GrammarRule( mainRule.Name, ReplaceHeadingRules( mainRule, secondRule ) );
             }
         }
 
-        return mutableGrammar.ToGrammar();
+        return grammar;
     }
 
     private static List<RuleDefinition> ReplaceHeadingRules( GrammarRule mainRule, GrammarRule secondRule )
@@ -71,7 +70,7 @@ internal class LeftRecursionRemover
         return newDefinitions;
     }
 
-    private void ReplaceLeftRecursionByNewRule( RuleName targetRuleName, MutableGrammar grammar )
+    private void ReplaceLeftRecursionByNewRule( RuleName targetRuleName, CommonGrammar grammar )
     {
         (List<RuleDefinition> WithLeftRecursion, List<RuleDefinition> WithoutLeftRecursion) 
             groupedDefinitions = GroupRuleDefinitionsByLeftRecursionUsage( targetRuleName, grammar );
@@ -112,13 +111,13 @@ internal class LeftRecursionRemover
             }
         }
         
-        grammar.Replace( newRule );
-        grammar.Replace( copiedRule );
+        grammar.Rules[newRule.Name] = newRule;
+        grammar.Rules[copiedRule.Name] = copiedRule;
     }
 
     internal 
         (List<RuleDefinition> WithLeftRecursion, List<RuleDefinition> WithoutLeftRecursion) 
-        GroupRuleDefinitionsByLeftRecursionUsage( RuleName targetRuleName, MutableGrammar grammar )
+        GroupRuleDefinitionsByLeftRecursionUsage( RuleName targetRuleName, CommonGrammar grammar )
     {
         var withLR = new List<RuleDefinition>();
         var withoutLR = new List<RuleDefinition>();

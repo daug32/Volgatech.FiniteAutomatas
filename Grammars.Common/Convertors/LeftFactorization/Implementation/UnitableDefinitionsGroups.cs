@@ -1,4 +1,3 @@
-using Grammars.Common.Convertors.LeftRecursions.Implementation;
 using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 using LinqExtensions;
@@ -18,7 +17,7 @@ internal class UnitableDefinitionsGroups
 
     public static List<UnitableDefinitionsGroups> Create(
         RuleName targetRuleName,
-        MutableGrammar grammar,
+        CommonGrammar grammar,
         Dictionary<RuleDefinition, GuidingSymbolsSet> definitionsToHeadings )
     {
         var groups = new List<UnitableDefinitionsGroups>();
