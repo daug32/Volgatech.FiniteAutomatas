@@ -6,9 +6,15 @@ namespace Grammars.Console.Displays;
 
 public static class ConsolePrinter
 {
-    public static T ToConsole<T>( this T grammar ) where T : CommonGrammar
+    public static T ToConsole<T>( this T grammar, string? stepDescription = null ) where T : CommonGrammar
     {
-        System.Console.WriteLine( new String( '-', System.Console.WindowWidth ) );
+        var splitter = new String( '-', System.Console.WindowWidth - 1 );
+        
+        System.Console.WriteLine( splitter );
+        if ( stepDescription != null )
+        {
+            System.Console.WriteLine( stepDescription );
+        }
         
         foreach ( GrammarRule rule in grammar.Rules.Values )
         {
@@ -25,7 +31,7 @@ public static class ConsolePrinter
             }
         }
 
-        System.Console.WriteLine( new String( '-', System.Console.WindowWidth ) );
+        System.Console.WriteLine( splitter );
 
         return grammar;
     }

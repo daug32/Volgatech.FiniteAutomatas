@@ -38,6 +38,27 @@ public class RuleDefinitionParser
                 continue;
             }
 
+            if ( symbol == ParsingSettings.EmptySymbol )
+            {
+                if ( isNonTerminalSymbolParsing )
+                {
+                    throw new ArgumentException( "Empty symbol can not be used in the non terminal symbol name" );
+                }
+                
+                if ( lastWord.Any() )
+                {
+                    items.Add(
+                        RuleSymbol.TerminalSymbol(
+                            TerminalSymbol.Word(
+                                lastWord.ConvertToString() ) ) );
+                    lastWord.Clear();
+                }
+                
+                items.Add( RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ) );
+                
+                continue;
+            }
+
             if ( Char.IsWhiteSpace( symbol ) )
             {
                 // Non terminal symbol can have spaces in their names

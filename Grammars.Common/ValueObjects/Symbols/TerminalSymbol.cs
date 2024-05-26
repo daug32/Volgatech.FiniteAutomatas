@@ -40,10 +40,10 @@ public class TerminalSymbol
 
     public override string ToString() => Type switch
     {
-        TerminalSymbolType.End => "⊥",
+        TerminalSymbolType.End => "<end/>",
         TerminalSymbolType.WhiteSpace => " ",
         TerminalSymbolType.Word => Value ?? throw new UnreachableException(),
-        TerminalSymbolType.EmptySymbol => "<eps>",
+        TerminalSymbolType.EmptySymbol => "<eps/>",
         _ => throw new ArgumentOutOfRangeException()
     };
 }

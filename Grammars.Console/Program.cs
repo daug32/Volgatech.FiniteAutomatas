@@ -1,5 +1,6 @@
 ﻿using Grammars.Common;
 using Grammars.Common.Convertors;
+using Grammars.Common.Convertors.Inlinings;
 using Grammars.Common.Convertors.LeftFactorization;
 using Grammars.Common.Convertors.LeftRecursions;
 using Grammars.Common.Convertors.Semantics;
@@ -19,13 +20,19 @@ public class Program
         var grammar = _grammarParser
             .ParseFile( @"../../../Grammars/common.txt" )
             .Convert( new WhitespacesRemoveConvertor() )
-            .ToConsole()
+            .ToConsole( "Parse" )
+            
             .Convert( new LeftRecursionRemoverConvertor() )
-            .ToConsole()
-            .Convert( new LeftFactorizationConvertor() )
-            .ToConsole()
             .Convert( new RuleNamesConvertor() )
-            .ToConsole();
+            .ToConsole( "Left recursion" )
+            
+            .Convert( new InlineNonTerminalsConvertor() )
+            .Convert( new RuleNamesConvertor() )
+            .ToConsole( "Inlining" )
+            
+            .Convert( new LeftFactorizationConvertor() )
+            .Convert( new RuleNamesConvertor() )
+            .ToConsole( "Left factoring" );
     }
 }
 
