@@ -1,11 +1,9 @@
-﻿using LinqExtensions;
-
-namespace Grammars.Common.ValueObjects;
+﻿namespace Grammars.Common.ValueObjects;
 
 public class GrammarRule
 {
     public readonly RuleName Name;
-    public IReadOnlyList<RuleDefinition> Definitions { get; private set; }
+    public List<RuleDefinition> Definitions { get; }
 
     public GrammarRule( RuleName name, IEnumerable<RuleDefinition> definitions )
     {
@@ -13,10 +11,5 @@ public class GrammarRule
         Definitions = definitions.ToList();
     }
 
-    public void AddDefinition( RuleDefinition definition )
-    {
-        Definitions = Definitions.ToList().With( definition );
-    }
-
-    public GrammarRule Copy() => new GrammarRule( Name, Definitions.Select( x => x.Copy() ) );
+    public GrammarRule Copy() => new( Name, Definitions.Select( x => x.Copy() ) );
 }

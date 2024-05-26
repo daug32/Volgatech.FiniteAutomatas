@@ -89,9 +89,9 @@ internal class LeftRecursionRemover
 
         foreach ( RuleDefinition definition in groupedDefinitions.WithoutLeftRecursion )
         {
-            copiedRule.AddDefinition( new RuleDefinition( definition.Symbols.ToList() ) );    
+            copiedRule.Definitions.Add( definition.Copy() );    
             
-            copiedRule.AddDefinition( new RuleDefinition( definition.Symbols
+            copiedRule.Definitions.Add( new RuleDefinition( definition.Symbols
                 .ToList()
                 .With( RuleSymbol.NonTerminalSymbol( newRule.Name ) ) ) );    
         }
@@ -101,13 +101,13 @@ internal class LeftRecursionRemover
             var definitionWithoutNonTerminal = definition.Symbols.ToList().WithoutFirst();
             if ( definitionWithoutNonTerminal.Any() )
             {
-                newRule.AddDefinition( new RuleDefinition( definitionWithoutNonTerminal ) );
+                newRule.Definitions.Add( new RuleDefinition( definitionWithoutNonTerminal ) );
             }
 
             var definitionWithoutNonTerminalAndWithNewRule = definition.Symbols.ToList().WithoutFirst().With( RuleSymbol.NonTerminalSymbol( newRule.Name ) );
             if ( definitionWithoutNonTerminalAndWithNewRule.Any() )
             {
-                newRule.AddDefinition( new RuleDefinition( definitionWithoutNonTerminalAndWithNewRule ) );
+                newRule.Definitions.Add( new RuleDefinition( definitionWithoutNonTerminalAndWithNewRule ) );
             }
         }
         
