@@ -8,6 +8,7 @@ public class TerminalSymbol
     public readonly string? Value;
     public readonly TerminalSymbolType Type;
 
+    public static TerminalSymbol EmptySymbol() => new( null, TerminalSymbolType.EmptySymbol );
     public static TerminalSymbol WhiteSpace() => new( null, TerminalSymbolType.WhiteSpace );
     public static TerminalSymbol End() => new( null, TerminalSymbolType.End );
     public static TerminalSymbol Word( string word ) => new( word.ThrowIfNullOrWhiteSpace(), TerminalSymbolType.Word );
@@ -42,6 +43,7 @@ public class TerminalSymbol
         TerminalSymbolType.End => "⊥",
         TerminalSymbolType.WhiteSpace => " ",
         TerminalSymbolType.Word => Value ?? throw new UnreachableException(),
+        TerminalSymbolType.EmptySymbol => "<eps>",
         _ => throw new ArgumentOutOfRangeException()
     };
 }

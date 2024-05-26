@@ -1,1 +1,2 @@
-﻿<A> -> a b | a c | d b | d c
+﻿<A> -> x <B> z
+<B> -> <B> t | t

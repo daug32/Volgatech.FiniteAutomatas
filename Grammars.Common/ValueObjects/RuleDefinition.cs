@@ -11,6 +11,8 @@ public class RuleDefinition
         Symbols = items.ToList();
     }
 
+    public RuleSymbolType FirstSymbolType() => Symbols.First().Type;
+
     public override bool Equals( object? obj ) => obj is RuleDefinition other && Equals( other );
 
     public override int GetHashCode()

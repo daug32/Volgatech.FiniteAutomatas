@@ -4,5 +4,6 @@ public enum TerminalSymbolType
 {
     End,
     WhiteSpace,
-    Word
+    Word,
+    EmptySymbol
 }

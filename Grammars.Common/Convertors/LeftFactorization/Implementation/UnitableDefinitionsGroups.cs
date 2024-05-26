@@ -1,10 +1,11 @@
+using Grammars.Common.Convertors.LeftRecursions.Implementation;
 using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 using LinqExtensions;
 
-namespace Grammars.Common.Convertors.LeftFactorization;
+namespace Grammars.Common.Convertors.LeftFactorization.Implementation;
 
-public class UnitableDefinitionsGroups
+internal class UnitableDefinitionsGroups
 {
     public HashSet<RuleSymbol> Headings;
     public List<RuleDefinition> Definitions;
@@ -17,7 +18,7 @@ public class UnitableDefinitionsGroups
 
     public static List<UnitableDefinitionsGroups> Create(
         RuleName targetRuleName,
-        CommonGrammar grammar,
+        MutableGrammar grammar,
         Dictionary<RuleDefinition, GuidingSymbolsSet> definitionsToHeadings )
     {
         var groups = new List<UnitableDefinitionsGroups>();

@@ -99,14 +99,17 @@ internal class LeftRecursionRemover
 
         foreach ( RuleDefinition definition in groupedDefinitions.WithLeftRecursion )
         {
-            newRule.AddDefinition( new RuleDefinition( definition.Symbols
-                .ToList()
-                .WithoutFirst() ) );
-            
-            newRule.AddDefinition( new RuleDefinition( definition.Symbols
-                .ToList()
-                .WithoutFirst()
-                .With( RuleSymbol.NonTerminalSymbol( newRule.Name ) ) ) );
+            var definitionWithoutNonTerminal = definition.Symbols.ToList().WithoutFirst();
+            if ( definitionWithoutNonTerminal.Any() )
+            {
+                newRule.AddDefinition( new RuleDefinition( definitionWithoutNonTerminal ) );
+            }
+
+            var definitionWithoutNonTerminalAndWithNewRule = definition.Symbols.ToList().WithoutFirst().With( RuleSymbol.NonTerminalSymbol( newRule.Name ) );
+            if ( definitionWithoutNonTerminalAndWithNewRule.Any() )
+            {
+                newRule.AddDefinition( new RuleDefinition( definitionWithoutNonTerminalAndWithNewRule ) );
+            }
         }
         
         grammar.Replace( newRule );
