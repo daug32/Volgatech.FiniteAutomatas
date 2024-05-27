@@ -1,5 +1,6 @@
 ﻿using Grammars.Common;
 using Grammars.Common.Convertors;
+using Grammars.Common.Convertors.Epsilons;
 using Grammars.Common.Convertors.LeftFactorization;
 using Grammars.Common.Convertors.LeftRecursions;
 using Grammars.Common.Convertors.Semantics;
@@ -12,8 +13,9 @@ public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
     public LlOneGrammar Convert( CommonGrammar grammar )
     {
         CommonGrammar normalizedGrammar = grammar
-            .Convert( new LeftFactorizationConvertor() )
+            .Convert( new RemoveEpsilonsConvertor()  )
             .Convert( new LeftRecursionRemoverConvertor() )
+            .Convert( new RemoveEpsilonsConvertor() )
             .Convert( new RenameRuleNamesConvertor() );
 
         return new LlOneGrammar( 

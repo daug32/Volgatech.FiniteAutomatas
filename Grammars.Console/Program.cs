@@ -1,49 +1,53 @@
-﻿using Grammars.Common;
-using Grammars.Common.Convertors;
-using Grammars.Common.Convertors.Epsilons;
-using Grammars.Common.Convertors.LeftRecursions;
-using Grammars.Common.Convertors.Semantics;
-using Grammars.Common.ValueObjects;
-using Grammars.Common.ValueObjects.Symbols;
+﻿using Grammars.Common.Convertors;
 using Grammars.Console.Parsers;
+using Grammars.LL.Convertors;
+using Grammars.LL.Models;
 using Grammars.Visualization;
 
 namespace Grammars.Console;
 
 public class Program
 {
+    private static readonly string _exitCommand = "exit";
+    
     private static readonly GrammarParser _grammarParser = new();
     
     public static void Main()
     {
-        CommonGrammar grammar = _grammarParser
-            .ParseFile( @"../../../Grammars/common.txt" )
-            .Convert( new WhitespacesRemoveConvertor() )
-            .ToConsole( "Parse" )
-            
-            .Convert( new RemoveEpsilonsConvertor() )
-            .ToConsole( "Epsilon eliminations" )
-
-            .Convert( new LeftRecursionRemoverConvertor() )
-            .ToConsole( "Left recursion" )
-
-            .Convert( new RemoveEpsilonsConvertor() )
-            .Convert( new RenameRuleNamesConvertor() )
-            .ToConsole( "Epsilon eliminations" );
+        AskForSentences( BuildGrammar() );
     }
-}
 
-public class WhitespacesRemoveConvertor : IGrammarConvertor
-{
-    public CommonGrammar Convert( CommonGrammar grammar )
+    private static LlOneGrammar BuildGrammar() => _grammarParser
+        .ParseFile( @"../../../Grammars/common.txt" )
+        .Convert( new RemoveWhitespacesConvertor() )
+        .ToConsole( "Original grammar" )
+        .Convert( new ToLlOneGrammarConvertor() )
+        .ToConsole( "LL one grammar" );
+
+    private static void AskForSentences( LlOneGrammar grammar )
     {
-        return new CommonGrammar(
-            grammar.StartRule,
-            grammar.Rules.Values.Select( rule => new GrammarRule(
-                rule.Name,
-                rule.Definitions.Select( definition => new RuleDefinition( definition.Symbols.Where( symbol =>
-                    symbol.Type == RuleSymbolType.NonTerminalSymbol || 
-                    symbol.Type == RuleSymbolType.TerminalSymbol && 
-                    symbol.Symbol.Type != TerminalSymbolType.WhiteSpace ) ) ) ) ) );
+        while ( true )
+        {
+            System.Console.Write( $"Enter sentence or type \"{_exitCommand}\" to exit: " );
+
+            string command = System.Console.ReadLine() ?? String.Empty;
+            if ( _exitCommand.Equals( command, StringComparison.InvariantCultureIgnoreCase ) )
+            {
+                System.Console.WriteLine( "Exiting" );
+                return;
+            }
+
+            RunResult result = grammar.Run( command );
+            if ( result.RunResultType == RunResultType.Error )
+            {
+                System.Console.WriteLine( "Sentence is invalid." );
+                System.Console.WriteLine( $"Sentence: {result.Sentence}" );
+                System.Console.WriteLine( $"Location: {result.Error!.InvalidSymbolIndex}" );
+
+                continue;
+            }
+
+            System.Console.WriteLine( "Sentence is correct" );
+        }
     }
 }

@@ -16,19 +16,21 @@ public static class ConsolePrinter
             Console.WriteLine( stepDescription );
         }
 
-        foreach ( GrammarRule rule in grammar.Rules.Values )
+        foreach ( GrammarRule grammarRule in grammar.Rules.Values )
         {
-            Console.WriteLine( $"Rule: \"{rule.Name}\"" );
-            foreach ( RuleDefinition ruleDefinition in rule.Definitions )
-            {
-                string serializedRuleDefinition = String.Join(
-                    "",
-                    ruleDefinition.Symbols.Select( symbol => symbol.Type == RuleSymbolType.NonTerminalSymbol
-                        ? $"<{symbol.RuleName}>"
-                        : symbol.Symbol!.ToString() ) );
-
-                Console.WriteLine( $"\t\"{serializedRuleDefinition}\"" );
-            }
+            string serializedDefinitions = String.Join(
+                " | ",
+                grammarRule.Definitions
+                    .Select( definition =>
+                    {
+                        var serializedSymbols = definition.Symbols.Select( s => s.Type == RuleSymbolType.NonTerminalSymbol 
+                            ? $"<{s.RuleName}>"
+                            : s.Symbol.ToString() );
+                        return String.Join( " ", serializedSymbols );
+                    } )
+                    .OrderByDescending( x => x.Length )
+                    .ThenBy( x => x ) );
+            Console.WriteLine( $"<{grammarRule.Name}> -> {serializedDefinitions}" );
         }
 
         Console.WriteLine( splitter );

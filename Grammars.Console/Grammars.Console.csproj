@@ -15,8 +15,4 @@
       <ProjectReference Include="..\LinqExtensions\LinqExtensions.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Displays" />
-    </ItemGroup>
-
 </Project>
