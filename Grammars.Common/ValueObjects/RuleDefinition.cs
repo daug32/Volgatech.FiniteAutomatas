@@ -8,7 +8,20 @@ public class RuleDefinition
 
     public RuleDefinition( IEnumerable<RuleSymbol> items )
     {
+        if ( !items.Any() )
+        {
+            throw new ArgumentException( "Definition must have at least one symbol" );
+        }
+
         Symbols = items.ToList();
+
+        // var symbols = items.ToList();
+        //
+        // bool hasNonEmptySymbols = symbols.Any( x => x.Type != RuleSymbolType.TerminalSymbol || x.Symbol!.Type != TerminalSymbolType.EmptySymbol );
+        //
+        // Symbols = hasNonEmptySymbols
+        //     ? symbols.Where( x => x.Type != RuleSymbolType.TerminalSymbol || x.Symbol!.Type != TerminalSymbolType.EmptySymbol ).ToList()
+        //     : new[] { RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ) };
     }
 
     public RuleSymbol FirstSymbol() => Symbols.First();

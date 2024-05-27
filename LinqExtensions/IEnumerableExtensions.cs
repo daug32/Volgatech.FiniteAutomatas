@@ -26,6 +26,7 @@ public static class IEnumerableExtensions
         {
             if ( index == indexToExclude )
             {
+                index++;
                 continue;
             }
             

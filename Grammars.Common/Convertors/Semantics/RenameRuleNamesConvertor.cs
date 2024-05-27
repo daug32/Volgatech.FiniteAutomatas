@@ -3,7 +3,7 @@ using Grammars.Common.ValueObjects.Symbols;
 
 namespace Grammars.Common.Convertors.Semantics;
 
-public class RuleNamesConvertor : IGrammarConvertor
+public class RenameRuleNamesConvertor : IGrammarConvertor
 {
     public CommonGrammar Convert( CommonGrammar grammar )
     {

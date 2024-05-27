@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Grammars.Common.Convertors.LeftFactorization.Implementation.Inlinings;
+using Grammars.Common.Extensions;
 using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 using LinqExtensions;
@@ -10,11 +10,20 @@ internal class LeftFactorizationHandler
 {
     public CommonGrammar Factorize( CommonGrammar grammar )
     {
+        Queue<RuleName> processedRules = new Queue<RuleName>();
         Queue<RuleName> rulesToProcess = new Queue<RuleName>().EnqueueRange( grammar.Rules.Keys );
 
         while ( rulesToProcess.Any() )
         {
-            GrammarRule rule = grammar.Rules[rulesToProcess.Dequeue()];
+            RuleName ruleToProcessName = rulesToProcess.Dequeue();
+            if ( processedRules.Contains( ruleToProcessName ) )
+            {
+                continue;
+            }
+
+            processedRules.Enqueue( ruleToProcessName );
+            
+            GrammarRule rule = grammar.Rules[ruleToProcessName];
             
             Dictionary<RuleDefinition, GuidingSymbolsSet> definitionsToHeadings = BuildDefinitionsToHeadings( grammar, rule );
 
@@ -69,6 +78,8 @@ internal class LeftFactorizationHandler
 
             grammar.Rules[rule.Name] = new GrammarRule( rule.Name, currentRuleDefinitions );
         }
+        
+        grammar.RemoveAllDuplicateDefinitions();
 
         return grammar;
     }

@@ -16,36 +16,52 @@ public class CommonGrammar
             x => x.Name,
             x => x );
 
-        if ( !Rules.ContainsKey( startRule ) )
+        Validate();
+    }
+
+    public GuidingSymbolsSet GetGuidingSymbolsSet( RuleName ruleName, RuleDefinition definition )
+    {
+        return GetGuidingSymbolsSet( ruleName, new[] { definition } );
+    }
+
+    public CommonGrammar Copy()
+    {
+        return new(
+            StartRule,
+            Rules.Values.Select( grammarRule => grammarRule.Copy() ) );
+    }
+
+    public void Validate()
+    {
+        if ( !Rules.ContainsKey( StartRule ) )
         {
-            throw new ArgumentException( $"StartRule was not found. StartRuleName: {startRule}" );
+            throw new ArgumentException( $"StartRule was not found. StartRuleName: {StartRule}" );
         }
 
-        var symbols = Rules.Values
-            .SelectMany( rule => rule.Definitions.SelectMany( definition => definition.Symbols ) )
-            .Where( x => x.Type == RuleSymbolType.NonTerminalSymbol )
-            .ToHashSet();
-
-        foreach ( RuleSymbol symbol in symbols )
+        foreach ( GrammarRule rule in Rules.Values )
         {
-            if ( !Rules.ContainsKey( symbol.RuleName! ) )
+            foreach ( RuleDefinition definition in rule.Definitions )
             {
-                throw new ArgumentException( $"Grammar doesn't have a definition for rule. RuleName: {symbol}" );
+                foreach ( RuleSymbol symbol in definition.Symbols )
+                {
+                    if ( symbol.Type != RuleSymbolType.NonTerminalSymbol )
+                    {
+                        continue;
+                    }
+
+                    if ( !Rules.ContainsKey( symbol.RuleName! ) )
+                    {
+                        throw new ArgumentException( $"Grammar doesn't have a definition for rule. RuleName: {symbol}" );
+                    }
+                }
             }
         }
     }
 
-    public GuidingSymbolsSet GetGuidingSymbolsSet( RuleName ruleName, RuleDefinition definition ) =>
-        GetGuidingSymbolsSet( ruleName, new[] { definition } );
-
-    public CommonGrammar Copy() => new( 
-        StartRule,
-        Rules.Values.Select( grammarRule => grammarRule.Copy() ) );
-
     private GuidingSymbolsSet GetGuidingSymbolsSet( RuleName ruleName, IEnumerable<RuleDefinition> definitions )
     {
         var guidingSymbols = new HashSet<RuleSymbol>();
-        
+
         var definitionsToCheck = new Queue<RuleDefinition>();
         definitionsToCheck.EnqueueRange( definitions );
 

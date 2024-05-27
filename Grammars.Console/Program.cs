@@ -1,14 +1,12 @@
 ﻿using Grammars.Common;
 using Grammars.Common.Convertors;
 using Grammars.Common.Convertors.Epsilons;
-using Grammars.Common.Convertors.Inlinings;
-using Grammars.Common.Convertors.LeftFactorization;
 using Grammars.Common.Convertors.LeftRecursions;
 using Grammars.Common.Convertors.Semantics;
 using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 using Grammars.Console.Parsers;
-using Grammars.Console.Displays;
+using Grammars.Visualization;
 
 namespace Grammars.Console;
 
@@ -22,16 +20,16 @@ public class Program
             .ParseFile( @"../../../Grammars/common.txt" )
             .Convert( new WhitespacesRemoveConvertor() )
             .ToConsole( "Parse" )
+            
+            .Convert( new RemoveEpsilonsConvertor() )
+            .ToConsole( "Epsilon eliminations" )
 
             .Convert( new LeftRecursionRemoverConvertor() )
             .ToConsole( "Left recursion" )
 
-            .Convert( new LeftFactorizationConvertor() )
-            .Convert( new RuleNamesConvertor() )
-            .ToConsole( "Left factoring" )
-            
             .Convert( new RemoveEpsilonsConvertor() )
-            .ToConsole();
+            .Convert( new RenameRuleNamesConvertor() )
+            .ToConsole( "Epsilon eliminations" );
     }
 }
 

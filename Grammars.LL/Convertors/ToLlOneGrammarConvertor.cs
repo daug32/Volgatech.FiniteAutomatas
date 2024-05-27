@@ -14,7 +14,7 @@ public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
         CommonGrammar normalizedGrammar = grammar
             .Convert( new LeftFactorizationConvertor() )
             .Convert( new LeftRecursionRemoverConvertor() )
-            .Convert( new RuleNamesConvertor() );
+            .Convert( new RenameRuleNamesConvertor() );
 
         return new LlOneGrammar( 
             normalizedGrammar.StartRule,
