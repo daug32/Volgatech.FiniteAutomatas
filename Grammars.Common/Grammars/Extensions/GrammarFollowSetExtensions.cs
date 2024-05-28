@@ -23,8 +23,6 @@ public static class GrammarFollowSetExtensions
 
         foreach ( GrammarRule rule in grammar.Rules.Values )
         {
-            bool hasEpsilonProductions = rule.Has( TerminalSymbolType.EmptySymbol );
-            
             foreach ( RuleDefinition definition in rule.Definitions )
             {
                 for ( var index = 0; index < definition.Symbols.Count; index++ )
@@ -45,8 +43,25 @@ public static class GrammarFollowSetExtensions
                         result.AddRange( grammar.GetFollowSet( rule.Name ).GuidingSymbols );
                         continue;
                     }
+                    
+                    RuleSymbol nextSymbol = definition.Symbols[index + 1];
+                    if ( nextSymbol.Type == RuleSymbolType.NonTerminalSymbol )
+                    {
+                        GuidingSymbolsSet nextRuleGuidingSymbolsSet = grammar.GetFirstSet( nextSymbol.RuleName! );
+                        
+                        bool hasEpsilonProduction = nextRuleGuidingSymbolsSet.Has( TerminalSymbolType.EmptySymbol );
+                        if ( hasEpsilonProduction )
+                        {
+                            result.AddRange( nextRuleGuidingSymbolsSet.GuidingSymbols.Where( x => x.Symbol!.Type != TerminalSymbolType.EmptySymbol ) );
+                            result.AddRange( grammar.GetFollowSet( nextSymbol.RuleName! ).GuidingSymbols );
+                            break;
+                        }
 
-                    result.Add( definition.Symbols[index + 1] );
+                        result.AddRange( nextRuleGuidingSymbolsSet.GuidingSymbols );
+                        break;
+                    }
+                    
+                    result.Add( nextSymbol );
                     break;
                 }
             }
