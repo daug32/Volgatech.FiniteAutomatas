@@ -45,23 +45,23 @@ public static class GrammarFollowSetExtensions
                     }
                     
                     RuleSymbol nextSymbol = definition.Symbols[index + 1];
-                    if ( nextSymbol.Type == RuleSymbolType.NonTerminalSymbol )
+                    if ( nextSymbol.Type != RuleSymbolType.NonTerminalSymbol )
                     {
-                        GuidingSymbolsSet nextRuleGuidingSymbolsSet = grammar.GetFirstSet( nextSymbol.RuleName! );
-                        
-                        bool hasEpsilonProduction = nextRuleGuidingSymbolsSet.Has( TerminalSymbolType.EmptySymbol );
-                        if ( hasEpsilonProduction )
-                        {
-                            result.AddRange( nextRuleGuidingSymbolsSet.GuidingSymbols.Where( x => x.Symbol!.Type != TerminalSymbolType.EmptySymbol ) );
-                            result.AddRange( grammar.GetFollowSet( nextSymbol.RuleName! ).GuidingSymbols );
-                            break;
-                        }
-
-                        result.AddRange( nextRuleGuidingSymbolsSet.GuidingSymbols );
+                        result.Add( nextSymbol );
                         break;
                     }
-                    
-                    result.Add( nextSymbol );
+
+                    GuidingSymbolsSet nextRuleGuidingSymbolsSet = grammar.GetFirstSet( nextSymbol.RuleName! );
+                        
+                    bool hasEpsilonProduction = nextRuleGuidingSymbolsSet.Has( TerminalSymbolType.EmptySymbol );
+                    if ( hasEpsilonProduction )
+                    {
+                        result.AddRange( nextRuleGuidingSymbolsSet.GuidingSymbols.Where( x => x.Symbol!.Type != TerminalSymbolType.EmptySymbol ) );
+                        result.AddRange( grammar.GetFollowSet( nextSymbol.RuleName! ).GuidingSymbols );
+                        break;
+                    }
+
+                    result.AddRange( nextRuleGuidingSymbolsSet.GuidingSymbols );
                     break;
                 }
             }

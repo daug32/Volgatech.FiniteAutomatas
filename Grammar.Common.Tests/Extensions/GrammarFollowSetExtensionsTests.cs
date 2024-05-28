@@ -31,7 +31,10 @@ public class GrammarFollowSetExtensionsTests
                 <S> -> <A>a$
                 <A> -> b
             ",
-            new[] { RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ) } ),
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) )
+            } ),
         new FirstFollowTestData(
             new RuleName( "A" ),
             @"<A> -> <A>a$ | ε$",
@@ -63,6 +66,34 @@ public class GrammarFollowSetExtensionsTests
                 RuleSymbol.TerminalSymbol( TerminalSymbol.End() )
             } ),
         new FirstFollowTestData(
+            new RuleName( "C" ),
+            @"
+                <S> -> a<B><D>h$
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "h" ) )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "D" ),
+            @"
+                <S> -> a<B><D>h$
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "h" ) )
+            } ),
+        new FirstFollowTestData(
             new RuleName( "E" ),
             @"
                 <S> -> a<B><D>h$
@@ -75,6 +106,20 @@ public class GrammarFollowSetExtensionsTests
             new[]
             {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "f" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "h" ) )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "F" ),
+            @"
+                <S> -> a<B><D>h$
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "h" ) )
             } )
     };
@@ -93,6 +138,7 @@ public class GrammarFollowSetExtensionsTests
             actualSymbols.Count,
             Is.EqualTo( testData.ExpectedRuleSymbols.Count ),
             "Number of actual symbols is not equal to the expected number\n"
+            + $"RuleName: {testData.TargetRuleName}\n"
             + $"ActualSymbols: {SerializeRuleSymbols( actualSymbols )}\n"
             + $"ExpectedSymbols: {SerializeRuleSymbols( testData.ExpectedRuleSymbols )}" );
 
@@ -102,6 +148,7 @@ public class GrammarFollowSetExtensionsTests
             Assert.IsTrue(
                 hasSymbol,
                 "Symbol was not found\n"
+                + $"RuleName: {testData.TargetRuleName}\n"
                 + $"Symbol: \"{actualSymbol}\"\n"
                 + $"ActualSymbols: {SerializeRuleSymbols( actualSymbols )}\n"
                 + $"ExpectedSymbols: {SerializeRuleSymbols( testData.ExpectedRuleSymbols )}" );
