@@ -34,12 +34,20 @@ public class GrammarFollowSetExtensionsTests
             new[] { RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ) } ),
         new FirstFollowTestData(
             new RuleName( "A" ),
-            @"<A> -> <A>a$ | ε",
-            new[] { RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ) } ),
+            @"<A> -> <A>a$ | ε$",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.End() ),
+            } ),
         new FirstFollowTestData(
             new RuleName( "A" ),
-            @"<A> -> ε | <A>a$",
-            new[] { RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ) } ),
+            @"<A> -> ε$ | <A>a$",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.End() ),
+            } ),
         new FirstFollowTestData(
             new RuleName( "S" ),
             @"
