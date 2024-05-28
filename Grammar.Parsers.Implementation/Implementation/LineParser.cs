@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics;
-using Grammar.Parsers.Implementation.Implementation;
 using Grammar.Parsers.Implementation.Implementation.Models;
 using Grammars.Common.ValueObjects;
 
-namespace Grammar.Parsers.Implementation;
+namespace Grammar.Parsers.Implementation.Implementation;
 
 internal class LineParser
 {

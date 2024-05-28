@@ -1,13 +1,13 @@
 using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 
-namespace Grammars.Common.Convertings.Convertors.Inlinings.Implementation;
+namespace Grammars.Common.Convertors.Implementation.Inlining;
 
 internal class NonTerminalsInliner
 {
     public CommonGrammar Inline( CommonGrammar grammar )
     {
-        List<ConcreteDefinition> concreteDefinitions = ConcreteDefinition.CreateFromGrammar( grammar );
+        List<InlinableDefinition> concreteDefinitions = InlinableDefinition.CreateFromGrammar( grammar );
 
         bool hasChanges = true;
         while ( hasChanges )
@@ -16,15 +16,15 @@ internal class NonTerminalsInliner
 
             for ( int index = 0; index < concreteDefinitions.Count; index++ )
             {
-                ConcreteDefinition definitionToInline = concreteDefinitions[index];
+                InlinableDefinition definitionToInline = concreteDefinitions[index];
                 if ( !definitionToInline.StartsWithTerminal )
                 {
                     continue;
                 }
 
-                IEnumerable<ConcreteDefinition> definitionsToProcess = concreteDefinitions.Where( x => x.CanInline( definitionToInline ) );
+                IEnumerable<InlinableDefinition> definitionsToProcess = concreteDefinitions.Where( x => x.CanInline( definitionToInline ) );
                 
-                foreach ( ConcreteDefinition definition in definitionsToProcess )
+                foreach ( InlinableDefinition definition in definitionsToProcess )
                 {
                     hasChanges = true;
                     definition.Inline( definitionToInline );
@@ -43,14 +43,14 @@ internal class NonTerminalsInliner
             concreteDefinitions.Select( x => new GrammarRule( x.RuleName, x.Definitions ) ) );
     }
 
-    private bool CanBeRemoved( ConcreteDefinition definitionToRemove, IEnumerable<ConcreteDefinition> allDefinitions )
+    private bool CanBeRemoved( InlinableDefinition definitionToRemove, IEnumerable<InlinableDefinition> allDefinitions )
     {
         if ( definitionToRemove.IsStartRule )
         {
             return false;
         }
         
-        foreach ( ConcreteDefinition rule in allDefinitions )
+        foreach ( InlinableDefinition rule in allDefinitions )
         {
             foreach ( RuleDefinition definition in rule.Definitions )
             {

@@ -1,4 +1,4 @@
-﻿namespace Grammars.Common.Convertings.Convertors;
+﻿namespace Grammars.Common.Convertors;
 
 public interface IGrammarConvertor
 {

@@ -24,7 +24,7 @@ public class TerminalSymbol
         other.Type == Type &&
         other.Value == Value;
 
-    public override int GetHashCode() => HashCode.Combine( Value, ( int )Type );
+    public override int GetHashCode() => HashCode.Combine( ( int )Type, Value );
 
     public static bool operator ==( TerminalSymbol? a, TerminalSymbol? b )
     {

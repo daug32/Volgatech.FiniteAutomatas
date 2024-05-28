@@ -19,33 +19,35 @@ public static class GrammarFirstSetExtensions
 
     private static GuidingSymbolsSet GetFirstSet( this CommonGrammar grammar, RuleName ruleName, IEnumerable<RuleDefinition> definitions )
     {
-        var guidingSymbols = new HashSet<RuleSymbol>();
-
-        var definitionsToCheck = new Queue<RuleDefinition>();
-        definitionsToCheck.EnqueueRange( definitions );
-
-        var processedDefinitions = new HashSet<RuleDefinition>();
-
-        while ( definitionsToCheck.Any() )
+        var result = new HashSet<RuleSymbol>();
+        
+        foreach ( RuleDefinition ruleDefinition in definitions )
         {
-            RuleDefinition ruleDefinition = definitionsToCheck.Dequeue();
-            if ( processedDefinitions.Contains( ruleDefinition ) )
+            for ( int index = 0; index < ruleDefinition.Symbols.Count; index++ )
             {
-                continue;
+                RuleSymbol symbol = ruleDefinition.Symbols[index];
+                if ( symbol.Type == RuleSymbolType.TerminalSymbol )
+                {
+                    result.Add( symbol );
+                    break;
+                }
+
+                // If non terminal, just recursively get headings from it
+                GuidingSymbolsSet innerRuleHeadings = grammar.GetFirstSet( symbol.RuleName! );
+                innerRuleHeadings.GuidingSymbols
+                    .Where( x => x.Symbol!.Type != TerminalSymbolType.EmptySymbol )
+                    .ForEach( innerRuleHeading => result.Add( innerRuleHeading ) );
+                    
+                // If there is an epsilon, we need to get next symbol
+                if ( innerRuleHeadings.Has( TerminalSymbolType.EmptySymbol ) )
+                {
+                    continue;
+                }
+
+                break;
             }
-
-            processedDefinitions.Add( ruleDefinition );
-
-            RuleSymbol headerSymbol = ruleDefinition.Symbols.First();
-            if ( headerSymbol.Type == RuleSymbolType.NonTerminalSymbol )
-            {
-                definitionsToCheck.EnqueueRange( grammar.Rules[headerSymbol.RuleName!].Definitions );
-                continue;
-            }
-
-            guidingSymbols.Add( headerSymbol );
         }
 
-        return new GuidingSymbolsSet( ruleName, guidingSymbols );
+        return new GuidingSymbolsSet( ruleName, result );
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Grammar.Parsers;
 using Grammar.Parsers.Implementation;
-using Grammars.Common.Convertings.Convertors;
+using Grammars.Common.Convertors;
 using Grammars.Common.Extensions.Grammar;
 using Grammars.Common.ValueObjects;
 using Grammars.LL.Convertors;
@@ -15,7 +15,6 @@ public class Program
     
     public static void Main()
     {
-            
         LlOneGrammar grammar = BuildGrammar();
         System.Console.WriteLine( "First" );
         foreach ( RuleName ruleName in grammar.Rules.Keys )  

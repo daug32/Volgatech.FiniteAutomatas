@@ -1,6 +1,6 @@
-﻿using Grammars.Common.Convertings.Convertors.Inlinings.Implementation;
+﻿using Grammars.Common.Convertors.Implementation.Inlining;
 
-namespace Grammars.Common.Convertings.Convertors.Inlinings;
+namespace Grammars.Common.Convertors.Convertors;
 
 public class InlineNonTerminalsConvertor : IGrammarConvertor
 {

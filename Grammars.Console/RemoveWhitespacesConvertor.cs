@@ -1,5 +1,5 @@
 ﻿using Grammars.Common;
-using Grammars.Common.Convertings.Convertors;
+using Grammars.Common.Convertors;
 using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 

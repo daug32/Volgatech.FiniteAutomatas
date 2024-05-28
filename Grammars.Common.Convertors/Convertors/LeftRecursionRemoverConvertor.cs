@@ -1,6 +1,6 @@
-﻿using Grammars.Common.Convertings.Convertors.LeftRecursions.Implementation;
+﻿using Grammars.Common.Convertors.Implementation.Recursions;
 
-namespace Grammars.Common.Convertings.Convertors.LeftRecursions;
+namespace Grammars.Common.Convertors.Convertors;
 
 public class LeftRecursionRemoverConvertor : IGrammarConvertor
 {

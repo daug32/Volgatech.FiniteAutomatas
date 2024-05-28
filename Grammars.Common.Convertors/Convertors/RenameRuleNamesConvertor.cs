@@ -1,7 +1,7 @@
 ﻿using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 
-namespace Grammars.Common.Convertings.Convertors.Semantics;
+namespace Grammars.Common.Convertors.Convertors;
 
 public class RenameRuleNamesConvertor : IGrammarConvertor
 {

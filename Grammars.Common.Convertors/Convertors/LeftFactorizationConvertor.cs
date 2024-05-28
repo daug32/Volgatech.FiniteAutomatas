@@ -1,6 +1,6 @@
-﻿using Grammars.Common.Convertings.Convertors.LeftFactorization.Implementation;
+﻿using Grammars.Common.Convertors.Implementation.Factorization;
 
-namespace Grammars.Common.Convertings.Convertors.LeftFactorization;
+namespace Grammars.Common.Convertors.Convertors;
 
 public class LeftFactorizationConvertor : IGrammarConvertor
 {

@@ -2,23 +2,25 @@ using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 using LinqExtensions;
 
-namespace Grammars.Common.Convertings.Convertors.Inlinings.Implementation;
+namespace Grammars.Common.Convertors.Implementation.Inlining;
 
-internal class ConcreteDefinition
+internal class InlinableDefinition
 {
     public readonly RuleName RuleName;
+    
     public readonly bool IsStartRule;
     public bool StartsWithTerminal => Definitions.All( x => x.FirstSymbolType() == RuleSymbolType.TerminalSymbol );
+    
     public List<RuleDefinition> Definitions;
 
-    public ConcreteDefinition( RuleName ruleName, bool isStartRule, IEnumerable<RuleDefinition> definitions )
+    public InlinableDefinition( RuleName ruleName, bool isStartRule, IEnumerable<RuleDefinition> definitions )
     {
         RuleName = ruleName;
         IsStartRule = isStartRule;
         Definitions = definitions.ToList();
     }
 
-    public bool CanInline( ConcreteDefinition definitionToInline )
+    public bool CanInline( InlinableDefinition definitionToInline )
     {
         if ( !definitionToInline.StartsWithTerminal )
         {
@@ -33,7 +35,7 @@ internal class ConcreteDefinition
         } );
     }
 
-    public void Inline( ConcreteDefinition definitionToInline )
+    public void Inline( InlinableDefinition definitionToInline )
     {
         var definitionsToProcess = new List<RuleDefinition>();
         for ( var index = 0; index < Definitions.Count; index++ )
@@ -69,10 +71,10 @@ internal class ConcreteDefinition
         }
     }
 
-    public static List<ConcreteDefinition> CreateFromGrammar( CommonGrammar grammar )
+    public static List<InlinableDefinition> CreateFromGrammar( CommonGrammar grammar )
     {
         return grammar.Rules.Values
-            .Select( rule => new ConcreteDefinition( 
+            .Select( rule => new InlinableDefinition( 
                 rule.Name, 
                 grammar.StartRule == rule.Name, 
                 rule.Definitions ) )

@@ -11,7 +11,7 @@ public class GrammarFirstSetExtensionsTests
 {
     [TestCase(
         @"
-            <S> -> <A> s
+            <S> -> <A> s $
             <A> -> <B> a | a
             <B> -> b
         ",
@@ -19,7 +19,7 @@ public class GrammarFirstSetExtensionsTests
         new[] { "a", "b" } )]
     [TestCase(
         @"
-            <S> -> <A>
+            <S> -> <A>$
             <A> -> <B>
             <B> -> b
         ",
@@ -31,15 +31,12 @@ public class GrammarFirstSetExtensionsTests
         new[] { "ε", "s" } )]
     [TestCase(
         @"
-            <S> -> a<B><D>h
-            <B> -> c<C>
-            <C> -> b<C> | ε
-            <D> -> <E><F>
-            <E> -> g | ε
-            <F> -> f | ε
+            <A> -> <B><C>$
+            <B> -> b | ε
+            <C> -> c | ε
         ",
-        "D",
-        new[] { "g", "f", "ε" } )]
+        "A",
+        new[] { "b", "c", "$" } )]
     public void FindFirstSet(
         string rawGrammar,
         string rawRuleName,
@@ -57,8 +54,8 @@ public class GrammarFirstSetExtensionsTests
         Assert.That(
             actualSymbols.Count,
             Is.EqualTo( expectedSymbols.Count ),
-            "Number of actual symbols is not equal to the expected number. "
-            + $"ActualSymbols: {SerializeRuleSymbols( actualSymbols )}"
+            "Number of actual symbols is not equal to the expected number\n"
+            + $"ActualSymbols: {SerializeRuleSymbols( actualSymbols )}\n"
             + $"ExpectedSymbols: {SerializeRuleSymbols( expectedSymbols )}" );
 
         foreach ( RuleSymbol actualSymbol in actualSymbols )
@@ -66,9 +63,9 @@ public class GrammarFirstSetExtensionsTests
             bool hasSymbol = expectedSymbols.Contains( actualSymbol );
             Assert.IsTrue(
                 hasSymbol,
-                "Symbol was not found. "
-                + $"Symbol: \"{actualSymbol}\" "
-                + $"ActualSymbols: {SerializeRuleSymbols( actualSymbols )} "
+                "Symbol was not found\n"
+                + $"Symbol: \"{actualSymbol}\"\n"
+                + $"ActualSymbols: {SerializeRuleSymbols( actualSymbols )}\n"
                 + $"ExpectedSymbols: {SerializeRuleSymbols( expectedSymbols )}" );
         }
     }

@@ -4,10 +4,16 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AssemblyName>Grammars.Common.Convertors</AssemblyName>
+        <RootNamespace>Grammars.Common.Convertors</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Grammars.Common\Grammars.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Implementation" />
     </ItemGroup>
 
 </Project>

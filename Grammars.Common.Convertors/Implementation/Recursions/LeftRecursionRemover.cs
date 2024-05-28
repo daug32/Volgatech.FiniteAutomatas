@@ -2,7 +2,7 @@
 using Grammars.Common.ValueObjects.Symbols;
 using LinqExtensions;
 
-namespace Grammars.Common.Convertings.Convertors.LeftRecursions.Implementation;
+namespace Grammars.Common.Convertors.Implementation.Recursions;
 
 internal class LeftRecursionRemover
 {

@@ -5,7 +5,7 @@ using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 using LinqExtensions;
 
-namespace Grammars.Common.Convertings.Convertors.LeftFactorization.Implementation;
+namespace Grammars.Common.Convertors.Implementation.Factorization;
 
 internal class LeftFactorizationHandler
 {

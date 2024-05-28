@@ -4,7 +4,7 @@ using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 using LinqExtensions;
 
-namespace Grammars.Common.Convertings.Convertors.Epsilons;
+namespace Grammars.Common.Convertors.Convertors;
 
 public class RemoveEpsilonsConvertor : IGrammarConvertor
 {

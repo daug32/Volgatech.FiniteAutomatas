@@ -17,6 +17,10 @@ public class GuidingSymbolsSet
 
     public bool Has( RuleSymbol symbol ) => GuidingSymbols.Contains( symbol );
 
+    public bool Has( TerminalSymbolType terminalSymbolType ) => GuidingSymbols.Any( s => 
+        s.Type == RuleSymbolType.TerminalSymbol && 
+        s.Symbol!.Type == terminalSymbolType );
+
     public bool HasIntersections( GuidingSymbolsSet other )
     {
         return GuidingSymbols.Intersect( other.GuidingSymbols ).Any();
