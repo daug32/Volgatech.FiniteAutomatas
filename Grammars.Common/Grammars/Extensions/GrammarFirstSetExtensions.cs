@@ -1,9 +1,9 @@
-﻿using Grammars.Common.Extensions.Grammar.ValuesObjects;
-using Grammars.Common.ValueObjects;
-using Grammars.Common.ValueObjects.Symbols;
+﻿using Grammars.Common.Grammars.ValueObjects;
+using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
+using Grammars.Common.Grammars.ValueObjects.Symbols;
 using LinqExtensions;
 
-namespace Grammars.Common.Extensions.Grammar;
+namespace Grammars.Common.Grammars.Extensions;
 
 public static class GrammarFirstSetExtensions
 {

@@ -1,6 +1,6 @@
-﻿using Grammars.Common.ValueObjects.Symbols;
+﻿using Grammars.Common.Grammars.ValueObjects.Symbols;
 
-namespace Grammars.Common.ValueObjects;
+namespace Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 
 public class RuleDefinition
 {

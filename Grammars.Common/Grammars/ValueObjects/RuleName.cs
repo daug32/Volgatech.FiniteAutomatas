@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 
-namespace Grammars.Common.ValueObjects;
+namespace Grammars.Common.Grammars.ValueObjects;
 
 public class RuleName
 {

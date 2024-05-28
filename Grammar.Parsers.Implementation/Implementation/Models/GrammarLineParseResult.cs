@@ -1,4 +1,5 @@
-﻿using Grammars.Common.ValueObjects;
+﻿using Grammars.Common.Grammars.ValueObjects;
+using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 
 namespace Grammar.Parsers.Implementation.Implementation.Models;
 

@@ -1,8 +1,7 @@
 ﻿using System.Collections.Immutable;
-using Grammars.Common.ValueObjects;
-using Grammars.Common.ValueObjects.Symbols;
+using Grammars.Common.Grammars.ValueObjects.Symbols;
 
-namespace Grammars.Common.Extensions.Grammar.ValuesObjects;
+namespace Grammars.Common.Grammars.ValueObjects;
 
 public class GuidingSymbolsSet
 {

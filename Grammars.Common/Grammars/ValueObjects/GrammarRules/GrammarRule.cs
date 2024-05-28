@@ -1,7 +1,6 @@
-﻿using Grammars.Common.Extensions;
-using Grammars.Common.ValueObjects.Symbols;
+﻿using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 
-namespace Grammars.Common.ValueObjects;
+namespace Grammars.Common.Grammars.ValueObjects.GrammarRules;
 
 public class GrammarRule
 {

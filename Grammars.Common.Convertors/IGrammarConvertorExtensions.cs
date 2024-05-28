@@ -1,4 +1,6 @@
-﻿namespace Grammars.Common.Convertors;
+﻿using Grammars.Common.Grammars;
+
+namespace Grammars.Common.Convertors;
 
 // ReSharper disable once InconsistentNaming
 public static class IGrammarConvertorExtensions

@@ -1,4 +1,4 @@
-﻿namespace Grammars.Common.ValueObjects.Symbols;
+﻿namespace Grammars.Common.Grammars.ValueObjects.Symbols;
 
 public enum TerminalSymbolType
 {

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using FluentAssertions;
 
-namespace Grammars.Common.ValueObjects.Symbols;
+namespace Grammars.Common.Grammars.ValueObjects.Symbols;
 
 public class TerminalSymbol
 {

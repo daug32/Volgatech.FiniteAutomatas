@@ -1,5 +1,5 @@
-﻿using Grammars.Common.ValueObjects;
-using Grammars.Common.ValueObjects.Symbols;
+﻿using Grammars.Common.Grammars.ValueObjects;
+using Grammars.Common.Grammars.ValueObjects.Symbols;
 
 namespace Grammar.Common.Tests.Extensions.Containers;
 

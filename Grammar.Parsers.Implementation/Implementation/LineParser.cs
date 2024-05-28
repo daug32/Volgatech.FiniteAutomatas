@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using Grammar.Parsers.Implementation.Implementation.Models;
-using Grammars.Common.ValueObjects;
+using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 
 namespace Grammar.Parsers.Implementation.Implementation;
 

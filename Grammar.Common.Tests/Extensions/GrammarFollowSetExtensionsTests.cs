@@ -2,9 +2,10 @@ using Grammar.Common.Tests.Extensions.Containers;
 using Grammar.Parsers;
 using Grammar.Parsers.Implementation;
 using Grammars.Common;
-using Grammars.Common.Extensions.Grammar;
-using Grammars.Common.ValueObjects;
-using Grammars.Common.ValueObjects.Symbols;
+using Grammars.Common.Grammars;
+using Grammars.Common.Grammars.Extensions;
+using Grammars.Common.Grammars.ValueObjects;
+using Grammars.Common.Grammars.ValueObjects.Symbols;
 
 namespace Grammar.Common.Tests.Extensions;
 

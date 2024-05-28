@@ -1,4 +1,4 @@
-﻿using Grammars.Common.ValueObjects;
+﻿using Grammars.Common.Grammars.ValueObjects;
 
 namespace Grammar.Parsers;
 

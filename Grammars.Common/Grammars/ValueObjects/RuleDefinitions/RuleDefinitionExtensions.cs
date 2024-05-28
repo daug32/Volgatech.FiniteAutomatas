@@ -1,7 +1,6 @@
-﻿using Grammars.Common.ValueObjects;
-using Grammars.Common.ValueObjects.Symbols;
+﻿using Grammars.Common.Grammars.ValueObjects.Symbols;
 
-namespace Grammars.Common.Extensions;
+namespace Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 
 public static class RuleDefinitionExtensions
 {

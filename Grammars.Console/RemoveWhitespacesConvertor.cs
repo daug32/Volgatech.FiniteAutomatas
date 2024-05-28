@@ -1,7 +1,9 @@
 ﻿using Grammars.Common;
 using Grammars.Common.Convertors;
-using Grammars.Common.ValueObjects;
-using Grammars.Common.ValueObjects.Symbols;
+using Grammars.Common.Grammars;
+using Grammars.Common.Grammars.ValueObjects.GrammarRules;
+using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
+using Grammars.Common.Grammars.ValueObjects.Symbols;
 
 namespace Grammars.Console;
 

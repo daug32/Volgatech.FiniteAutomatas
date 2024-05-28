@@ -1,6 +1,8 @@
-﻿using Grammars.Common.ValueObjects;
+﻿using Grammars.Common.Grammars.ValueObjects;
+using Grammars.Common.Grammars.ValueObjects.GrammarRules;
+using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 
-namespace Grammars.Common.Extensions.Grammar;
+namespace Grammars.Common.Grammars.Extensions;
 
 public static class GrammarExtensions
 {
