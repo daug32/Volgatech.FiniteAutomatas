@@ -63,6 +63,95 @@ public class GrammarFirstSetExtensionsTests
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "c" ) ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.End() )
             } ),
+        new FirstFollowTestData(
+            new RuleName( "S" ),
+            @"
+                <S> -> a<B><D>h$
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "B" ),
+            @"
+                <S> -> a<B><D>h$
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "c" ) )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "C" ),
+            @"
+                <S> -> a<B><D>h$
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "D" ),
+            @"
+                <S> -> a<B><D>h$
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "g" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "f" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "E" ),
+            @"
+                <S> -> a<B><D>h$
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "g" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "F" ),
+            @"
+                <S> -> a<B><D>h$
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "f" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() )
+            } )
     };
 
     [TestCaseSource( nameof( _testCases ) )]

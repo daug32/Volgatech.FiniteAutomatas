@@ -8,19 +8,63 @@ namespace Grammars.Common.Grammars.Extensions;
 
 public static class GrammarFollowSetExtensions
 {
-    public static GuidingSymbolsSet GetFollowSet( this CommonGrammar grammar, RuleName ruleName )
+    public static GuidingSymbolsSet GetFollowSet( this CommonGrammar grammar, RuleName ruleNameToGetFollowSet )
     {
-        var result = new HashSet<RuleSymbol>();
+        var result = grammar.Rules.Keys.ToDictionary( x => x, x => new HashSet<RuleSymbol>() );
+        var relations = grammar.Rules.Keys.ToDictionary( x => x, x => (Follows: new HashSet<RuleName>(), Firsts: new HashSet<RuleName>()) );
 
-        if ( grammar.StartRule == ruleName )
+        InitalizeResultAndRelationsTables( grammar, relations, result );
+        
+        bool hasChanges = true;
+        while ( hasChanges )
         {
-            var startRuleEndings = grammar.Rules[grammar.StartRule]
-                .Definitions
-                .Select( definition => definition.Symbols.Last() );
+            hasChanges = false;
 
-            result.AddRange( startRuleEndings );
+            foreach ( RuleName ruleName in relations.Keys )
+            {
+                (HashSet<RuleName> Follows, HashSet<RuleName> Firsts) ruleRelations = relations[ruleName];
+
+                int countBeforeChanges = result[ruleName].Count;
+                foreach ( RuleName toFirst in ruleRelations.Firsts )
+                {
+                    GuidingSymbolsSet guidingSymbols = grammar.GetFirstSet( toFirst );
+                    if ( guidingSymbols.Has( TerminalSymbolType.EmptySymbol ) )
+                    {
+                        ruleRelations.Follows.Add( toFirst );
+                    }
+                    
+                    result[ruleName].AddRange( guidingSymbols.GuidingSymbols );
+                }
+
+                foreach ( RuleName toFollow in ruleRelations.Follows )
+                {
+                    result[ruleName].AddRange( result[toFollow] );
+                }
+                
+                int countAfterChanges = result[ruleName].Count;
+
+                hasChanges |= countAfterChanges != countBeforeChanges;
+            }
         }
 
+        RemoveAllEpsilons( result );
+
+        return new GuidingSymbolsSet( ruleNameToGetFollowSet, result[ruleNameToGetFollowSet] );
+    }
+
+    private static void RemoveAllEpsilons( Dictionary<RuleName, HashSet<RuleSymbol>> result )
+    {
+        foreach ( RuleName ruleName in result.Keys )
+        {
+            result[ruleName].RemoveWhere( x => x.Symbol!.Type == TerminalSymbolType.EmptySymbol );
+        }
+    }
+
+    private static void InitalizeResultAndRelationsTables(
+        CommonGrammar grammar,
+        Dictionary<RuleName, (HashSet<RuleName> Follows, HashSet<RuleName> Firsts)> relations,
+        Dictionary<RuleName, HashSet<RuleSymbol>> result )
+    {
         foreach ( GrammarRule rule in grammar.Rules.Values )
         {
             foreach ( RuleDefinition definition in rule.Definitions )
@@ -28,45 +72,42 @@ public static class GrammarFollowSetExtensions
                 for ( var index = 0; index < definition.Symbols.Count; index++ )
                 {
                     RuleSymbol symbol = definition.Symbols[index];
-                    if ( symbol.Type != RuleSymbolType.NonTerminalSymbol )
+                    if ( symbol.Type == RuleSymbolType.TerminalSymbol )
                     {
-                        continue;
-                    }
-
-                    if ( symbol.RuleName != ruleName )
-                    {
-                        continue;
-                    }
-
-                    if ( index + 1 == definition.Symbols.Count )
-                    {
-                        result.AddRange( grammar.GetFollowSet( rule.Name ).GuidingSymbols );
                         continue;
                     }
                     
+                    (HashSet<RuleName> Follows, HashSet<RuleName> Firsts) symbolRelations = relations[symbol.RuleName!];
+
+                    if ( index + 1 == definition.Symbols.Count )
+                    {
+                        symbolRelations.Follows.Add( rule.Name );
+                        continue;
+                    }
+
                     RuleSymbol nextSymbol = definition.Symbols[index + 1];
-                    if ( nextSymbol.Type != RuleSymbolType.NonTerminalSymbol )
+                    if ( nextSymbol.Type == RuleSymbolType.NonTerminalSymbol )
                     {
-                        result.Add( nextSymbol );
-                        break;
+                        symbolRelations.Firsts.Add( nextSymbol.RuleName! );
+                        continue;
                     }
 
-                    GuidingSymbolsSet nextRuleGuidingSymbolsSet = grammar.GetFirstSet( nextSymbol.RuleName! );
-                        
-                    bool hasEpsilonProduction = nextRuleGuidingSymbolsSet.Has( TerminalSymbolType.EmptySymbol );
-                    if ( hasEpsilonProduction )
-                    {
-                        result.AddRange( nextRuleGuidingSymbolsSet.GuidingSymbols.Where( x => x.Symbol!.Type != TerminalSymbolType.EmptySymbol ) );
-                        result.AddRange( grammar.GetFollowSet( nextSymbol.RuleName! ).GuidingSymbols );
-                        break;
-                    }
-
-                    result.AddRange( nextRuleGuidingSymbolsSet.GuidingSymbols );
-                    break;
+                    result[symbol.RuleName!].Add( nextSymbol );
                 }
             }
         }
 
-        return new GuidingSymbolsSet( ruleName, result );
+        bool hasEndSymbols = grammar.Rules[grammar.StartRule].Definitions.Any( definition =>
+        {
+            RuleSymbol lastSymbol = definition.Symbols.Last();
+            return 
+                lastSymbol.Type == RuleSymbolType.TerminalSymbol && 
+                lastSymbol.Symbol.Type == TerminalSymbolType.End;
+        } );
+
+        if ( hasEndSymbols )
+        {
+            result[grammar.StartRule].Add( RuleSymbol.TerminalSymbol( TerminalSymbol.End() ) );
+        }
     }
 }

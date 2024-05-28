@@ -46,7 +46,7 @@ public static class GrammarFirstSetExtensions
                 }
 
                 var innerRuleHeadings = guidingSymbols[symbol.RuleName!];
-                hasNonEpsilonProductionAtTheEnd = innerRuleHeadings.Any( x => x.Symbol!.Type == TerminalSymbolType.EmptySymbol );
+                hasNonEpsilonProductionAtTheEnd = innerRuleHeadings.All( x => x.Symbol!.Type != TerminalSymbolType.EmptySymbol );
                 
                 headings.AddRange( innerRuleHeadings );
 

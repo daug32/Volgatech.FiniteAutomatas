@@ -37,6 +37,17 @@ public class GrammarFollowSetExtensionsTests
             } ),
         new FirstFollowTestData(
             new RuleName( "A" ),
+            @"
+                <S> -> <A>$
+                <A> -> <A>a | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.End() ),
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "A" ),
             @"<A> -> <A>a$ | ε$",
             new[]
             {
@@ -77,6 +88,8 @@ public class GrammarFollowSetExtensionsTests
             ",
             new[]
             {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "g" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "f" ) ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "h" ) )
             } ),
         new FirstFollowTestData(
