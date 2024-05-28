@@ -28,7 +28,7 @@ public class RenameRuleNamesConvertor : IGrammarConvertor
         foreach ( RuleName ruleName in grammar.Rules.Keys )
         {
             oldNameToNewName[ruleName] = 
-                _options.RenameOnlyUnreadableRules && Int32.TryParse( ruleName.Value, out _ )
+                _options.RenameOnlyUnreadableRules && Int64.TryParse( ruleName.Value, out _ )
                 ? new RuleName( index.ToString() )
                 : ruleName;
             index++;

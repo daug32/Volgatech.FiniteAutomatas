@@ -19,16 +19,14 @@ public static class GrammarFirstSetExtensions
 
     private static GuidingSymbolsSet GetFirstSet( this CommonGrammar grammar, RuleName ruleName, IEnumerable<RuleDefinition> definitions )
     {
-        var guidingSymbols = new HashSet<RuleSymbol>();
+        var guidingSymbols = grammar.Rules.Keys.ToDictionary( x => x, x => new HashSet<RuleSymbol>() );
 
-        var definitionsToCheck = new Queue<RuleDefinition>();
-        definitionsToCheck.EnqueueRange( definitions );
-
-        var processedDefinitions = new HashSet<RuleDefinition>();
+        var definitionsToCheck = BuildQueue( ruleName, definitions.ToList(), grammar );
+        var processedDefinitions = new HashSet<ConcreteDefinition>();
 
         while ( definitionsToCheck.Any() )
         {
-            RuleDefinition ruleDefinition = definitionsToCheck.Dequeue();
+            ConcreteDefinition ruleDefinition = definitionsToCheck.Dequeue();
             if ( processedDefinitions.Contains( ruleDefinition ) )
             {
                 continue;
@@ -36,16 +34,96 @@ public static class GrammarFirstSetExtensions
 
             processedDefinitions.Add( ruleDefinition );
 
-            RuleSymbol headerSymbol = ruleDefinition.Symbols.First();
-            if ( headerSymbol.Type == RuleSymbolType.NonTerminalSymbol )
+            var headings = new HashSet<RuleSymbol>();
+            bool hasNonEpsilonProductionAtTheEnd = false;
+            foreach ( RuleSymbol symbol in ruleDefinition.Definition.Symbols )
             {
-                definitionsToCheck.EnqueueRange( grammar.Rules[headerSymbol.RuleName!].Definitions );
+                if ( symbol.Type != RuleSymbolType.NonTerminalSymbol )
+                {
+                    headings.Add( symbol );
+                    hasNonEpsilonProductionAtTheEnd = symbol.Symbol!.Type != TerminalSymbolType.EmptySymbol;
+                    break;
+                }
+
+                var innerRuleHeadings = guidingSymbols[symbol.RuleName!];
+                hasNonEpsilonProductionAtTheEnd = innerRuleHeadings.Any( x => x.Symbol!.Type == TerminalSymbolType.EmptySymbol );
+                
+                headings.AddRange( innerRuleHeadings );
+
+                if ( headings.Any( x => x.Symbol!.Type == TerminalSymbolType.EmptySymbol ) )
+                {
+                    continue;
+                }
+
+                break;
+            }
+
+            if ( hasNonEpsilonProductionAtTheEnd )
+            {
+                headings = headings
+                    .Where( x => x.Type != RuleSymbolType.TerminalSymbol || x.Symbol!.Type != TerminalSymbolType.EmptySymbol )
+                    .ToHashSet();
+            }
+
+            guidingSymbols[ruleDefinition.RuleName].AddRange( headings );
+        }
+
+        return new GuidingSymbolsSet( ruleName, guidingSymbols[ruleName] );
+    }
+
+    private static Queue<ConcreteDefinition> BuildQueue(
+        RuleName ruleName,
+        List<RuleDefinition> targetDefinitions,
+        CommonGrammar grammar )
+    {
+        var result = new List<ConcreteDefinition>();
+
+        var processedNonTerms = new HashSet<RuleName>();
+        var nonTermsToProcess = new Queue<RuleName>( targetDefinitions.SelectMany( x =>
+            x.Symbols.Where( x => x.Type == RuleSymbolType.NonTerminalSymbol ).Select( x => x.RuleName! ) ) );
+
+        while ( nonTermsToProcess.Any() )
+        {
+            RuleName rule = nonTermsToProcess.Dequeue();
+            if ( processedNonTerms.Contains( rule ) )
+            {
                 continue;
             }
 
-            guidingSymbols.Add( headerSymbol );
+            List<RuleDefinition> ruleDefinitions = grammar.Rules[rule].Definitions;
+            IEnumerable<RuleName> nonTerms =
+                ruleDefinitions.SelectMany( x => x.Symbols.Where( x => x.Type == RuleSymbolType.NonTerminalSymbol ).Select( x => x.RuleName! ) );
+
+            foreach ( RuleName nonTerm in nonTerms )
+            {
+                nonTermsToProcess.Enqueue( nonTerm );
+            }
+
+            result.AddRange( ruleDefinitions.Select( x => new ConcreteDefinition( rule, x ) ) );
+
+            processedNonTerms.Add( rule );
         }
 
-        return new GuidingSymbolsSet( ruleName, guidingSymbols );
+        if ( !processedNonTerms.Contains( ruleName ) )
+        {
+            result.AddRange( targetDefinitions.Select( x => new ConcreteDefinition( ruleName, x ) ) );
+        }
+
+        return new Queue<ConcreteDefinition>( result.OrderBy( definition =>
+        {
+            RuleSymbol first = definition.Definition.FirstSymbol();
+
+            if ( first.Type == RuleSymbolType.NonTerminalSymbol )
+            {
+                return 2;
+            }
+
+            if ( first.Symbol!.Type == TerminalSymbolType.EmptySymbol )
+            {
+                return 1;
+            }
+
+            return 0;
+        } ) );
     }
 }
