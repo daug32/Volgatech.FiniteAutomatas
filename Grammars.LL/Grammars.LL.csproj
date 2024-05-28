@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\FluentAssertions\FluentAssertions.csproj" />
+      <ProjectReference Include="..\Grammars.Common.Convertors\Grammars.Common.Convertors.csproj" />
       <ProjectReference Include="..\Grammars.Common\Grammars.Common.csproj" />
       <ProjectReference Include="..\LinqExtensions\LinqExtensions.csproj" />
     </ItemGroup>

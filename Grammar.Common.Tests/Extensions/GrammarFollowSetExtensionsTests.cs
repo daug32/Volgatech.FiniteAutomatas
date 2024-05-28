@@ -16,7 +16,10 @@ public class GrammarFollowSetExtensionsTests
     {
         new FirstFollowTestData(
             new RuleName( "S" ),
-            @"<S> -> <A> s",
+            @"
+                <S> -> <A>s$
+                <A> -> a
+            ",
             new[]
             {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.End() )
@@ -24,7 +27,7 @@ public class GrammarFollowSetExtensionsTests
         new FirstFollowTestData(
             new RuleName( "A" ),
             @"
-                <S> -> <A> a
+                <S> -> <A>a$
                 <A> -> b
             ",
             new[]
@@ -34,7 +37,7 @@ public class GrammarFollowSetExtensionsTests
         new FirstFollowTestData(
             new RuleName( "S" ),
             @"
-                <S> -> a<B><D>h
+                <S> -> a<B><D>h$
                 <B> -> c<C>
                 <C> -> b<C> | ε
                 <D> -> <E><F>
@@ -43,12 +46,12 @@ public class GrammarFollowSetExtensionsTests
             ",
             new[]
             {
-                RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() )
+                RuleSymbol.TerminalSymbol( TerminalSymbol.End() )
             } ),
         new FirstFollowTestData(
             new RuleName( "E" ),
             @"
-                <S> -> a<B><D>h
+                <S> -> a<B><D>h$
                 <B> -> c<C>
                 <C> -> b<C> | ε
                 <D> -> <E><F>
@@ -69,7 +72,7 @@ public class GrammarFollowSetExtensionsTests
         CommonGrammar grammar = new GrammarInMemoryStringParser( testData.RawGrammar, _defaultSettings ).Parse();
 
         // Act
-        var actualSymbols = grammar.GetFirstSet( testData.TargetRuleName ).GuidingSymbols.ToHashSet();
+        var actualSymbols = grammar.GetFollowSet( testData.TargetRuleName ).GuidingSymbols.ToHashSet();
 
         // Assert
         Assert.That(
