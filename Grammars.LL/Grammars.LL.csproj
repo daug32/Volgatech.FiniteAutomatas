@@ -11,6 +11,7 @@
       <ProjectReference Include="..\Grammars.Common.Convertors\Grammars.Common.Convertors.csproj" />
       <ProjectReference Include="..\Grammars.Common\Grammars.Common.csproj" />
       <ProjectReference Include="..\LinqExtensions\LinqExtensions.csproj" />
+      <ProjectReference Include="..\Logging\Logging.csproj" />
     </ItemGroup>
 
 </Project>

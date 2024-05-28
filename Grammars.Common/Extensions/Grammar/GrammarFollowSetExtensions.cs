@@ -1,58 +1,56 @@
 ﻿using Grammars.Common.Extensions.Grammar.ValuesObjects;
+using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
+using LinqExtensions;
 
 namespace Grammars.Common.Extensions.Grammar;
 
 public static class GrammarFollowSetExtensions
 {
-    public static GuidingSymbolsSet GetFollowSet( this CommonGrammar grammar, ValueObjects.RuleName ruleName )
+    public static GuidingSymbolsSet GetFollowSet( this CommonGrammar grammar, RuleName ruleName )
     {
-        var followSymbols = new HashSet<RuleSymbol>();
+        var result = new HashSet<RuleSymbol>();
 
-        var rulesToFind = new Queue<ValueObjects.RuleName>( new[] { ruleName } );
-        var processedRules = new HashSet<ValueObjects.RuleName>();
-
-        while ( rulesToFind.Any() )
+        if ( grammar.StartRule == ruleName )
         {
-            ValueObjects.RuleName ruleToFind = rulesToFind.Dequeue();
-            if ( processedRules.Contains( ruleToFind ) )
+            var startRuleEndings = grammar.Rules[grammar.StartRule]
+                .Definitions
+                .Select( definition => definition.Symbols.Last() );
+
+            result.AddRange( startRuleEndings );
+        }
+
+        foreach ( GrammarRule rule in grammar.Rules.Values )
+        {
+            bool hasEpsilonProductions = rule.Has( TerminalSymbolType.EmptySymbol );
+            
+            foreach ( RuleDefinition definition in rule.Definitions )
             {
-                continue;
-            }
-
-            processedRules.Add( ruleToFind );
-
-            List<(ValueObjects.RuleName RuleName, ValueObjects.RuleDefinition RuleDefinition)> usages = grammar.Rules.Values
-                .SelectMany( r => r.Definitions.Select( d => ( Rule: r.Name, RuleDefinition: d ) ) )
-                .Where( x => x.RuleDefinition.Has( ruleToFind ) )
-                .ToList();
-
-            foreach ( (ValueObjects.RuleName RuleName, ValueObjects.RuleDefinition RuleDefinition) usage in usages )
-            {
-                for ( var index = 0; index < usage.RuleDefinition.Symbols.Count; index++ )
+                for ( var index = 0; index < definition.Symbols.Count; index++ )
                 {
-                    RuleSymbol symbol = usage.RuleDefinition.Symbols[index];
-                    if ( symbol.Type != RuleSymbolType.NonTerminalSymbol || symbol.RuleName != ruleName )
+                    RuleSymbol symbol = definition.Symbols[index];
+                    if ( symbol.Type != RuleSymbolType.NonTerminalSymbol )
                     {
                         continue;
                     }
 
-                    if ( index + 1 < usage.RuleDefinition.Symbols.Count )
+                    if ( symbol.RuleName != ruleName )
                     {
-                        followSymbols.Add( usage.RuleDefinition.Symbols[index + 1] );
                         continue;
                     }
 
-                    rulesToFind.Enqueue( usage.RuleName );
+                    if ( index + 1 == definition.Symbols.Count )
+                    {
+                        result.AddRange( grammar.GetFollowSet( rule.Name ).GuidingSymbols );
+                        continue;
+                    }
+
+                    result.Add( definition.Symbols[index + 1] );
+                    break;
                 }
-            }
-
-            if ( ruleToFind == grammar.StartRule )
-            {
-                followSymbols.Add( RuleSymbol.TerminalSymbol( TerminalSymbol.End() ) );
             }
         }
 
-        return new GuidingSymbolsSet( ruleName, followSymbols );
+        return new GuidingSymbolsSet( ruleName, result );
     }
 }

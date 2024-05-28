@@ -30,10 +30,15 @@ public class GrammarFollowSetExtensionsTests
                 <S> -> <A>a$
                 <A> -> b
             ",
-            new[]
-            {
-                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) )
-            } ),
+            new[] { RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ) } ),
+        new FirstFollowTestData(
+            new RuleName( "A" ),
+            @"<A> -> <A>a$ | ε",
+            new[] { RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ) } ),
+        new FirstFollowTestData(
+            new RuleName( "A" ),
+            @"<A> -> ε | <A>a$",
+            new[] { RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ) } ),
         new FirstFollowTestData(
             new RuleName( "S" ),
             @"

@@ -1,19 +1,20 @@
 ﻿using Grammar.Parsers;
 using Grammar.Parsers.Implementation;
 using Grammars.Common.Convertors;
-using Grammars.Common.Extensions.Grammar;
-using Grammars.Common.ValueObjects;
-using Grammars.Common.ValueObjects.Symbols;
 using Grammars.LL.Convertors;
 using Grammars.LL.Models;
 using Grammars.Visualization;
+using Logging;
+using Logging.Implementation;
 
 namespace Grammars.Console;
 
 public class Program
 {
+    private static readonly ILogger _logger = new ConsoleLogger();
+
     private static readonly string _exitCommand = "exit";
-    
+
     public static void Main()
     {
         LlOneGrammar grammar = BuildGrammar();
@@ -26,20 +27,8 @@ public class Program
             .Parse()
             // .Convert( new RemoveWhitespacesConvertor() )
             .ToConsole( "Original grammar" )
-            .Convert( new ToLlOneGrammarConvertor() )
+            .Convert( new ToLlOneGrammarConvertor( _logger ) )
             .ToConsole( "LL one grammar" );
-
-        bool hasEndSymbol = grammar.Rules.Values.Any( rule => 
-            rule.Definitions.Any( definition => 
-                definition.Symbols.Any( symbol => 
-                    symbol.Type == RuleSymbolType.TerminalSymbol && symbol.Symbol.Type == TerminalSymbolType.End ) ) );
-
-        if ( !hasEndSymbol )
-        {
-            System.Console.ForegroundColor = ConsoleColor.Yellow;
-            System.Console.WriteLine( "WARNING: No end symbol was found"  );
-            System.Console.ResetColor();
-        }
 
         return grammar;
     }

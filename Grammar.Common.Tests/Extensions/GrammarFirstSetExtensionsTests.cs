@@ -32,9 +32,14 @@ public class GrammarFirstSetExtensionsTests
                 <A> -> <B>
                 <B> -> b
             ",
+            new[] { RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) ) } ),
+        new FirstFollowTestData(
+            new RuleName( "A" ),
+            @"<A> -> <A>a | ε",
             new[]
             {
-                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) )
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ),
             } ),
         new FirstFollowTestData(
             new RuleName( "S" ),
