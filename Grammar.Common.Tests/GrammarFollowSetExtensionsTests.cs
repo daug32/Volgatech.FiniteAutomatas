@@ -9,91 +9,85 @@ namespace Grammar.Common.Tests;
 
 public class GrammarFollowSetExtensionsTests
 {
-    [TestCase(
-        @"<S> -> <A> s",
-        "S",
-        new[] { "$" } )]
-    [TestCase(
-        @"
-            <S> -> <A> a
-            <A> -> b
-        ",
-        "A",
-        new[] { "a" } )]
-    [TestCase(
-        @"
-            <S> -> a<B><D>h
-            <B> -> c<C>
-            <C> -> b<C> | ε
-            <D> -> <E><F>
-            <E> -> g | ε
-            <F> -> f | ε
-        ",
-        "S",
-        new[] { "ε" } )]
-    [TestCase(
-        @"
-            <S> -> a<B><D>h
-            <B> -> c<C>
-            <C> -> b<C> | ε
-            <D> -> <E><F>
-            <E> -> g | ε
-            <F> -> f | ε
-        ",
-        "E",
-        new[] { "f", "h" } )]
-    public void FindFollowSet(
-        string rawGrammar,
-        string rawRuleName,
-        string[] rawExpectedSymbols )
+    private static readonly ParsingSettings _defaultSettings = new();
+
+    private static readonly object[] _testData =
+    {
+        new FirstFollowTestData(
+            new RuleName( "S" ),
+            @"<S> -> <A> s",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.End() )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "A" ),
+            @"
+                <S> -> <A> a
+                <A> -> b
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "S" ),
+            @"
+                <S> -> a<B><D>h
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "E" ),
+            @"
+                <S> -> a<B><D>h
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "f" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "h" ) )
+            } )
+    };
+
+    [TestCaseSource( nameof( _testData ) )]
+    public void FindFollowSet( FirstFollowTestData testData )
     {
         // Arrange
-        var targetRuleName = new RuleName( rawRuleName );
-        CommonGrammar grammar = new GrammarInMemoryStringParser( rawGrammar, new ParsingSettings() ).Parse();
-        var expectedSymbols = ConvertToRuleSymbols( rawExpectedSymbols );
+        CommonGrammar grammar = new GrammarInMemoryStringParser( testData.RawGrammar, _defaultSettings ).Parse();
 
         // Act
-        var actualSymbols = grammar.GetFirstSet( targetRuleName ).GuidingSymbols.ToHashSet();
+        var actualSymbols = grammar.GetFirstSet( testData.TargetRuleName ).GuidingSymbols.ToHashSet();
 
         // Assert
         Assert.That(
             actualSymbols.Count,
-            Is.EqualTo( expectedSymbols.Count ),
-            "Number of actual symbols is not equal to the expected number. "
-            + $"ActualSymbols: {SerializeRuleSymbols( actualSymbols )}"
-            + $"ExpectedSymbols: {SerializeRuleSymbols( expectedSymbols )}" );
+            Is.EqualTo( testData.ExpectedRuleSymbols.Count ),
+            "Number of actual symbols is not equal to the expected number\n"
+            + $"ActualSymbols: {SerializeRuleSymbols( actualSymbols )}\n"
+            + $"ExpectedSymbols: {SerializeRuleSymbols( testData.ExpectedRuleSymbols )}" );
 
         foreach ( RuleSymbol actualSymbol in actualSymbols )
         {
-            bool hasSymbol = expectedSymbols.Contains( actualSymbol );
+            bool hasSymbol = testData.ExpectedRuleSymbols.Contains( actualSymbol );
             Assert.IsTrue(
                 hasSymbol,
-                "Symbol was not found. "
-                + $"Symbol: \"{actualSymbol}\" "
-                + $"ActualSymbols: {SerializeRuleSymbols( actualSymbols )} "
-                + $"ExpectedSymbols: {SerializeRuleSymbols( expectedSymbols )}" );
+                "Symbol was not found\n"
+                + $"Symbol: \"{actualSymbol}\"\n"
+                + $"ActualSymbols: {SerializeRuleSymbols( actualSymbols )}\n"
+                + $"ExpectedSymbols: {SerializeRuleSymbols( testData.ExpectedRuleSymbols )}" );
         }
-    }
-
-    private HashSet<RuleSymbol> ConvertToRuleSymbols( string[] symbols )
-    {
-        return symbols
-            .Select( x =>
-            {
-                var defaultSettings = new ParsingSettings();
-                if ( x == defaultSettings.EmptySymbol.ToString() )
-                {
-                    return RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() );
-                }
-
-                if ( x == defaultSettings.EndSymbol.ToString() )
-                {
-                    return RuleSymbol.TerminalSymbol( TerminalSymbol.End() );
-                }
-
-                return RuleSymbol.TerminalSymbol( TerminalSymbol.Word( x ) );
-            } )
-            .ToHashSet();
     }
 
     private string SerializeRuleSymbols( IEnumerable<RuleSymbol> items )
