@@ -12,6 +12,13 @@ public class LlOneGrammar : CommonGrammar
 
     public RunResult Run( string sentence )
     {
-        return new LlOneGrammarRunner( this ).Run( sentence );
+        try
+        {
+            return new LlOneGrammarRunner( this ).Run( sentence );
+        }
+        catch ( Exception )
+        {
+            return RunResult.Fail( sentence, RunError.NotLl() );
+        }
     }
 }

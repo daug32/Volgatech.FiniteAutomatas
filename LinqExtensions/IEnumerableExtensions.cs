@@ -36,4 +36,14 @@ public static class IEnumerableExtensions
 
         return result;
     }
+
+    public static IEnumerable<T> ForEach<T>( this IEnumerable<T> items, Action<T> func )
+    {
+        foreach ( T item in items )
+        {
+            func( item );
+        }
+
+        return items;
+    }
 }

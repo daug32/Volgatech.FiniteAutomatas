@@ -1,9 +1,8 @@
 ﻿using Grammars.Common;
-using Grammars.Common.Convertors;
-using Grammars.Common.Convertors.Epsilons;
-using Grammars.Common.Convertors.LeftFactorization;
-using Grammars.Common.Convertors.LeftRecursions;
-using Grammars.Common.Convertors.Semantics;
+using Grammars.Common.Convertings.Convertors;
+using Grammars.Common.Convertings.Convertors.Epsilons;
+using Grammars.Common.Convertings.Convertors.LeftRecursions;
+using Grammars.Common.Convertings.Convertors.Semantics;
 using Grammars.LL.Models;
 
 namespace Grammars.LL.Convertors;

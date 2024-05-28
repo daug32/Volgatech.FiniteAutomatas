@@ -19,11 +19,6 @@ public class CommonGrammar
         Validate();
     }
 
-    public GuidingSymbolsSet GetGuidingSymbolsSet( RuleName ruleName, RuleDefinition definition )
-    {
-        return GetGuidingSymbolsSet( ruleName, new[] { definition } );
-    }
-
     public CommonGrammar Copy()
     {
         return new(
@@ -56,37 +51,5 @@ public class CommonGrammar
                 }
             }
         }
-    }
-
-    private GuidingSymbolsSet GetGuidingSymbolsSet( RuleName ruleName, IEnumerable<RuleDefinition> definitions )
-    {
-        var guidingSymbols = new HashSet<RuleSymbol>();
-
-        var definitionsToCheck = new Queue<RuleDefinition>();
-        definitionsToCheck.EnqueueRange( definitions );
-
-        var processedDefinitions = new HashSet<RuleDefinition>();
-
-        while ( definitionsToCheck.Any() )
-        {
-            RuleDefinition ruleDefinition = definitionsToCheck.Dequeue();
-            if ( processedDefinitions.Contains( ruleDefinition ) )
-            {
-                continue;
-            }
-
-            processedDefinitions.Add( ruleDefinition );
-
-            RuleSymbol headerSymbol = ruleDefinition.Symbols.First();
-            if ( headerSymbol.Type == RuleSymbolType.NonTerminalSymbol )
-            {
-                definitionsToCheck.EnqueueRange( Rules[headerSymbol.RuleName!].Definitions );
-                continue;
-            }
-
-            guidingSymbols.Add( headerSymbol );
-        }
-
-        return new GuidingSymbolsSet( ruleName, guidingSymbols );
     }
 }

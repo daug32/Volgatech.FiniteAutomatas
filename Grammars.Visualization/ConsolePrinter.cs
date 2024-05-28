@@ -23,9 +23,12 @@ public static class ConsolePrinter
                 grammarRule.Definitions
                     .Select( definition =>
                     {
-                        var serializedSymbols = definition.Symbols.Select( s => s.Type == RuleSymbolType.NonTerminalSymbol 
-                            ? $"<{s.RuleName}>"
-                            : s.Symbol.ToString() );
+                        var serializedSymbols = definition.Symbols
+                            .Where( s => s.Type != RuleSymbolType.TerminalSymbol || s.Symbol.Type != TerminalSymbolType.WhiteSpace )
+                            .Select( s => 
+                                s.Type == RuleSymbolType.NonTerminalSymbol 
+                                    ? $"<{s.RuleName}>"
+                                    : s.Symbol.ToString() );
                         return String.Join( " ", serializedSymbols );
                     } )
                     .OrderByDescending( x => x.Length )

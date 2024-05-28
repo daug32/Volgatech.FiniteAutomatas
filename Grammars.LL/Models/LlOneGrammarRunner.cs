@@ -2,15 +2,15 @@
 
 public class LlOneGrammarRunner
 {
-    private readonly LlOneGrammar _llOneGrammar;
+    private readonly LlOneGrammar _grammar;
 
-    public LlOneGrammarRunner( LlOneGrammar llOneGrammar )
+    public LlOneGrammarRunner( LlOneGrammar grammar )
     {
-        _llOneGrammar = llOneGrammar;
+        _grammar = grammar;
     }
 
     public RunResult Run( string sentence )
     {
-        return RunResult.Fail( sentence, new RunError( 1 ) );
+        return RunResult.Fail( sentence, RunError.InvalidSentence( 1 ) );
     }
 }

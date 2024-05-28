@@ -10,6 +10,6 @@ public class GrammarRule
         Name = name;
         Definitions = definitions.ToList();
     }
-
+    
     public GrammarRule Copy() => new( Name, Definitions.Select( x => x.Copy() ) );
 }
