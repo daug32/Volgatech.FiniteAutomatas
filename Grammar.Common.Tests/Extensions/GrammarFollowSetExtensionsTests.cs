@@ -1,3 +1,4 @@
+using Grammar.Common.Tests.Extensions.Containers;
 using Grammar.Parsers;
 using Grammar.Parsers.Implementation;
 using Grammars.Common;
@@ -5,61 +6,64 @@ using Grammars.Common.Extensions.Grammar;
 using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 
-namespace Grammar.Common.Tests;
+namespace Grammar.Common.Tests.Extensions;
 
-public class GrammarFirstSetExtensionsTests
+public class GrammarFollowSetExtensionsTests
 {
     private static readonly ParsingSettings _defaultSettings = new();
 
-    private static readonly object[] _testCases = {
-        new FirstFollowTestData(
-            new RuleName( "A" ),
-            @"
-                <S> -> <A> s $
-                <A> -> <B> a | a
-                <B> -> b
-            ",
-            new[]
-            {
-                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ),
-                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) ), 
-            } ),
+    private static readonly object[] _testData =
+    {
         new FirstFollowTestData(
             new RuleName( "S" ),
-            @"
-                <S> -> <A>$
-                <A> -> <B>
-                <B> -> b
-            ",
+            @"<S> -> <A> s",
             new[]
             {
-                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) )
-            } ),
-        new FirstFollowTestData(
-            new RuleName( "S" ),
-            @"<S> -> s | ε",
-            new[]
-            {
-                RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ),
-                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "s" ) )
-            } ),
-        new FirstFollowTestData(
-            new RuleName( "A" ),
-            @"
-                <A> -> <B><C>$
-                <B> -> b | ε
-                <C> -> c | ε
-            ",
-            new[]
-            {
-                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) ),
-                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "c" ) ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.End() )
             } ),
+        new FirstFollowTestData(
+            new RuleName( "A" ),
+            @"
+                <S> -> <A> a
+                <A> -> b
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "S" ),
+            @"
+                <S> -> a<B><D>h
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "E" ),
+            @"
+                <S> -> a<B><D>h
+                <B> -> c<C>
+                <C> -> b<C> | ε
+                <D> -> <E><F>
+                <E> -> g | ε
+                <F> -> f | ε
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "f" ) ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "h" ) )
+            } )
     };
 
-    [TestCaseSource( nameof( _testCases ) )]
-    public void FindFirstSet( FirstFollowTestData testData )
+    [TestCaseSource( nameof( _testData ) )]
+    public void FindFollowSet( FirstFollowTestData testData )
     {
         // Arrange
         CommonGrammar grammar = new GrammarInMemoryStringParser( testData.RawGrammar, _defaultSettings ).Parse();

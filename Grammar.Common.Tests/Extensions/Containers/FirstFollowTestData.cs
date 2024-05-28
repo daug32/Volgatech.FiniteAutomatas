@@ -1,7 +1,7 @@
 ﻿using Grammars.Common.ValueObjects;
 using Grammars.Common.ValueObjects.Symbols;
 
-namespace Grammar.Common.Tests;
+namespace Grammar.Common.Tests.Extensions.Containers;
 
 public class FirstFollowTestData
 {
