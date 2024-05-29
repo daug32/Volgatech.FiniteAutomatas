@@ -11,13 +11,37 @@ public class RemoveWhitespacesConvertor : IGrammarConvertor
 {
     public CommonGrammar Convert( CommonGrammar grammar )
     {
-        return new CommonGrammar(
-            grammar.StartRule,
-            grammar.Rules.Values.Select( rule => new GrammarRule(
-                rule.Name,
-                rule.Definitions.Select( definition => new RuleDefinition( definition.Symbols.Where( symbol =>
-                    symbol.Type == RuleSymbolType.NonTerminalSymbol || 
-                    symbol.Type == RuleSymbolType.TerminalSymbol && 
-                    symbol.Symbol.Type != TerminalSymbolType.WhiteSpace ) ) ) ) ) );
+        var rules = new List<GrammarRule>();
+        foreach ( GrammarRule rule in grammar.Rules.Values )
+        {
+            var definitions = new List<RuleDefinition>();
+            foreach ( RuleDefinition definition in rule.Definitions )
+            {
+                var symbols = new List<RuleSymbol>();
+                foreach ( RuleSymbol symbol in definition.Symbols )
+                {
+                    if ( symbol.Type == RuleSymbolType.NonTerminalSymbol )
+                    {
+                        continue;
+                    }
+
+                    if ( symbol.Symbol!.Type == TerminalSymbolType.WhiteSpace )
+                    {
+                        continue;
+                    }
+
+                    symbols.Add( symbol );
+                }
+
+                if ( symbols.Any() )
+                {
+                    definitions.Add( new RuleDefinition( symbols ) );
+                }
+            }
+
+            rules.Add( new GrammarRule( rule.Name, definitions ) );
+        }
+
+        return new CommonGrammar( grammar.StartRule, rules );
     }
 }
