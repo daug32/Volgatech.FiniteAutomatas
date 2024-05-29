@@ -37,6 +37,7 @@ public class LlOneGrammarRunner
             }
 
             RuleSymbol currentStackItem = stack.Pop();
+            
             if ( currentStackItem.Type == RuleSymbolType.NonTerminalSymbol )
             {
                 if ( !table[word].ContainsKey( currentStackItem.RuleName! ) )
@@ -44,7 +45,9 @@ public class LlOneGrammarRunner
                     return RunResult.Fail( sentence, RunError.InvalidSentence( i ) );
                 }
                 
-                foreach ( RuleSymbol ruleSymbol in table[word][currentStackItem.RuleName!].Symbols.Reverse() )
+                foreach ( RuleSymbol ruleSymbol in table[word][currentStackItem.RuleName!].Symbols
+                             .Where( x => x.Type != RuleSymbolType.TerminalSymbol || x.Symbol.Type != TerminalSymbolType.End )
+                             .Reverse() )
                 {
                     stack.Push( ruleSymbol );
                 }
@@ -86,7 +89,7 @@ public class LlOneGrammarRunner
 
         var result = new LinkedList<TerminalSymbol>();
 
-        string[] parts = sentence.Split( ' ' );
+        IEnumerable<string> parts = sentence.Split( ' ' ).Where( x => x.Length > 0 );
         foreach ( string part in parts )
         {
             result.AddLast( TerminalSymbol.Word( part ) );

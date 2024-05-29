@@ -22,18 +22,11 @@ internal class ConcreteDefinition
         {
             foreach ( RuleDefinition definition in rule.Definitions )
             {
-                var headingSymbols = grammar.GetFirstSet( rule.Name, definition )
+                IEnumerable<TerminalSymbol> headingSymbols = grammar.GetFirstSet( rule.Name, definition )
                     .GuidingSymbols
                     .Select( x => x.Symbol ?? throw new UnreachableException() );
 
-                List<RuleSymbol> symbols = definition.Symbols
-                    .Where( x => x.Type != RuleSymbolType.TerminalSymbol || x.Symbol!.Type != TerminalSymbolType.End )
-                    .ToList();
-                
-                if ( symbols.Any() )
-                {
-                    result.Add( new ConcreteDefinition( rule.Name, new RuleDefinition( symbols ), headingSymbols ) );
-                }
+                result.Add( new ConcreteDefinition( rule.Name, new RuleDefinition( definition.Symbols ), headingSymbols ) );
             }
         }
 
