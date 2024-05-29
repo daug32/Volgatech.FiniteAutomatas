@@ -79,8 +79,7 @@ public static class GrammarFirstSetExtensions
         var result = new List<ConcreteDefinition>();
 
         var processedNonTerms = new HashSet<RuleName>();
-        var nonTermsToProcess = new Queue<RuleName>( targetDefinitions.SelectMany( x =>
-            x.Symbols.Where( x => x.Type == RuleSymbolType.NonTerminalSymbol ).Select( x => x.RuleName! ) ) );
+        var nonTermsToProcess = new Queue<RuleName>( ExtractAchievableNonTerminals( targetDefinitions ) );
 
         while ( nonTermsToProcess.Any() )
         {
@@ -125,5 +124,25 @@ public static class GrammarFirstSetExtensions
 
             return 0;
         } ) );
+    }
+
+    private static IEnumerable<RuleName> ExtractAchievableNonTerminals( List<RuleDefinition> targetDefinitions )
+    {
+        var result = new HashSet<RuleName>();
+        
+        foreach ( RuleDefinition definition in targetDefinitions )
+        {
+            foreach ( RuleSymbol symbol in definition.Symbols )
+            {
+                if ( symbol.Type == RuleSymbolType.TerminalSymbol )
+                {
+                    break;
+                }
+
+                result.Add( symbol.RuleName! );
+            }
+        }
+
+        return result;
     }
 }
