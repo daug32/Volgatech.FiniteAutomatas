@@ -1,6 +1,8 @@
 ﻿using Grammar.Parsers;
 using Grammar.Parsers.Implementation;
 using Grammars.Common.Convertors;
+using Grammars.Common.Grammars.Extensions;
+using Grammars.Common.Grammars.ValueObjects;
 using Grammars.LL.Convertors;
 using Grammars.LL.Models;
 using Grammars.LL.Runners;
@@ -8,6 +10,7 @@ using Grammars.LL.Runners.Results;
 using Grammars.Visualization;
 using Logging;
 using Grammars.LL.Visualizations;
+using LinqExtensions;
 using Logging.Implementation;
 
 namespace Grammars.Console;
@@ -30,7 +33,7 @@ public class Program
 
     private static LlOneGrammar BuildGrammar()
     {
-        LlOneGrammar grammar = new GrammarFileParser( @"../../../Grammars/common.txt", new ParsingSettings() )
+        LlOneGrammar grammar = new GrammarFileParser( @"../../../Grammars/1.txt", new ParsingSettings() )
             .Parse()
             .Convert( new RemoveWhitespacesConvertor() )
             .ToConsole( "Original grammar" )

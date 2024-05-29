@@ -46,4 +46,6 @@ internal class ConcreteDefinition
         Definition = definition;
         HeadingSymbols = headingSymbols.ToHashSet();
     }
+
+    public override string ToString() => $"<{RuleName}> -> {String.Join( " ", Definition.Symbols )}";
 }

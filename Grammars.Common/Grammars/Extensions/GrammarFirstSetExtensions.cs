@@ -1,4 +1,6 @@
-﻿using Grammars.Common.Grammars.ValueObjects;
+﻿using System.Diagnostics;
+using Grammars.Common.Grammars.ValueObjects;
+using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using LinqExtensions;
@@ -9,66 +11,140 @@ public static class GrammarFirstSetExtensions
 {
     public static GuidingSymbolsSet GetFirstSet( this CommonGrammar grammar, RuleName ruleName )
     {
-        return grammar.GetFirstSet( ruleName, grammar.Rules[ruleName].Definitions );
+        return grammar.GetFirstSet( ruleName, grammar.Rules[ruleName].Definitions )[ruleName];
     }
 
     public static GuidingSymbolsSet GetFirstSet( this CommonGrammar grammar, RuleName ruleName, RuleDefinition definition )
     {
-        return grammar.GetFirstSet( ruleName, new[] { definition } );
+        return grammar.GetFirstSet( ruleName, new[] { definition } )[ruleName];
     }
 
-    private static GuidingSymbolsSet GetFirstSet( this CommonGrammar grammar, RuleName ruleName, IEnumerable<RuleDefinition> definitions )
+    private static Dictionary<RuleName, GuidingSymbolsSet> GetFirstSet( this CommonGrammar grammar, RuleName ruleNameToGetFirstSet, IEnumerable<RuleDefinition> definitions )
     {
-        var guidingSymbols = grammar.Rules.Keys.ToDictionary( x => x, x => new HashSet<RuleSymbol>() );
+        List<ConcreteDefinition> concreteDefinitions = BuildConcreteDefinitions( grammar, ruleNameToGetFirstSet, definitions );
+        
+        var result = grammar.Rules.Keys.ToDictionary( x => x, x => new HashSet<RuleSymbol>() );
+        var relations = grammar.Rules.Keys.ToDictionary( x => x, x => new List<(ConcreteDefinition Definition, int Index)>() );
 
-        var definitionsToCheck = BuildQueue( ruleName, definitions.ToList(), grammar );
-        var processedDefinitions = new HashSet<ConcreteDefinition>();
-
-        while ( definitionsToCheck.Any() )
+        InitializeResultAndRelationsTables( concreteDefinitions, relations, result );
+        
+        bool hasChanges = true;
+        while ( hasChanges )
         {
-            ConcreteDefinition ruleDefinition = definitionsToCheck.Dequeue();
-            if ( processedDefinitions.Contains( ruleDefinition ) )
-            {
-                continue;
-            }
+            hasChanges = false;
 
-            processedDefinitions.Add( ruleDefinition );
-
-            var headings = new HashSet<RuleSymbol>();
-            bool hasNonEpsilonProductionAtTheEnd = false;
-            foreach ( RuleSymbol symbol in ruleDefinition.Definition.Symbols )
+            foreach ( RuleName ruleName in relations.Keys )
             {
-                if ( symbol.Type != RuleSymbolType.NonTerminalSymbol )
+                List<(ConcreteDefinition Definition, int Index)> ruleRelations = relations[ruleName];
+
+                int countBeforeChanges = result[ruleName].Count;
+                for ( var index = 0; index < ruleRelations.Count; index++ )
                 {
-                    headings.Add( symbol );
-                    hasNonEpsilonProductionAtTheEnd = symbol.Symbol!.Type != TerminalSymbolType.EmptySymbol;
-                    break;
+                    (ConcreteDefinition Definition, int Index) toFirst = ruleRelations[index];
+                    RuleDefinition toFirstDefinition = toFirst.Definition.Definition;
+                    RuleName toFirstRuleName = toFirstDefinition.Symbols[toFirst.Index].RuleName ?? throw new UnreachableException();
+
+                    HashSet<RuleSymbol> guidingSymbols = result[toFirstRuleName];
+
+                    result[ruleName].AddRange( result[toFirstRuleName] );
+                    
+                    if ( guidingSymbols.All( x => x.Symbol!.Type != TerminalSymbolType.EmptySymbol ) )
+                    {
+                        continue;
+                    }
+
+                    if ( !ruleRelations.Any( x => x.Index == toFirst.Index && Equals( x.Definition, toFirst.Definition ) ) )
+                    {
+                        ruleRelations.Add( toFirst );
+                    }
+
+                    for ( int i = toFirst.Index + 1; i < toFirstDefinition.Symbols.Count; i++ )
+                    {
+                        RuleSymbol symbol = toFirstDefinition.Symbols[i];
+                        if ( symbol.Type == RuleSymbolType.TerminalSymbol )
+                        {
+                            result[ruleName].Add( symbol );
+
+                            if ( symbol.Symbol!.Type != TerminalSymbolType.EmptySymbol )
+                            {
+                                break;
+                            }
+
+                            continue;
+                        }
+
+                        relations[ruleName].Add( ( toFirst.Definition, i ) );
+                        result[ruleName].AddRange( result[symbol.RuleName!] );
+                    }
+
+                    result[ruleName].AddRange( guidingSymbols );
                 }
 
-                var innerRuleHeadings = guidingSymbols[symbol.RuleName!];
-                hasNonEpsilonProductionAtTheEnd = innerRuleHeadings.All( x => x.Symbol!.Type != TerminalSymbolType.EmptySymbol );
-                
-                headings.AddRange( innerRuleHeadings );
+                int countAfterChanges = result[ruleName].Count;
 
-                if ( headings.Any( x => x.Symbol!.Type == TerminalSymbolType.EmptySymbol ) )
-                {
-                    continue;
-                }
-
-                break;
+                hasChanges |= countAfterChanges != countBeforeChanges;
             }
-
-            if ( hasNonEpsilonProductionAtTheEnd )
-            {
-                headings = headings
-                    .Where( x => x.Type != RuleSymbolType.TerminalSymbol || x.Symbol!.Type != TerminalSymbolType.EmptySymbol )
-                    .ToHashSet();
-            }
-
-            guidingSymbols[ruleDefinition.RuleName].AddRange( headings );
         }
 
-        return new GuidingSymbolsSet( ruleName, guidingSymbols[ruleName] );
+        return result.ToDictionary(
+            pair => pair.Key,
+            pair => new GuidingSymbolsSet( pair.Key, pair.Value ) );
+    }
+
+    private static void InitializeResultAndRelationsTables( 
+        List<ConcreteDefinition> definitions,
+        Dictionary<RuleName, List<(ConcreteDefinition Definition, int Index)>> relations,
+        Dictionary<RuleName, HashSet<RuleSymbol>> result )
+    {
+        foreach ( ConcreteDefinition definition in definitions )
+        {
+            RuleSymbol firstSymbol = definition.Definition.FirstSymbol();
+            if ( firstSymbol.Type == RuleSymbolType.TerminalSymbol )
+            {
+                result[definition.RuleName].Add( firstSymbol );
+            }
+            else
+            {
+                relations[definition.RuleName].Add( (definition, 0) );
+            }
+        }
+    }
+
+    private static List<ConcreteDefinition> BuildConcreteDefinitions( CommonGrammar grammar, RuleName ruleName, IEnumerable<RuleDefinition> definitionsToUse )
+    {
+        var result = new List<ConcreteDefinition>();
+        
+        foreach ( GrammarRule rule in grammar.Rules.Values )
+        {
+            var definitionsToEnumerate = rule.Name == ruleName
+                ? definitionsToUse
+                : rule.Definitions;
+
+            foreach ( RuleDefinition definition in definitionsToEnumerate )
+            {
+                var newDefinition = new List<RuleSymbol>();
+                foreach ( RuleSymbol symbol in definition.Symbols )
+                {
+                    if ( symbol.Type == RuleSymbolType.TerminalSymbol )
+                    {
+                        newDefinition.Add( symbol );
+
+                        if ( symbol.Symbol.Type == TerminalSymbolType.EmptySymbol )
+                        {
+                            continue;
+                        }
+
+                        break;
+                    }
+                    
+                    newDefinition.Add( symbol );
+                }
+                
+                result.Add( new ConcreteDefinition( rule.Name, new RuleDefinition( newDefinition ) ) );
+            }
+        }
+
+        return result;
     }
 
     private static Queue<ConcreteDefinition> BuildQueue(
