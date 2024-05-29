@@ -26,11 +26,7 @@ public static class ConsolePrinter
 
     private static IEnumerable<string[]> BuildRows( ParsingTable table )
     {
-        List<RuleName> rules = table.Values
-            .SelectMany( x => x.Keys )
-            .Distinct()
-            .OrderBy( rule => rule == table.StartRule ? 0 : 1 )
-            .ToList();
+        List<RuleName> rules = OrderRules( table );
         
         List<TerminalSymbol> orderTerminalSymbols = OrderTerminalSymbols( table.Keys );
 
@@ -67,33 +63,47 @@ public static class ConsolePrinter
         }
     }
 
+    private static List<RuleName> OrderRules( ParsingTable table )
+    {
+        return table.Values
+            .SelectMany( x => x.Keys )
+            .Distinct()
+            .OrderBy( rule =>
+            {
+                if ( rule == table.StartRule )
+                {
+                    return 0;
+                }
+
+                return 1;
+            } )
+            .ThenBy( rule => rule.ToString() )
+            .ToList();
+    }
+
     private static List<TerminalSymbol> OrderTerminalSymbols( IEnumerable<TerminalSymbol> terminalSymbols )
     {
-        int maxPriority = Int32.MaxValue;
-        return terminalSymbols.OrderBy( x =>
-        {
-            if ( x.Type == TerminalSymbolType.WhiteSpace )
+        return terminalSymbols
+            .OrderBy( x =>
             {
-                return maxPriority - 2;
-            }
-            
-            if ( x.Type == TerminalSymbolType.EmptySymbol )
-            {
-                return maxPriority - 1;
-            }
+                if ( x.Type == TerminalSymbolType.WhiteSpace )
+                {
+                    return 0;
+                }
                 
-            if ( x.Type == TerminalSymbolType.End )
-            {
-                return maxPriority;
-            }
+                if ( x.Type == TerminalSymbolType.EmptySymbol )
+                {
+                    return 1;
+                }
+                    
+                if ( x.Type == TerminalSymbolType.End )
+                {
+                    return 2;
+                }
 
-            var serializedText = x.ToString();
-            if ( Char.IsLetter( serializedText.First() ) )
-            {
-                return 0;
-            }
-
-            return serializedText.First();
-        } ).ToList();
+                return 3;
+            } )
+            .ThenBy( x => x.ToString() )
+            .ToList();
     }
 }
