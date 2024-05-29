@@ -20,13 +20,14 @@ public class RemoveWhitespacesConvertor : IGrammarConvertor
                 var symbols = new List<RuleSymbol>();
                 foreach ( RuleSymbol symbol in definition.Symbols )
                 {
-                    if ( symbol.Type == RuleSymbolType.NonTerminalSymbol )
+                    if ( symbol.Type == RuleSymbolType.TerminalSymbol )
                     {
-                        continue;
-                    }
+                        if ( symbol.Symbol!.Type == TerminalSymbolType.WhiteSpace )
+                        {
+                            continue;
+                        }
 
-                    if ( symbol.Symbol!.Type == TerminalSymbolType.WhiteSpace )
-                    {
+                        symbols.Add( symbol );
                         continue;
                     }
 

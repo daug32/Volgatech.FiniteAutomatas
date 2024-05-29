@@ -3,8 +3,11 @@ using Grammar.Parsers.Implementation;
 using Grammars.Common.Convertors;
 using Grammars.LL.Convertors;
 using Grammars.LL.Models;
+using Grammars.LL.Runners;
+using Grammars.LL.Runners.Results;
 using Grammars.Visualization;
 using Logging;
+using Grammars.LL.Visualizations;
 using Logging.Implementation;
 
 namespace Grammars.Console;
@@ -18,6 +21,11 @@ public class Program
     public static void Main()
     {
         LlOneGrammar grammar = BuildGrammar();
+        
+        ParsingTable table = new ParsingTableCreator().Create( grammar );
+        table.ToConsole();
+
+        return;
         AskForSentences( grammar );
     }
 
@@ -25,7 +33,7 @@ public class Program
     {
         LlOneGrammar grammar = new GrammarFileParser( @"../../../Grammars/common.txt", new ParsingSettings() )
             .Parse()
-            // .Convert( new RemoveWhitespacesConvertor() )
+            .Convert( new RemoveWhitespacesConvertor() )
             .ToConsole( "Original grammar" )
             .Convert( new ToLlOneGrammarConvertor( _logger ) )
             .ToConsole( "LL one grammar" );

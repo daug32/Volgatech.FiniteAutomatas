@@ -10,6 +10,11 @@ public static class GrammarFollowSetExtensions
 {
     public static GuidingSymbolsSet GetFollowSet( this CommonGrammar grammar, RuleName ruleNameToGetFollowSet )
     {
+        return grammar.GetFollowSet()[ruleNameToGetFollowSet];
+    }
+
+    public static Dictionary<RuleName, GuidingSymbolsSet> GetFollowSet( this CommonGrammar grammar )
+    {
         var result = grammar.Rules.Keys.ToDictionary( x => x, x => new HashSet<RuleSymbol>() );
         var relations = grammar.Rules.Keys.ToDictionary( x => x, x => (Follows: new HashSet<RuleName>(), Firsts: new HashSet<RuleName>()) );
 
@@ -49,7 +54,9 @@ public static class GrammarFollowSetExtensions
 
         RemoveAllEpsilons( result );
 
-        return new GuidingSymbolsSet( ruleNameToGetFollowSet, result[ruleNameToGetFollowSet] );
+        return result.ToDictionary(
+            pair => pair.Key,
+            pair => new GuidingSymbolsSet( pair.Key, pair.Value ) );
     }
 
     private static void RemoveAllEpsilons( Dictionary<RuleName, HashSet<RuleSymbol>> result )

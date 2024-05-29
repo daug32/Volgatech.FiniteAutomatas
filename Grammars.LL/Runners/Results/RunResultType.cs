@@ -1,4 +1,4 @@
-﻿namespace Grammars.LL.Models;
+﻿namespace Grammars.LL.Runners.Results;
 
 public enum RunResultType
 {
