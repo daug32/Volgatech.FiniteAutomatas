@@ -22,7 +22,7 @@ public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
     public LlOneGrammar Convert( CommonGrammar grammar )
     {
         CommonGrammar normalizedGrammar = grammar
-            .Convert( new RemoveEpsilonsConvertor()  )
+            // .Convert( new RemoveEpsilonsConvertor()  )
             .Convert( new LeftRecursionRemoverConvertor() )
             // .Convert( new RemoveEpsilonsConvertor() )
             .Convert( new RenameRuleNamesConvertor() );

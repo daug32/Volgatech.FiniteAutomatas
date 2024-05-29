@@ -13,7 +13,11 @@ public static class ConsolePrinter
         string[] columns = BuildColumns( table ).ToArray();
         IEnumerable<string[]> rows = BuildRows( table );
 
-        var consoleTable = new ConsoleTable( columns );
+        var consoleTable = new ConsoleTable( new ConsoleTableOptions()
+        {
+            Columns = columns,
+            EnableCount = false
+        } );
         foreach ( string[] row in rows )
         {
             consoleTable.AddRow( row );
@@ -88,20 +92,20 @@ public static class ConsolePrinter
             {
                 if ( x.Type == TerminalSymbolType.WhiteSpace )
                 {
-                    return 0;
+                    return 3;
                 }
                 
                 if ( x.Type == TerminalSymbolType.EmptySymbol )
                 {
-                    return 1;
+                    return 2;
                 }
                     
                 if ( x.Type == TerminalSymbolType.End )
                 {
-                    return 2;
+                    return 1;
                 }
 
-                return 3;
+                return 0;
             } )
             .ThenBy( x => x.ToString() )
             .ToList();

@@ -100,6 +100,11 @@ public static class GrammarFollowSetExtensions
                     }
 
                     result[symbol.RuleName!].Add( nextSymbol );
+
+                    if ( nextSymbol.Symbol!.Type == TerminalSymbolType.End )
+                    {
+                        symbolRelations.Follows.Add( rule.Name );
+                    }
                 }
             }
         }

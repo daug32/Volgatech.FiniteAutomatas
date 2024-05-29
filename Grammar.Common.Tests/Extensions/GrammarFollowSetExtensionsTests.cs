@@ -134,8 +134,23 @@ public class GrammarFollowSetExtensionsTests
             new[]
             {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "h" ) )
+            } ),
+        new FirstFollowTestData(
+            new RuleName( "E`" ),
+            @"
+                <E> -> <T><E`>$
+                <E`> -> +<T><E`> | ε
+                <T> -> <F><T'>
+                <T'> -> *<F><T'> | ε
+                <F> -> id | (<E>)
+            ",
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.End() ),
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( ")" ) ),
             } )
     };
+
 
     [TestCaseSource( nameof( _testData ) )]
     public void FindFollowSet( FirstFollowTestData testData )
