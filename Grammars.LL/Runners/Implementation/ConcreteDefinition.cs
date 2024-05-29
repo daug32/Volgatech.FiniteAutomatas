@@ -6,7 +6,7 @@ using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 
-namespace Grammars.LL.Runners;
+namespace Grammars.LL.Runners.Implementation;
 
 internal class ConcreteDefinition
 {
@@ -25,7 +25,15 @@ internal class ConcreteDefinition
                 var headingSymbols = grammar.GetFirstSet( rule.Name, definition )
                     .GuidingSymbols
                     .Select( x => x.Symbol ?? throw new UnreachableException() );
-                result.Add( new ConcreteDefinition( rule.Name, definition, headingSymbols ) );
+
+                List<RuleSymbol> symbols = definition.Symbols
+                    .Where( x => x.Type != RuleSymbolType.TerminalSymbol || x.Symbol!.Type != TerminalSymbolType.End )
+                    .ToList();
+                
+                if ( symbols.Any() )
+                {
+                    result.Add( new ConcreteDefinition( rule.Name, new RuleDefinition( symbols ), headingSymbols ) );
+                }
             }
         }
 

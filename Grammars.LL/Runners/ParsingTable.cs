@@ -6,10 +6,12 @@ namespace Grammars.LL.Runners;
 
 public class ParsingTable : Dictionary<TerminalSymbol, Dictionary<RuleName, RuleDefinition>>
 {
-    public RuleName StartRule;
+    public readonly RuleName StartRule;
+    public readonly HashSet<TerminalSymbol> Alphabet;
 
-    public ParsingTable( RuleName startRule )
+    public ParsingTable( RuleName startRule, HashSet<TerminalSymbol> alphabet )
     {
+        Alphabet = alphabet;
         StartRule = startRule;
     }
 }

@@ -25,7 +25,6 @@ public class Program
         ParsingTable table = new ParsingTableCreator().Create( grammar );
         table.ToConsole();
 
-        return;
         AskForSentences( grammar );
     }
 

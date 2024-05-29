@@ -5,6 +5,7 @@ using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using Grammars.LL.Models;
+using Grammars.LL.Runners.Implementation;
 
 namespace Grammars.LL.Runners;
 
@@ -12,8 +13,10 @@ public class ParsingTableCreator
 {
     public ParsingTable Create( LlOneGrammar grammar )
     {
-        var table = new ParsingTable( grammar.StartRule );
-        foreach ( TerminalSymbol terminalSymbol in GetAlphabet( grammar ) )
+        HashSet<TerminalSymbol> alphabet = GetAlphabet( grammar );
+
+        var table = new ParsingTable( grammar.StartRule, alphabet );
+        foreach ( TerminalSymbol terminalSymbol in alphabet )
         {
             table[terminalSymbol] = new Dictionary<RuleName, RuleDefinition>();
         }
@@ -53,6 +56,8 @@ public class ParsingTableCreator
     private HashSet<TerminalSymbol> GetAlphabet( CommonGrammar grammar )
     {
         var alphabet = new HashSet<TerminalSymbol>();
+        alphabet.Add( TerminalSymbol.End() );
+        
         foreach ( GrammarRule rule in grammar.Rules.Values )
         {
             foreach ( RuleDefinition definition in rule.Definitions )
