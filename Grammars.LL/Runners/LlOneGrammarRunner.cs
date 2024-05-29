@@ -77,6 +77,8 @@ public class LlOneGrammarRunner
 
     private LinkedList<TerminalSymbol> ParseSentence( string sentence )
     {
+        sentence = sentence.Trim();
+
         while ( sentence.Contains( "  " ) )
         {
             sentence = sentence.Replace( "  ", " " );
