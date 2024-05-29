@@ -45,28 +45,30 @@ public static class GrammarFirstSetExtensions
                     RuleName toFirstRuleName = toFirstDefinition.Symbols[toFirst.Index].RuleName ?? throw new UnreachableException();
 
                     HashSet<RuleSymbol> guidingSymbols = result[toFirstRuleName];
-
-                    result[ruleName].AddRange( result[toFirstRuleName] );
                     
-                    if ( guidingSymbols.All( x => x.Symbol!.Type != TerminalSymbolType.EmptySymbol ) )
+                    result[ruleName].AddRange( result[toFirstRuleName] );
+
+                    bool hasEpsilon = guidingSymbols.All( x => x.Symbol!.Type != TerminalSymbolType.EmptySymbol );
+                    if ( hasEpsilon )
                     {
                         continue;
                     }
 
-                    if ( !ruleRelations.Any( x => x.Index == toFirst.Index && Equals( x.Definition, toFirst.Definition ) ) )
+                    bool alreadyHasRelation = !ruleRelations.Any( x => x.Index == toFirst.Index && Equals( x.Definition, toFirst.Definition ) );
+                    if ( alreadyHasRelation )
                     {
                         ruleRelations.Add( toFirst );
                     }
 
+                    // Add a new relation
                     for ( int i = toFirst.Index + 1; i < toFirstDefinition.Symbols.Count; i++ )
                     {
                         RuleSymbol symbol = toFirstDefinition.Symbols[i];
                         if ( symbol.Type == RuleSymbolType.TerminalSymbol )
                         {
-                            result[ruleName].Add( symbol );
-
                             if ( symbol.Symbol!.Type != TerminalSymbolType.EmptySymbol )
                             {
+                                result[ruleName].Add( symbol );
                                 break;
                             }
 
@@ -74,10 +76,8 @@ public static class GrammarFirstSetExtensions
                         }
 
                         relations[ruleName].Add( ( toFirst.Definition, i ) );
-                        result[ruleName].AddRange( result[symbol.RuleName!] );
+                        result[ruleName].AddRange( result[symbol.RuleName!].Where( x => x.Symbol.Type != TerminalSymbolType.EmptySymbol ) );
                     }
-
-                    result[ruleName].AddRange( guidingSymbols );
                 }
 
                 int countAfterChanges = result[ruleName].Count;
@@ -86,9 +86,26 @@ public static class GrammarFirstSetExtensions
             }
         }
 
+        RemoveEpsilonsIfNeeded( result, grammar );
+
         return result.ToDictionary(
             pair => pair.Key,
             pair => new GuidingSymbolsSet( pair.Key, pair.Value ) );
+    }
+
+    private static void RemoveEpsilonsIfNeeded( Dictionary<RuleName, HashSet<RuleSymbol>> result, CommonGrammar grammar )
+    {
+        foreach ( var rule in grammar.Rules.Values )
+        {
+            bool allDefinitionsEndsWithNotEmptyTerminal = rule.Definitions.All( d => 
+                d.Symbols.Any( s => 
+                    s.Type == RuleSymbolType.TerminalSymbol && s.Symbol!.Type != TerminalSymbolType.EmptySymbol ) );
+
+            if ( allDefinitionsEndsWithNotEmptyTerminal )
+            {
+                result[rule.Name].RemoveWhere( x => x.Type == RuleSymbolType.TerminalSymbol && x.Symbol!.Type == TerminalSymbolType.EmptySymbol );
+            }
+        }
     }
 
     private static void InitializeResultAndRelationsTables( 
@@ -141,81 +158,6 @@ public static class GrammarFirstSetExtensions
                 }
                 
                 result.Add( new ConcreteDefinition( rule.Name, new RuleDefinition( newDefinition ) ) );
-            }
-        }
-
-        return result;
-    }
-
-    private static Queue<ConcreteDefinition> BuildQueue(
-        RuleName ruleName,
-        List<RuleDefinition> targetDefinitions,
-        CommonGrammar grammar )
-    {
-        var result = new List<ConcreteDefinition>();
-
-        var processedNonTerms = new HashSet<RuleName>();
-        var nonTermsToProcess = new Queue<RuleName>( ExtractAchievableNonTerminals( targetDefinitions ) );
-
-        while ( nonTermsToProcess.Any() )
-        {
-            RuleName rule = nonTermsToProcess.Dequeue();
-            if ( processedNonTerms.Contains( rule ) )
-            {
-                continue;
-            }
-
-            List<RuleDefinition> ruleDefinitions = grammar.Rules[rule].Definitions;
-            IEnumerable<RuleName> nonTerms =
-                ruleDefinitions.SelectMany( x => x.Symbols.Where( x => x.Type == RuleSymbolType.NonTerminalSymbol ).Select( x => x.RuleName! ) );
-
-            foreach ( RuleName nonTerm in nonTerms )
-            {
-                nonTermsToProcess.Enqueue( nonTerm );
-            }
-
-            result.AddRange( ruleDefinitions.Select( x => new ConcreteDefinition( rule, x ) ) );
-
-            processedNonTerms.Add( rule );
-        }
-
-        if ( !processedNonTerms.Contains( ruleName ) )
-        {
-            result.AddRange( targetDefinitions.Select( x => new ConcreteDefinition( ruleName, x ) ) );
-        }
-
-        return new Queue<ConcreteDefinition>( result.OrderBy( definition =>
-        {
-            RuleSymbol first = definition.Definition.FirstSymbol();
-
-            if ( first.Type == RuleSymbolType.NonTerminalSymbol )
-            {
-                return 2;
-            }
-
-            if ( first.Symbol!.Type == TerminalSymbolType.EmptySymbol )
-            {
-                return 1;
-            }
-
-            return 0;
-        } ) );
-    }
-
-    private static IEnumerable<RuleName> ExtractAchievableNonTerminals( List<RuleDefinition> targetDefinitions )
-    {
-        var result = new HashSet<RuleName>();
-        
-        foreach ( RuleDefinition definition in targetDefinitions )
-        {
-            foreach ( RuleSymbol symbol in definition.Symbols )
-            {
-                if ( symbol.Type == RuleSymbolType.TerminalSymbol )
-                {
-                    break;
-                }
-
-                result.Add( symbol.RuleName! );
             }
         }
 

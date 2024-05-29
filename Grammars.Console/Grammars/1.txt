@@ -1,4 +1,4 @@
-﻿<A> -> a <B> <C> <D>
-<B> -> ε | b
-<C> -> c | ε
-<D> -> <D> d | ε
+﻿<F> -> <S> $
+<S> -> if <A> then <S> | if <A> then <S> else <S> | <B>
+<A> -> <A> + <A> | id 
+<B> -> id = <A>
