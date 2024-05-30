@@ -93,18 +93,26 @@ public class LlOneRunnerTests
     [TestCaseSource( nameof( _testCases ) )]
     public void RunnerTest( RunnerTestData testData )
     {
+        // Arrange
         LlOneGrammar grammar = new GrammarInMemoryStringParser( testData.Content, _defaultParsingSettings )
             .Parse()
             .Convert( new RemoveWhitespacesConvertor() )
             .Convert( new ToLlOneGrammarConvertor() );
 
+        // Act
         RunResult runResult = grammar.Run( testData.Input.Value );
+
+        // Assert
+        string assertMessage = $"InputString: {testData.Input.Value}\n"
+                               + $"ExpectedRunResult: {testData.Input.IsSuccess}\n"
+                               + $"ActualRunResult: {runResult.RunResultType}\n"
+                               + $"Grammar: {testData.Content}";
+
         Assert.That(
             runResult.RunResultType == RunResultType.Ok,
             Is.EqualTo( testData.Input.IsSuccess ),
-            $"InputString: {testData.Input.Value}\n"
-            + $"ExpectedRunResult: {testData.Input.IsSuccess}\n"
-            + $"ActualRunResult: {runResult.RunResultType}\n"
-            + $"Grammar: {testData.Content}" );
+            assertMessage );
+
+        Assert.Pass( assertMessage );
     }
 }
