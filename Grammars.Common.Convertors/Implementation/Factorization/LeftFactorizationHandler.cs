@@ -56,7 +56,8 @@ internal class LeftFactorizationHandler
                     RuleSymbol firstSymbol = oldDefinitionToMigrate.Symbols.First();
                     if ( firstSymbol.Type == RuleSymbolType.NonTerminalSymbol )
                     {
-                        throw new UnreachableException();
+                        newRule.Definitions.Add( oldDefinitionToMigrate.Copy() );
+                        continue;
                     }
 
                     var migratedDefinition = oldDefinitionToMigrate.Symbols.ToList().WithoutFirst();
@@ -123,6 +124,7 @@ internal class LeftFactorizationHandler
         List<RuleDefinition> definitionsWithCommonHeadings = ruleToInline.Definitions
             .Where( definition => grammar.GetFirstSet( ruleToInline.Name, definition ).HasIntersections( symbolsToInline ) )
             .ToList();
+        bool hasDefinitionWithoutCommonHeading = definitionsWithCommonHeadings.Count != ruleToInline.Definitions.Count;
 
         for ( var index = 0; index < ruleToInline.Definitions.Count; index++ )
         {
@@ -151,17 +153,9 @@ internal class LeftFactorizationHandler
                 ruleWhereToInline.Definitions.Add( new RuleDefinition( definitionWithReplaced ) );                
             }
                     
-            // Remove start symbol
-            var newDefinition = ruleDefinitionWhereToExtract.Symbols.ToListExcept( 0 );
-            if ( !newDefinition.Any() )
-            {
-                newDefinition.Add( RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ) );
-            }
-
-            ruleToInline.Definitions[index] = new RuleDefinition( newDefinition );
+            ruleToInline.Definitions[index] = RemoveStartSymbol( ruleDefinitionWhereToExtract );
         }
-        
-        bool hasDefinitionWithoutCommonHeading = definitionsWithCommonHeadings.Count != ruleToInline.Definitions.Count;
+
         if ( !hasDefinitionWithoutCommonHeading )
         {
             var definitionsToRemove = ruleUsers
@@ -178,6 +172,17 @@ internal class LeftFactorizationHandler
         }
 
         return hasChanges;
+    }
+
+    private static RuleDefinition RemoveStartSymbol( RuleDefinition definitionWhereToRemove )
+    {
+        var newDefinitionSymbols = definitionWhereToRemove.Symbols.ToListExcept( 0 );
+        if ( !newDefinitionSymbols.Any() )
+        {
+            newDefinitionSymbols.Add( RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ) );
+        }
+
+        return new RuleDefinition( newDefinitionSymbols );
     }
 
     private List<(RuleName DefinitionOwner, int DefinitionIndex, int RuleToReplaceIndex)> FindRuleUsers(
@@ -249,12 +254,5 @@ internal class LeftFactorizationHandler
         }
 
         return false;
-    }
-
-    private static Dictionary<RuleDefinition, GuidingSymbolsSet> BuildDefinitionsToHeadings( CommonGrammar grammar, GrammarRule rule )
-    {
-        return rule.Definitions.ToDictionary(
-            x => x,
-            x => grammar.GetFirstSet( rule.Name, x ) );
     }
 }

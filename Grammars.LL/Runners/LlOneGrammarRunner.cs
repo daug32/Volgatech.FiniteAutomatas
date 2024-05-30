@@ -61,7 +61,7 @@ public class LlOneGrammarRunner
             }
             
             wordsQueue.RemoveFirst();
-            i++;
+            i += word.ToString().Length;
         }
 
         if ( wordsQueue.Any() && !stack.Any() || 

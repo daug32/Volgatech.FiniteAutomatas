@@ -53,14 +53,18 @@ internal class UnitableDefinitionsGroups
 
             HashSet<RuleSymbol> commonHeadings = toUnite
                 .SelectMany( x => definitionsToHeadings[x].GuidingSymbols )
+                .Where( x => x.Type != RuleSymbolType.TerminalSymbol || x.Symbol!.Type != TerminalSymbolType.EmptySymbol )
                 .ToHashSet();
 
-            groups.Add( new UnitableDefinitionsGroups(
-                rule.Name,
-                commonHeadings,
-                toUnite
-                    .Append( firstDefinition )
-                    .Select( definition => definition.Copy() ) ) );
+            if ( commonHeadings.Any() )
+            {
+                groups.Add( new UnitableDefinitionsGroups(
+                    rule.Name,
+                    commonHeadings,
+                    toUnite
+                        .Append( firstDefinition )
+                        .Select( definition => definition.Copy() ) ) );
+            }
         }
 
         return groups;
