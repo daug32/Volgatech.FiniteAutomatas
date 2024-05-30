@@ -15,7 +15,7 @@ public class LlOneRunnerTests
     private ParsingSettings _defaultParsingSettings = null!;
 
     private static readonly object[] _testCases = new List<RunnerTestData>()
-        .With( RunnerTestData.FromList(
+        .WithMany( RunnerTestData.FromList(
             "<S> -> a",
             new[]
             {
@@ -24,7 +24,7 @@ public class LlOneRunnerTests
                 new RunnerInputTestData( "b", false ),
                 new RunnerInputTestData( "aa", false )
             } ) )
-        .With( RunnerTestData.FromList(
+        .WithMany( RunnerTestData.FromList(
             "<S> -> <S>a | ε",
             new[]
             {
@@ -33,7 +33,7 @@ public class LlOneRunnerTests
                 new RunnerInputTestData( "aaa", true ),
                 new RunnerInputTestData( "b", false )
             } ) )
-        .With( RunnerTestData.FromList(
+        .WithMany( RunnerTestData.FromList(
             @"
                     <S> -> <A><B><C>
                     <A> -> a | ε
@@ -55,7 +55,7 @@ public class LlOneRunnerTests
                 new RunnerInputTestData( "abb", false ),
                 new RunnerInputTestData( "abcc", false )
             } ) )
-        .With( RunnerTestData.FromList(
+        .WithMany( RunnerTestData.FromList(
             @"
                     <S> -> <A><B><C>d
                     <A> -> <A>a | ε

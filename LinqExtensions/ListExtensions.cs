@@ -8,7 +8,7 @@ public static class ListExtensions
         return collection;
     }
 
-    public static List<T> With<T>( this List<T> collection, IEnumerable<T> items )
+    public static List<T> WithMany<T>( this List<T> collection, IEnumerable<T> items )
     {
         collection.AddRange( items );
         return collection;

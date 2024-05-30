@@ -64,7 +64,7 @@ internal class LeftRecursionRemover
                 var newDefinitionSymbols = secondRuleDefinition.Symbols
                     .Select( symbol => symbol )
                     .ToList()
-                    .With( tail );
+                    .WithMany( tail );
 
                 newDefinitions.Add( new RuleDefinition( newDefinitionSymbols ) );
             }
