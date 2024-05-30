@@ -25,7 +25,6 @@ public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
         CommonGrammar normalizedGrammar = grammar
             .Convert( new RemoveEpsilonsConvertor() )
             .Convert( new LeftRecursionRemoverConvertor() )
-            .Convert( new InlineNonTerminalsConvertor() )
             .Convert( new LeftFactorizationConvertor() )
             .Convert( new InlineNonTerminalsConvertor() )
             .Convert( new RenameRuleNamesConvertor() );

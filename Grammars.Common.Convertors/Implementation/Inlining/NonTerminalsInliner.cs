@@ -56,12 +56,9 @@ internal class NonTerminalsInliner
         {
             foreach ( RuleDefinition definition in rule.Definitions )
             {
-                foreach ( RuleSymbol symbol in definition.Symbols )
+                if ( definition.Has( definitionToRemove.RuleName ) )
                 {
-                    if ( symbol.RuleName == definitionToRemove.RuleName )
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
         }

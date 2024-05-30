@@ -69,9 +69,9 @@ public class LlOneRunnerTests
                 new RunnerInputTestData( "c", true ),
                 new RunnerInputTestData( "", true ),
 
-                new RunnerInputTestData( "aa", false ),
-                new RunnerInputTestData( "abb", false ),
-                new RunnerInputTestData( "abcc", false )
+                new RunnerInputTestData( "a a", false ),
+                new RunnerInputTestData( "a b b", false ),
+                new RunnerInputTestData( "a b c c", false )
             } ) )
         .WithMany( RunnerTestData.FromList(
             @"
@@ -82,48 +82,39 @@ public class LlOneRunnerTests
             ",
             new[]
             {
-                new RunnerInputTestData( "aabbcc", true ),
-                new RunnerInputTestData( "aa", true ),
-                new RunnerInputTestData( "aabb", true ),
-                new RunnerInputTestData( "aacc", true ),
-                new RunnerInputTestData( "bb", true ),
-                new RunnerInputTestData( "bbcc", true ),
-                new RunnerInputTestData( "cc", true ),
+                new RunnerInputTestData( "a a b b c c d", true ),
+                new RunnerInputTestData( "a a d", true ),
+                new RunnerInputTestData( "a a b b d", true ),
+                new RunnerInputTestData( "a a c c d", true ),
+                new RunnerInputTestData( "b b d", true ),
+                new RunnerInputTestData( "b b c c d", true ),
+                new RunnerInputTestData( "c c d", true ),
 
-                new RunnerInputTestData( "a", true ),
-                new RunnerInputTestData( "ab", true ),
-                new RunnerInputTestData( "ac", true ),
-                new RunnerInputTestData( "abc", true ),
-                new RunnerInputTestData( "b", true ),
-                new RunnerInputTestData( "bc", true ),
-                new RunnerInputTestData( "c", true ),
-                new RunnerInputTestData( "", true )
+                new RunnerInputTestData( "a d", true ),
+                new RunnerInputTestData( "a b d", true ),
+                new RunnerInputTestData( "a c d", true ),
+                new RunnerInputTestData( "a b c d", true ),
+                new RunnerInputTestData( "b d", true ),
+                new RunnerInputTestData( "b c d", true ),
+                new RunnerInputTestData( "c d", true ),
+                new RunnerInputTestData( "d", true ),
+                
+                new RunnerInputTestData( "a", false ),
+                new RunnerInputTestData( "b", false ),
+                new RunnerInputTestData( "c", false ),
+                new RunnerInputTestData( "", false )
             } ) )
         .WithMany( RunnerTestData.FromList(
             @"
-                <S> -> <A><B><C>d
+                <S> -> <A><B>s
                 <A> -> <A>a | ε
                 <B> -> <B>b | ε
-                <C> -> <C>c | ε
             ",
             new[]
             {
-                new RunnerInputTestData( "aabbcc", true ),
-                new RunnerInputTestData( "aa", true ),
-                new RunnerInputTestData( "aabb", true ),
-                new RunnerInputTestData( "aacc", true ),
-                new RunnerInputTestData( "bb", true ),
-                new RunnerInputTestData( "bbcc", true ),
-                new RunnerInputTestData( "cc", true ),
-
-                new RunnerInputTestData( "a", true ),
-                new RunnerInputTestData( "ab", true ),
-                new RunnerInputTestData( "ac", true ),
-                new RunnerInputTestData( "abc", true ),
-                new RunnerInputTestData( "b", true ),
-                new RunnerInputTestData( "bc", true ),
-                new RunnerInputTestData( "c", true ),
-                new RunnerInputTestData( "", true )
+                new RunnerInputTestData( "a a a s", true ),
+                new RunnerInputTestData( "a s", true ),
+                new RunnerInputTestData( "s", true ),
             } ) )
         .ToArray();
 
@@ -133,7 +124,7 @@ public class LlOneRunnerTests
         _defaultParsingSettings = new ParsingSettings();
     }
 
-    [Test, TestCaseSource( nameof( _testCases ) )]
+    [Test, Parallelizable( ParallelScope.All ), TestCaseSource( nameof( _testCases ) )]
     public void RunnerTest( RunnerTestData testData )
     {
         TestContext.WriteLine( 

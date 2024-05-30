@@ -11,6 +11,7 @@ namespace Grammars.Common.Convertors.Implementation.Factorization;
 
 internal class LeftFactorizationHandler
 {
+    private int _number = 0;
     public CommonGrammar Factorize( CommonGrammar grammar )
     {
         Queue<RuleName> processedRules = new Queue<RuleName>();
@@ -20,6 +21,11 @@ internal class LeftFactorizationHandler
         {
             RuleName ruleToProcessName = rulesToProcess.Dequeue();
             if ( processedRules.Contains( ruleToProcessName ) )
+            {
+                continue;
+            }
+
+            if ( !grammar.Rules.ContainsKey( ruleToProcessName ) )
             {
                 continue;
             }
@@ -38,7 +44,7 @@ internal class LeftFactorizationHandler
             var currentRuleDefinitions = rule.Definitions.ToList();
             foreach ( UnitableDefinitionsGroups unitableGroup in unitableGroups )
             {
-                var newRule = new GrammarRule( RuleName.Random(), new List<RuleDefinition>() );
+                var newRule = new GrammarRule( new RuleName( $"{_number++}" ), new List<RuleDefinition>() );
 
                 RuleSymbol heading = unitableGroup.Headings.First();
 
@@ -171,7 +177,65 @@ internal class LeftFactorizationHandler
             }
         }
 
+        OptimizeRule( ruleToInline.Name, grammar );
+
         return hasChanges;
+    }
+
+    private void OptimizeRule( RuleName name, CommonGrammar grammar )
+    {
+        foreach ( RuleDefinition definition in grammar.Rules[name].Definitions )
+        {
+            foreach ( RuleSymbol symbol in definition.Symbols )
+            {
+                if ( symbol.Type != RuleSymbolType.TerminalSymbol )
+                {
+                    return;
+                }
+            }
+        }
+
+        bool hasNonEpsilonProductions = grammar.Rules[name].Definitions.Any( def => def.FirstSymbol().Symbol!.Type != TerminalSymbolType.EmptySymbol ); 
+
+        foreach ( GrammarRule rule in grammar.Rules.Values )
+        {
+            if ( rule.Name == name )
+            {
+                continue;
+            }
+
+            var processedDefinitions = new List<RuleDefinition>();
+            for ( var definitionIndex = 0; definitionIndex < rule.Definitions.Count; definitionIndex++ )
+            {
+                RuleDefinition definition = rule.Definitions[definitionIndex];
+
+                for ( var symbolIndex = 0; symbolIndex < definition.Symbols.Count; symbolIndex++ )
+                {
+                    RuleSymbol symbol = definition.Symbols[symbolIndex];
+                    if ( symbol.Type != RuleSymbolType.NonTerminalSymbol || symbol.RuleName! != name )
+                    {
+                        continue;
+                    }
+
+                    List<RuleSymbol> newDefinition = definition.Symbols.ToListExcept( symbolIndex );
+                    if ( !newDefinition.Any() )
+                    {
+                        newDefinition.Add( RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ) );
+                    }
+
+                    rule.Definitions.Add( new RuleDefinition( newDefinition ) );
+                    processedDefinitions.Add( definition );
+                }
+            }
+
+            if ( !hasNonEpsilonProductions )
+            {
+                rule.Definitions = rule.Definitions.Where( def => !processedDefinitions.Contains( def ) ).ToList();
+
+                grammar.Rules.Remove( name );
+            }
+        }
+        
     }
 
     private static RuleDefinition RemoveStartSymbol( RuleDefinition definitionWhereToRemove )
