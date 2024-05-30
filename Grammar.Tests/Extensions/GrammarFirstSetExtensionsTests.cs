@@ -1,13 +1,13 @@
-using Grammar.Common.Tests.Extensions.Containers;
 using Grammar.Parsers;
 using Grammar.Parsers.Implementation;
+using Grammar.Tests.Extensions.Containers;
 using Grammars.Common;
 using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.Extensions;
 using Grammars.Common.Grammars.ValueObjects;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 
-namespace Grammar.Common.Tests.Extensions;
+namespace Grammar.Tests.Extensions;
 
 public class GrammarFirstSetExtensionsTests
 {

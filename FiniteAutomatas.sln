@@ -32,7 +32,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammars.Common", "Grammars
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammars.Visualization", "Grammars.Visualization\Grammars.Visualization.csproj", "{B2BB4474-90B2-45A3-BFEE-70C6202C67DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammar.Common.Tests", "Grammar.Common.Tests\Grammar.Common.Tests.csproj", "{054BC727-D328-4F8A-87BA-5DAAC32778DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammar.Tests", "Grammar.Tests\Grammar.Tests.csproj", "{054BC727-D328-4F8A-87BA-5DAAC32778DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Grammar.Parsers", "Grammar.Parsers\Grammar.Parsers.csproj", "{D7F6A7BC-1D65-4944-B022-9620EC593984}"
 EndProject
