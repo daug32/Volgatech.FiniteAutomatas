@@ -29,8 +29,9 @@ public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
             .Convert( new RemoveEpsilonsConvertor() )
             .Convert( new RenameRuleNamesConvertor() );
 
-        SanitizeEndSymbols( normalizedGrammar );
         ValidateAmbiguousRuleDefinitionsOrThrow( normalizedGrammar );
+
+        SanitizeEndSymbols( normalizedGrammar );
 
         return new LlOneGrammar( 
             normalizedGrammar.StartRule,
