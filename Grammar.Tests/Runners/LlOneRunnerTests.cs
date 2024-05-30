@@ -97,7 +97,32 @@ public class LlOneRunnerTests
                 new RunnerInputTestData( "c", true ),
                 new RunnerInputTestData( "", true )
             } ) )
-        .Cast<object>()
+        .WithMany( RunnerTestData.FromList(
+            @"
+                <S> -> <A><B><C>d
+                <A> -> <A>a | ε
+                <B> -> <B>b | ε
+                <C> -> <C>c | ε
+            ",
+            new[]
+            {
+                new RunnerInputTestData( "aabbcc", true ),
+                new RunnerInputTestData( "aa", true ),
+                new RunnerInputTestData( "aabb", true ),
+                new RunnerInputTestData( "aacc", true ),
+                new RunnerInputTestData( "bb", true ),
+                new RunnerInputTestData( "bbcc", true ),
+                new RunnerInputTestData( "cc", true ),
+
+                new RunnerInputTestData( "a", true ),
+                new RunnerInputTestData( "ab", true ),
+                new RunnerInputTestData( "ac", true ),
+                new RunnerInputTestData( "abc", true ),
+                new RunnerInputTestData( "b", true ),
+                new RunnerInputTestData( "bc", true ),
+                new RunnerInputTestData( "c", true ),
+                new RunnerInputTestData( "", true )
+            } ) )
         .ToArray();
 
     [SetUp]
@@ -119,10 +144,18 @@ public class LlOneRunnerTests
         RunResult runResult = grammar.Run( testData.Input.Value );
 
         // Assert
-        string assertMessage = $"InputString: {testData.Input.Value}\n"
-                               + $"ExpectedRunResult: {testData.Input.IsSuccess}\n"
-                               + $"ActualRunResult: {runResult.RunResultType}\n"
-                               + $"Grammar: {testData.Content}";
+        string serializedLlGrammar = String.Join( 
+            "\n",
+            grammar.Rules.Values.SelectMany( rule =>
+                rule.Definitions.Select( definition => 
+                    $"<{rule.Name}> -> {String.Join( " ", definition.Symbols )}" ) ) );
+        
+        string assertMessage =
+            $"InputString: {testData.Input.Value}\n"
+            + $"ExpectedRunResult: {testData.Input.IsSuccess}\n"
+            + $"ActualRunResult: {runResult.RunResultType}\n"
+            + $"Original grammar: {testData.Content}\n"
+            + $"LL converted grammar:\n{serializedLlGrammar}";
 
         Assert.That(
             runResult.RunResultType == RunResultType.Ok,
