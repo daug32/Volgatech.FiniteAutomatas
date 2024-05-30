@@ -6,6 +6,7 @@ using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.Extensions;
 using Grammars.Common.Grammars.ValueObjects;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
+using LinqExtensions;
 
 namespace Grammar.Tests.Extensions;
 
@@ -13,8 +14,8 @@ public class GrammarFirstSetExtensionsTests
 {
     private static readonly ParsingSettings _defaultSettings = new();
 
-    private static readonly object[] _testCases = {
-        new FirstFollowTestData(
+    private static readonly object[] _testCases = new List<FirstFollowTestData>()
+        .With( new FirstFollowTestData(
             new RuleName( "A" ),
             @"
                 <S> -> <A> s $
@@ -24,33 +25,36 @@ public class GrammarFirstSetExtensionsTests
             new[]
             {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ),
-                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) ), 
-            } ),
-        new FirstFollowTestData(
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) )
+            } ) )
+        .With( new FirstFollowTestData(
             new RuleName( "S" ),
             @"
                 <S> -> <A>$
                 <A> -> <B>
                 <B> -> b
             ",
-            new[] { RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) ) } ),
-        new FirstFollowTestData(
+            new[]
+            {
+                RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) )
+            } ) )
+        .With( new FirstFollowTestData(
             new RuleName( "A" ),
             @"<A> -> <A>a | ε",
             new[]
             {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ),
-            } ),
-        new FirstFollowTestData(
+            } ) )
+        .With( new FirstFollowTestData(
             new RuleName( "S" ),
             @"<S> -> s | ε",
             new[]
             {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "s" ) )
-            } ),
-        new FirstFollowTestData(
+            } ) )
+        .With( new FirstFollowTestData(
             new RuleName( "A" ),
             @"
                 <A> -> <B><C>$
@@ -62,8 +66,8 @@ public class GrammarFirstSetExtensionsTests
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "c" ) ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.End() )
-            } ),
-        new FirstFollowTestData(
+            } ) )
+        .With( new FirstFollowTestData(
             new RuleName( "S" ),
             @"
                 <S> -> a<B><D>h$
@@ -76,8 +80,8 @@ public class GrammarFirstSetExtensionsTests
             new[]
             {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "a" ) )
-            } ),
-        new FirstFollowTestData(
+            } ) )
+        .With( new FirstFollowTestData(
             new RuleName( "B" ),
             @"
                 <S> -> a<B><D>h$
@@ -90,8 +94,8 @@ public class GrammarFirstSetExtensionsTests
             new[]
             {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "c" ) )
-            } ),
-        new FirstFollowTestData(
+            } ) )
+        .With( new FirstFollowTestData(
             new RuleName( "C" ),
             @"
                 <S> -> a<B><D>h$
@@ -105,8 +109,8 @@ public class GrammarFirstSetExtensionsTests
             {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "b" ) ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() )
-            } ),
-        new FirstFollowTestData(
+            } ) )
+        .With( new FirstFollowTestData(
             new RuleName( "D" ),
             @"
                 <S> -> a<B><D>h$
@@ -121,8 +125,8 @@ public class GrammarFirstSetExtensionsTests
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "g" ) ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "f" ) ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() )
-            } ),
-        new FirstFollowTestData(
+            } ) )
+        .With( new FirstFollowTestData(
             new RuleName( "E" ),
             @"
                 <S> -> a<B><D>h$
@@ -136,8 +140,8 @@ public class GrammarFirstSetExtensionsTests
             {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "g" ) ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() )
-            } ),
-        new FirstFollowTestData(
+            } ) )
+        .With( new FirstFollowTestData(
             new RuleName( "F" ),
             @"
                 <S> -> a<B><D>h$
@@ -151,8 +155,9 @@ public class GrammarFirstSetExtensionsTests
             {
                 RuleSymbol.TerminalSymbol( TerminalSymbol.Word( "f" ) ),
                 RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() )
-            } )
-    };
+            } ) )
+        .Cast<object>()
+        .ToArray();
 
     [TestCaseSource( nameof( _testCases ) )]
     public void FindFirstSet( FirstFollowTestData testData )
