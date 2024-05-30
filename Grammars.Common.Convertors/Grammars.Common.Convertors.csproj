@@ -12,8 +12,4 @@
       <ProjectReference Include="..\Grammars.Common\Grammars.Common.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Implementation" />
-    </ItemGroup>
-
 </Project>
