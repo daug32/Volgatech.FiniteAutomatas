@@ -32,12 +32,21 @@ public class LlOneRunnerTests
                 new RunnerInputTestData( "w o r d", false ),
             } ) )
         .WithMany( RunnerTestData.FromList(
+            "<S> -> a<S> | ε",
+            new[]
+            {
+                new RunnerInputTestData( "", true ),
+                new RunnerInputTestData( "a", true ),
+                new RunnerInputTestData( "a a a", true ),
+                new RunnerInputTestData( "b", false )
+            } ) )
+        .WithMany( RunnerTestData.FromList(
             "<S> -> <S>a | ε",
             new[]
             {
                 new RunnerInputTestData( "", true ),
                 new RunnerInputTestData( "a", true ),
-                new RunnerInputTestData( "aaa", true ),
+                new RunnerInputTestData( "a a a", true ),
                 new RunnerInputTestData( "b", false )
             } ) )
         .WithMany( RunnerTestData.FromList(
@@ -50,11 +59,11 @@ public class LlOneRunnerTests
             new[]
             {
                 new RunnerInputTestData( "a", true ),
-                new RunnerInputTestData( "ab", true ),
-                new RunnerInputTestData( "ac", true ),
-                new RunnerInputTestData( "abc", true ),
+                new RunnerInputTestData( "a b", true ),
+                new RunnerInputTestData( "a c", true ),
+                new RunnerInputTestData( "a b c", true ),
                 new RunnerInputTestData( "b", true ),
-                new RunnerInputTestData( "bc", true ),
+                new RunnerInputTestData( "b c", true ),
                 new RunnerInputTestData( "c", true ),
                 new RunnerInputTestData( "", true ),
 

@@ -1,2 +1,0 @@
-# Equal to: (a b)*
-    <A> -> a b <A> | ε

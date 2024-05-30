@@ -31,7 +31,7 @@ public class Program
 
     private static LlOneGrammar BuildGrammar()
     {
-        LlOneGrammar grammar = new GrammarFileParser( @"../../../Grammars/2.txt", new ParsingSettings() )
+        LlOneGrammar grammar = new GrammarFileParser( @"../../../Grammars/common.txt", new ParsingSettings() )
             .Parse()
             .Convert( new RemoveWhitespacesConvertor() )
             .ToConsole( "Original grammar" )

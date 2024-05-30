@@ -7,30 +7,26 @@ namespace Grammars.LL.Runners;
 
 public class LlOneGrammarRunner
 {
-    private readonly LlOneGrammar _grammar;
-    private readonly ParsingTableCreator _tableCreator;
+    private readonly ParsingTable _table;
 
     public LlOneGrammarRunner( LlOneGrammar grammar )
     {
-        _grammar = grammar;
-        _tableCreator = new ParsingTableCreator();
+        _table = new ParsingTableCreator().Create( grammar );
     }
 
     public RunResult Run( string sentence )
     {
-        ParsingTable table = _tableCreator.Create( _grammar );
-
         var wordsQueue = ParseSentence( sentence );
         
         var stack = new Stack<RuleSymbol>();
         stack.Push( RuleSymbol.TerminalSymbol( TerminalSymbol.End() ) );
-        stack.Push( RuleSymbol.NonTerminalSymbol( table.StartRule ) );
+        stack.Push( RuleSymbol.NonTerminalSymbol( _table.StartRule ) );
 
         int i = 0;
         while ( wordsQueue.Any() && stack.Any() )
         {
             TerminalSymbol word = wordsQueue.First();
-            if ( !table.ContainsKey( word ) )
+            if ( !_table.ContainsKey( word ) )
             {
                 return RunResult.Fail( sentence, RunError.InvalidSentence( i ) );
             }
@@ -39,12 +35,12 @@ public class LlOneGrammarRunner
             
             if ( currentStackItem.Type == RuleSymbolType.NonTerminalSymbol )
             {
-                if ( !table[word].ContainsKey( currentStackItem.RuleName! ) )
+                if ( !_table[word].ContainsKey( currentStackItem.RuleName! ) )
                 {
                     return RunResult.Fail( sentence, RunError.InvalidSentence( i ) );
                 }
                 
-                foreach ( RuleSymbol ruleSymbol in table[word][currentStackItem.RuleName!].Symbols
+                foreach ( RuleSymbol ruleSymbol in _table[word][currentStackItem.RuleName!].Symbols
                              .Where( x => x.Type != RuleSymbolType.TerminalSymbol || x.Symbol.Type != TerminalSymbolType.End )
                              .Reverse() )
                 {
