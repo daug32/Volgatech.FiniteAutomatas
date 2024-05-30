@@ -7,7 +7,6 @@ using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using Grammars.LL.Models;
-using LinqExtensions;
 using Logging;
 
 namespace Grammars.LL.Convertors;
@@ -25,8 +24,8 @@ public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
     {
         CommonGrammar normalizedGrammar = grammar
             .Convert( new LeftRecursionRemoverConvertor() )
-            .Convert( new LeftFactorizationConvertor() )
             .Convert( new RemoveEpsilonsConvertor() )
+            .Convert( new LeftFactorizationConvertor() )
             .Convert( new RenameRuleNamesConvertor() );
 
         SanitizeEndSymbols( normalizedGrammar );

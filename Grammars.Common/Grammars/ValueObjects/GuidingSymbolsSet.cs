@@ -24,4 +24,9 @@ public class GuidingSymbolsSet
     {
         return GuidingSymbols.Intersect( other.GuidingSymbols ).Any();
     }
+
+    public bool HasIntersections( HashSet<RuleSymbol> unitableGroupHeadings )
+    {
+        return GuidingSymbols.Intersect( unitableGroupHeadings ).Any();
+    }
 }

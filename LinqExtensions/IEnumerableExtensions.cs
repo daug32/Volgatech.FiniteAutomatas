@@ -3,8 +3,6 @@
 // ReSharper disable once InconsistentNaming
 public static class IEnumerableExtensions
 {
-    public static string ConvertToString( this char[] array ) => new( array );
-    
     public static string ConvertToString( this IEnumerable<char> array ) => new( array.ToArray() );
 
     public static Queue<T> EnqueueRange<T>( this Queue<T> queue, IEnumerable<T> items )
@@ -35,15 +33,5 @@ public static class IEnumerableExtensions
         }
 
         return result;
-    }
-
-    public static IEnumerable<T> ForEach<T>( this IEnumerable<T> items, Action<T> func )
-    {
-        foreach ( T item in items )
-        {
-            func( item );
-        }
-
-        return items;
     }
 }

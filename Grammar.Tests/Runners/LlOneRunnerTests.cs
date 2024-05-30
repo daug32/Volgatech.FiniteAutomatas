@@ -3,6 +3,7 @@ using Grammar.Parsers.Implementation;
 using Grammar.Tests.Runners.Containers;
 using Grammars.Common.Convertors;
 using Grammars.Common.Convertors.Convertors;
+using Grammars.Common.Grammars.ValueObjects.Symbols;
 using Grammars.LL.Convertors;
 using Grammars.LL.Models;
 using Grammars.LL.Runners.Results;
@@ -10,6 +11,7 @@ using LinqExtensions;
 
 namespace Grammar.Tests.Runners;
 
+[TestFixture]
 public class LlOneRunnerTests
 {
     private ParsingSettings _defaultParsingSettings = null!;
@@ -131,9 +133,14 @@ public class LlOneRunnerTests
         _defaultParsingSettings = new ParsingSettings();
     }
 
-    [TestCaseSource( nameof( _testCases ) )]
+    [Test, TestCaseSource( nameof( _testCases ) )]
     public void RunnerTest( RunnerTestData testData )
     {
+        TestContext.WriteLine( 
+            $"InputString: {testData.Input.Value}\n"
+            + $"ExpectedRunResult: {testData.Input.IsSuccess}\n"
+            + $"Original grammar: {testData.Content}" );
+        
         // Arrange
         LlOneGrammar grammar = new GrammarInMemoryStringParser( testData.Content, _defaultParsingSettings )
             .Parse()
@@ -147,21 +154,20 @@ public class LlOneRunnerTests
         string serializedLlGrammar = String.Join( 
             "\n",
             grammar.Rules.Values.SelectMany( rule =>
-                rule.Definitions.Select( definition => 
-                    $"<{rule.Name}> -> {String.Join( " ", definition.Symbols )}" ) ) );
+                rule.Definitions.Select( definition =>
+                {
+                    string serializedSymbols = String.Join( 
+                        " ", 
+                        definition.Symbols.Select( x => x.Type == RuleSymbolType.NonTerminalSymbol 
+                            ? $"<{x}>"
+                            : x.ToString() ) );
+                    return $"<{rule.Name}> -> {serializedSymbols}";
+                } ) ) );
         
-        string assertMessage =
-            $"InputString: {testData.Input.Value}\n"
-            + $"ExpectedRunResult: {testData.Input.IsSuccess}\n"
-            + $"ActualRunResult: {runResult.RunResultType}\n"
-            + $"Original grammar: {testData.Content}\n"
-            + $"LL converted grammar:\n{serializedLlGrammar}";
-
         Assert.That(
             runResult.RunResultType == RunResultType.Ok,
             Is.EqualTo( testData.Input.IsSuccess ),
-            assertMessage );
-
-        Assert.Pass( assertMessage );
+            $"ActualRunResult: {runResult.RunResultType}\n"
+            + $"LL grammar: {serializedLlGrammar}" );
     }
 }
