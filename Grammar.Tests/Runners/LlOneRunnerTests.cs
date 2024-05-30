@@ -25,6 +25,13 @@ public class LlOneRunnerTests
                 new RunnerInputTestData( "aa", false )
             } ) )
         .WithMany( RunnerTestData.FromList(
+            "<S> -> word",
+            new[]
+            {
+                new RunnerInputTestData( "word", true ),
+                new RunnerInputTestData( "w o r d", false ),
+            } ) )
+        .WithMany( RunnerTestData.FromList(
             "<S> -> <S>a | ε",
             new[]
             {
@@ -64,13 +71,13 @@ public class LlOneRunnerTests
             ",
             new[]
             {
-                new RunnerInputTestData( "aabbcc", false ),
-                new RunnerInputTestData( "aa", false ),
-                new RunnerInputTestData( "aabb", false ),
-                new RunnerInputTestData( "aacc", false ),
-                new RunnerInputTestData( "bb", false ),
-                new RunnerInputTestData( "bbcc", false ),
-                new RunnerInputTestData( "cc", false ),
+                new RunnerInputTestData( "aabbcc", true ),
+                new RunnerInputTestData( "aa", true ),
+                new RunnerInputTestData( "aabb", true ),
+                new RunnerInputTestData( "aacc", true ),
+                new RunnerInputTestData( "bb", true ),
+                new RunnerInputTestData( "bbcc", true ),
+                new RunnerInputTestData( "cc", true ),
 
                 new RunnerInputTestData( "a", true ),
                 new RunnerInputTestData( "ab", true ),
