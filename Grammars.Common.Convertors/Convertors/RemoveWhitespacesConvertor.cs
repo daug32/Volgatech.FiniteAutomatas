@@ -1,11 +1,9 @@
-﻿using Grammars.Common;
-using Grammars.Common.Convertors;
-using Grammars.Common.Grammars;
+﻿using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 
-namespace Grammars.Console;
+namespace Grammars.Common.Convertors.Convertors;
 
 public class RemoveWhitespacesConvertor : IGrammarConvertor
 {

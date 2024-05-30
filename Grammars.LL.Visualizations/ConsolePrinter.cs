@@ -1,17 +1,19 @@
 ﻿using ConsoleTables;
+using Grammars.Common.Grammars.Extensions;
 using Grammars.Common.Grammars.ValueObjects;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
+using Grammars.LL.Models;
 using Grammars.LL.Runners;
 
 namespace Grammars.LL.Visualizations;
 
 public static class ConsolePrinter
 {
-    public static ParsingTable ToConsole( this ParsingTable table )
+    public static ParsingTable ToConsole( this ParsingTable table, LlOneGrammar grammar )
     {
         string[] columns = BuildColumns( table ).ToArray();
-        IEnumerable<string[]> rows = BuildRows( table );
+        IEnumerable<string[]> rows = BuildRows( table, grammar );
 
         var consoleTable = new ConsoleTable( new ConsoleTableOptions()
         {
@@ -28,7 +30,7 @@ public static class ConsolePrinter
         return table;
     }
 
-    private static IEnumerable<string[]> BuildRows( ParsingTable table )
+    private static IEnumerable<string[]> BuildRows( ParsingTable table, LlOneGrammar grammar )
     {
         List<RuleName> rules = OrderRules( table );
         
@@ -52,6 +54,10 @@ public static class ConsolePrinter
                 
                 values.Add( String.Join( " ", ruleToDefinition[rule].Symbols ) );
             }
+            
+            values.Add( String.Join( ",", grammar.GetFirstSet( rule ).GuidingSymbols ) );
+            
+            values.Add( String.Join( ",", grammar.GetFollowSet( rule ).GuidingSymbols ) );
 
             yield return values.ToArray();
         }
@@ -65,6 +71,10 @@ public static class ConsolePrinter
         {
             yield return x.ToString();
         }
+
+        yield return "FIRST";
+
+        yield return "FOLLOW";
     }
 
     private static List<RuleName> OrderRules( ParsingTable table )

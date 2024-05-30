@@ -1,6 +1,7 @@
 ﻿using Grammar.Parsers;
 using Grammar.Parsers.Implementation;
 using Grammars.Common.Convertors;
+using Grammars.Common.Convertors.Convertors;
 using Grammars.Common.Grammars.Extensions;
 using Grammars.Common.Grammars.ValueObjects;
 using Grammars.LL.Convertors;
@@ -26,14 +27,14 @@ public class Program
         LlOneGrammar grammar = BuildGrammar();
         
         ParsingTable table = new ParsingTableCreator().Create( grammar );
-        table.ToConsole();
+        table.ToConsole( grammar );
 
         AskForSentences( grammar );
     }
 
     private static LlOneGrammar BuildGrammar()
     {
-        LlOneGrammar grammar = new GrammarFileParser( @"../../../Grammars/1.txt", new ParsingSettings() )
+        LlOneGrammar grammar = new GrammarFileParser( @"../../../Grammars/2.txt", new ParsingSettings() )
             .Parse()
             .Convert( new RemoveWhitespacesConvertor() )
             .ToConsole( "Original grammar" )

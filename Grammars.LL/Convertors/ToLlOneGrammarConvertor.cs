@@ -12,9 +12,9 @@ namespace Grammars.LL.Convertors;
 
 public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
 {
-    private readonly ILogger _logger;
+    private readonly ILogger? _logger;
 
-    public ToLlOneGrammarConvertor( ILogger logger )
+    public ToLlOneGrammarConvertor( ILogger? logger = null )
     {
         _logger = logger;
     }
@@ -46,7 +46,7 @@ public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
             return;
         }
 
-        _logger.Write(
+        _logger?.Write(
             LogLevel.Warning,
             "End symbol was not found. It will be placed automatically in the end of all definitions of the start rule" );
 

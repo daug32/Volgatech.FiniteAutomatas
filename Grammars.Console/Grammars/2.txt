@@ -1,0 +1,15 @@
+﻿# type a = int ; b = record c : int end
+# <S> -> type <F>$
+# <F> -> <I> = <T> <F1>
+#     <F1> -> ε |; <F>
+# 
+# <T> -> int | record <G> end
+#     <G> -> <I> : <T> <G1> 
+#     <G1> -> ε | ; <G>
+#     
+# <I> -> a | b | c
+
+<S> -> <A> <B> <C>
+<A> -> <A> a | ε
+<B> -> <B> b | ε
+<C> -> <C> c | ε
