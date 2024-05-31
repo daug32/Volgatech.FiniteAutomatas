@@ -1,7 +1,6 @@
 using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
-using Grammars.Common.Grammars.ValueObjects.Symbols;
 
 namespace Grammars.Common.Convertors.Implementation.Inlining;
 

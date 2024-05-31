@@ -19,7 +19,7 @@ public static class GrammarFollowSetExtensions
         var result = grammar.Rules.Keys.ToDictionary( x => x, x => new HashSet<RuleSymbol>() );
         var relations = grammar.Rules.Keys.ToDictionary( x => x, x => (Follows: new HashSet<RuleName>(), Firsts: new HashSet<RuleName>()) );
 
-        InitalizeResultAndRelationsTables( grammar, relations, result );
+        InitializeResultAndRelationsTables( grammar, relations, result );
         
         bool hasChanges = true;
         while ( hasChanges )
@@ -68,7 +68,7 @@ public static class GrammarFollowSetExtensions
         }
     }
 
-    private static void InitalizeResultAndRelationsTables(
+    private static void InitializeResultAndRelationsTables(
         CommonGrammar grammar,
         Dictionary<RuleName, (HashSet<RuleName> Follows, HashSet<RuleName> Firsts)> relations,
         Dictionary<RuleName, HashSet<RuleSymbol>> result )
@@ -115,7 +115,7 @@ public static class GrammarFollowSetExtensions
             RuleSymbol lastSymbol = definition.Symbols.Last();
             return 
                 lastSymbol.Type == RuleSymbolType.TerminalSymbol && 
-                lastSymbol.Symbol.Type == TerminalSymbolType.End;
+                lastSymbol.Symbol!.Type == TerminalSymbolType.End;
         } );
 
         if ( hasEndSymbols )

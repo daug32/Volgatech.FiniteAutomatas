@@ -1,13 +1,12 @@
-﻿using Grammars.Common.Grammars.ValueObjects;
-using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
-using RuleName = Grammars.Common.Grammars.ValueObjects.RuleNames.RuleName;
+﻿using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
+using Grammars.Common.Grammars.ValueObjects.RuleNames;
 
 namespace Grammars.Common.Grammars.Extensions;
 
 internal class ConcreteDefinition
 {
-    public RuleName RuleName;
-    public RuleDefinition Definition;
+    public readonly RuleName RuleName;
+    public readonly RuleDefinition Definition;
 
     public ConcreteDefinition( RuleName ruleName, RuleDefinition definition )
     {
@@ -17,18 +16,10 @@ internal class ConcreteDefinition
 
     public bool Has( RuleName ruleName ) => Definition.Has( ruleName );
 
-    public override bool Equals( object? obj )
-    {
-        if ( obj is not ConcreteDefinition other )
-        {
-            return false;
-        }
+    public override bool Equals( object? obj ) => 
+        obj is ConcreteDefinition other && 
+        other.RuleName == RuleName && 
+        other.Definition == Definition;
 
-        return other.RuleName == RuleName && other.Definition == Definition;
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine( RuleName, Definition );
-    }
+    public override int GetHashCode() => HashCode.Combine( RuleName, Definition );
 }
