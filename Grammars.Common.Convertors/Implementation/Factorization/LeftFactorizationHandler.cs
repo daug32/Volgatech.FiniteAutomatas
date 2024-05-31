@@ -5,6 +5,7 @@ using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.RuleNames;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
+using Grammars.LL.Convertors;
 using LinqExtensions;
 
 namespace Grammars.Common.Convertors.Implementation.Factorization;
@@ -29,6 +30,7 @@ internal class LeftFactorizationHandler
         HashSet<RuleName> ambiguousRules = GetAmbiguousRules();
         while ( ambiguousRules.Any() )
         {
+            A.ToConsole( _grammar, "InlineRules" );
             List<RuleName> rulesToProcess = ambiguousRules.ToList();
 
             foreach ( RuleName ruleName in rulesToProcess )

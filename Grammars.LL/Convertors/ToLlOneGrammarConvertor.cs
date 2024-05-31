@@ -19,12 +19,12 @@ public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
 
     public LlOneGrammar Convert( CommonGrammar grammar )
     {
-        CommonGrammar normalizedGrammar = grammar
-            .Convert( new RemoveEpsilonsConvertor() )
-            .Convert( new LeftRecursionRemoverConvertor() )
-            .Convert( new LeftFactorizationConvertor() )
-            .Convert( new InlineNonTerminalsConvertor() )
-            .Convert( new RenameRuleNamesConvertor() );
+        CommonGrammar normalizedGrammar;
+        normalizedGrammar = A.ToConsole( grammar.Convert( new RemoveEpsilonsConvertor() ), "RemoveEpsilonsConvertor" );
+        normalizedGrammar = A.ToConsole( normalizedGrammar.Convert( new LeftRecursionRemoverConvertor() ), "LeftRecursionRemoverConvertor" );
+        normalizedGrammar = A.ToConsole( normalizedGrammar.Convert( new LeftFactorizationConvertor() ), "LeftFactorizationConvertor" );
+        normalizedGrammar = A.ToConsole( normalizedGrammar.Convert( new InlineNonTerminalsConvertor() ), "InlineNonTerminalsConvertor" );
+        normalizedGrammar = A.ToConsole( normalizedGrammar .Convert( new RenameRuleNamesConvertor() ), "RenameRuleNamesConvertor" );
 
         SanitizeEndSymbols( normalizedGrammar );
 

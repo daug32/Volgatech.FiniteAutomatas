@@ -160,7 +160,12 @@ internal class GrammarRulesInliner
         foreach ( int definitionsWhereToRemoveStartSymbol in definitionsWhereToRemoveStartSymbols )
         {
             RuleDefinition definition = ruleToInline.Definitions[definitionsWhereToRemoveStartSymbol];
-            ruleToInline.Definitions[definitionsWhereToRemoveStartSymbol] = RemoveStartSymbol( definition );
+            definition = RemoveStartSymbol( definition );
+
+            if ( definition.Symbols.Count == 1 )
+            {
+                InlineRule( ruleToInlineName, grammar );
+            }
         }
 
         if ( !hasDefinitionWithoutCommonHeading )
