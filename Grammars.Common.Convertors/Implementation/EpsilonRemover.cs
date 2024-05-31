@@ -6,7 +6,7 @@ using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using LinqExtensions;
 
-namespace Grammars.Common.Convertors.Convertors;
+namespace Grammars.Common.Convertors.Implementation;
 
 internal class EpsilonRemover
 {
