@@ -125,7 +125,10 @@ public class LlOneRunnerTests
         _defaultParsingSettings = new ParsingSettings();
     }
 
-    [Test, Parallelizable( ParallelScope.All ), TestCaseSource( nameof( _testCases ) )]
+    [Test]
+    [MaxTime( 2000 )]
+    [Parallelizable( ParallelScope.All )]
+    [TestCaseSource( nameof( _testCases ) )]
     public void RunnerTest( RunnerTestData testData )
     {
         TestContext.WriteLine( 

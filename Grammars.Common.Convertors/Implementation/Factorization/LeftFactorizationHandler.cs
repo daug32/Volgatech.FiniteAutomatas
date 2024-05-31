@@ -1,143 +1,145 @@
-using Grammars.Common.Grammars;
-using Grammars.Common.Grammars.Extensions;
-using Grammars.Common.Grammars.ValueObjects;
+﻿using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.RuleNames;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
-using Grammars.LL.Convertors;
 using LinqExtensions;
 
 namespace Grammars.Common.Convertors.Implementation.Factorization;
 
 internal class LeftFactorizationHandler
 {
-    private readonly UnitableDefinitionGroupsSearcher _unitableGroupsSearcher = new();
-    private readonly GrammarRulesInliner _grammarRulesInliner = new();
     private readonly RuleNameGenerator _ruleNameGenerator;
+    private readonly UnitableDefinitionsSearcher _unitableDefinitionsSearcher;
+
     private readonly CommonGrammar _grammar;
 
     public LeftFactorizationHandler( CommonGrammar grammar )
     {
         _grammar = grammar;
         _ruleNameGenerator = new RuleNameGenerator( grammar );
+        _unitableDefinitionsSearcher = new UnitableDefinitionsSearcher();
     }
 
     public CommonGrammar Factorize()
     {
-        _grammarRulesInliner.InlineRules( _grammar );
-
-        HashSet<RuleName> ambiguousRules = GetAmbiguousRules();
-        while ( ambiguousRules.Any() )
+        List<UnitableDefinitionsGroup> unitableGroups = _unitableDefinitionsSearcher.Search( _grammar );
+        while ( unitableGroups.Any() )
         {
-            A.ToConsole( _grammar, "InlineRules" );
-            List<RuleName> rulesToProcess = ambiguousRules.ToList();
-
-            foreach ( RuleName ruleName in rulesToProcess )
+            foreach ( UnitableDefinitionsGroup group in unitableGroups )
             {
-                GrammarRule rule = _grammar.Rules[ruleName];
-
-                List<UnitableDefinitionsGroups> definitionsGroupsToUnite = _unitableGroupsSearcher.Search( rule.Name, _grammar );
-
-                var hadInlining = _grammarRulesInliner.InlineFirstSymbolsFromNonTerminals( definitionsGroupsToUnite, _grammar );
-                if ( hadInlining )
-                {
-                    break;
-                }
-
-                foreach ( UnitableDefinitionsGroups definitionsGroup in definitionsGroupsToUnite )
-                {
-                    UniteDefinitions( definitionsGroup );
-                }
+                UniteDefinitions( group );
             }
 
-            ambiguousRules = GetAmbiguousRules();
+            unitableGroups = _unitableDefinitionsSearcher.Search( _grammar );
         }
 
         return _grammar;
     }
 
-    private void UniteDefinitions( UnitableDefinitionsGroups unitableGroup )
+    private void UniteDefinitions( UnitableDefinitionsGroup unitableGroup )
     {
-        var newRule = new GrammarRule( _ruleNameGenerator.Next(), new List<RuleDefinition>() );
+        GrammarRule newRule = new GrammarRule( _ruleNameGenerator.Next(), new List<RuleDefinition>() );
 
-        RuleSymbol heading = unitableGroup.Headings.First();
-
-        _grammar.Rules[unitableGroup.RuleName].Definitions = _grammar.Rules[unitableGroup.RuleName]
-            .Definitions
+        GrammarRule currentRule = _grammar.Rules[unitableGroup.RuleName];
+        currentRule.Definitions = currentRule.Definitions
+            // Take only definitions that will not be united
             .Where( definition => !unitableGroup.Definitions.Contains( definition ) )
-            .ToList()
-            .With( new RuleDefinition( new[]
-            {
-                heading,
-                RuleSymbol.NonTerminalSymbol( newRule.Name )
-            } ) );
+            // Include new rule
+            .Append( new RuleDefinition( unitableGroup.CommonPrefix.Append( RuleSymbol.NonTerminalSymbol( newRule.Name ) ) ) )
+            .ToList();
 
-        foreach ( RuleDefinition oldDefinitionToMigrate in unitableGroup.Definitions )
+        foreach ( RuleDefinition oldDefinition in unitableGroup.Definitions )
         {
-            RuleSymbol firstSymbol = oldDefinitionToMigrate.FirstSymbol();
-            if ( firstSymbol.Type == RuleSymbolType.NonTerminalSymbol )
-            {
-                throw new ArgumentException( "ХУЙЦА САСНИ" );
-            }
-            
-            var migratedDefinition = oldDefinitionToMigrate.Symbols.ToList().WithoutFirst();
+            List<RuleSymbol> migratedDefinition = oldDefinition.Symbols
+                // Remove common prefix
+                .Skip( unitableGroup.CommonPrefix.Count )
+                .ToList();
+
             if ( !migratedDefinition.Any() )
             {
-                migratedDefinition.Add(
-                    RuleSymbol.TerminalSymbol(
-                        TerminalSymbol.EmptySymbol() ) );
+                migratedDefinition.Add( RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ) );
             }
 
             newRule.Definitions.Add( new RuleDefinition( migratedDefinition ) );
         }
 
-        _grammar.Rules.Add( newRule.Name, new GrammarRule( newRule.Name, newRule.Definitions ) );
+        _grammar.Rules.Add( newRule.Name, newRule );
     }
+}
 
-    private HashSet<RuleName> GetAmbiguousRules()
+internal class UnitableDefinitionsGroup
+{
+    public RuleName RuleName;
+    public List<RuleSymbol> CommonPrefix;
+    public List<RuleDefinition> Definitions;
+
+    public UnitableDefinitionsGroup( RuleName ruleName, List<RuleSymbol> commonPrefix, List<RuleDefinition> definitions )
     {
-        var result = new HashSet<RuleName>();
+        RuleName = ruleName;
+        CommonPrefix = commonPrefix;
+        Definitions = definitions;
+    }
+}
+
+internal class UnitableDefinitionsSearcher
+{
+    public List<UnitableDefinitionsGroup> Search( CommonGrammar grammar )
+    {
+        var result = new List<UnitableDefinitionsGroup>();
         
-        foreach ( GrammarRule rule in _grammar.Rules.Values )
+        foreach ( GrammarRule rule in grammar.Rules.Values )
         {
-            if ( rule.Definitions.Count < 2 )
+            var unprocessedDefinitions = rule.Definitions.ToList();
+
+            for ( var mainIndex = 0; mainIndex < unprocessedDefinitions.Count; mainIndex++ )
             {
-                continue;
-            }
-            
-            var definitionToFirstSet = rule.Definitions.ToDictionary(
-                def => def,
-                def => _grammar.GetFirstSet( rule.Name, def ).Exclude( RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ) ) );
+                RuleDefinition mainDefinition = unprocessedDefinitions[mainIndex];
 
-            for ( int mainI = 0; mainI < rule.Definitions.Count; mainI++ )
-            {
-                RuleDefinition mainDef = rule.Definitions[mainI];
-                if ( mainDef.Has( TerminalSymbolType.EmptySymbol ) )
+                int finalEndIndexOfCommonPrefix = -1;
+                List<RuleDefinition> definitions = new List<RuleDefinition>().With( mainDefinition );
+                
+                for ( int secondIndex = mainIndex + 1; secondIndex < unprocessedDefinitions.Count; secondIndex++ )
                 {
-                    continue;
-                }
-
-                bool hasAmbiguousReferences = false;
-                for ( int secondI = mainI + 1; secondI < rule.Definitions.Count; secondI++ )
-                {
-                    RuleDefinition secondDef = rule.Definitions[secondI];
-
-                    if ( definitionToFirstSet[mainDef].HasIntersections( definitionToFirstSet[secondDef] ) )
+                    RuleDefinition secondDefinition = unprocessedDefinitions[secondIndex];
+                    int endIndexOfCommonPrefix = -1;
+                    
+                    for ( int symbolIndex = 0; symbolIndex < mainDefinition.Symbols.Count; symbolIndex++ )
                     {
-                        hasAmbiguousReferences = true;
-                        break;
+                        if ( symbolIndex >= secondDefinition.Symbols.Count )
+                        {
+                            break;
+                        }
+
+                        if ( secondDefinition.Symbols[symbolIndex] != mainDefinition.Symbols[symbolIndex] )
+                        {
+                            break;
+                        }
+
+                        endIndexOfCommonPrefix = symbolIndex;
+                    }
+
+                    if ( endIndexOfCommonPrefix > -1 )
+                    {
+                        finalEndIndexOfCommonPrefix = Math.Min( finalEndIndexOfCommonPrefix < 0 ? 0 : finalEndIndexOfCommonPrefix, endIndexOfCommonPrefix );
+                        definitions.Add( secondDefinition );
+                        
+                        unprocessedDefinitions.RemoveAt( secondIndex );
+                        secondIndex--;
                     }
                 }
 
-                if ( hasAmbiguousReferences )
+                if ( finalEndIndexOfCommonPrefix > -1 )
                 {
-                    result.Add( rule.Name );
-                    break;
+                    List<RuleSymbol> commonPrefix = mainDefinition.Symbols.Take( finalEndIndexOfCommonPrefix + 1 ).ToList();
+                    result.Add( new UnitableDefinitionsGroup( rule.Name, commonPrefix, definitions ) );
+                    
+                    unprocessedDefinitions.RemoveAt( mainIndex );
+                    mainIndex--;
                 }
             }
         }
-        
+
         return result;
-    }
+    } 
 }
