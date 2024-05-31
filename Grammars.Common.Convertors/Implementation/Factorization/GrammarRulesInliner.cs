@@ -26,11 +26,10 @@ internal class GrammarRulesInliner
         }
     }
     
-    public bool InlineFirstSymbolsFromNonTerminals(
+    public void InlineFirstSymbolsFromNonTerminals(
         List<UnitableDefinitionsGroups> unitableGroups,
         CommonGrammar grammar )
     {
-        var hasChanges = false;
         foreach ( UnitableDefinitionsGroups unitableGroup in unitableGroups )
         {
             if ( unitableGroup.Definitions.Count < 2 )
@@ -42,23 +41,19 @@ internal class GrammarRulesInliner
 
             while ( rulesToInlineQueue.Any() )
             {
-                hasChanges |= InlineFirstSymbolsPresentedInHashSet(
+                InlineFirstSymbolsPresentedInHashSet(
                     rulesToInlineQueue.DequeueFirst(),
                     unitableGroup.Headings,
                     grammar );
             }
         }
-
-        return hasChanges;
     }
 
-    private bool InlineFirstSymbolsPresentedInHashSet(
+    private void InlineFirstSymbolsPresentedInHashSet(
         RuleName ruleToInlineName,
         HashSet<RuleSymbol> symbolsToInline,
         CommonGrammar grammar )
     {
-        var hasChanges = false;
-
         GrammarRule ruleToInline = grammar.Rules[ruleToInlineName];
 
         var ruleUsers = FindRuleUsers( ruleToInlineName, grammar );
@@ -76,8 +71,6 @@ internal class GrammarRulesInliner
             {
                 continue;
             }
-
-            hasChanges = true;
 
             RuleSymbol symbolToExtract = ruleDefinitionWhereToExtract.FirstSymbol();
             if ( symbolToExtract.Type == RuleSymbolType.NonTerminalSymbol )
@@ -113,8 +106,6 @@ internal class GrammarRulesInliner
                     .ToList();
             }
         }
-
-        return hasChanges;
     }
 
     private static RuleDefinition RemoveStartSymbol( RuleDefinition definitionWhereToRemove )
