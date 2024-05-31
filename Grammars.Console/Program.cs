@@ -23,10 +23,10 @@ public class Program
     {
         LlOneGrammar grammar = BuildGrammar();
         
-        ParsingTable table = new ParsingTableCreator().Create( grammar );
-        table.ToConsole( grammar );
-
-        AskForSentences( grammar );
+        // ParsingTable table = new ParsingTableCreator().Create( grammar );
+        // table.ToConsole( grammar );
+        //
+        // AskForSentences( grammar );
     }
 
     private static LlOneGrammar BuildGrammar()

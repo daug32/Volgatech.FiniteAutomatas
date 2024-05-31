@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.Extensions;
 using Grammars.Common.Grammars.ValueObjects.GrammarRules;
@@ -11,7 +12,7 @@ namespace Grammars.Common.Convertors.Implementation.Factorization;
 
 internal class GrammarRulesInliner
 {
-    public void InlineRulesWithOnlyTerminals( CommonGrammar grammar )
+    public void InlineRules( CommonGrammar grammar )
     {
         var hasChanges = true;
         while ( hasChanges )
@@ -21,15 +22,17 @@ internal class GrammarRulesInliner
             List<RuleName> grammarRules = grammar.Rules.Keys.ToList();
             for ( int i = 0; i < grammarRules.Count; i++ )
             {
-                hasChanges |= OptimizeRule( grammarRules[i], grammar );
+                hasChanges |= InlineRule( grammarRules[i], grammar );
             }
         }
     }
-    
-    public void InlineFirstSymbolsFromNonTerminals(
+
+    public bool InlineFirstSymbolsFromNonTerminals(
         List<UnitableDefinitionsGroups> unitableGroups,
         CommonGrammar grammar )
     {
+        bool hasChanges = false;
+        
         foreach ( UnitableDefinitionsGroups unitableGroup in unitableGroups )
         {
             if ( unitableGroup.Definitions.Count < 2 )
@@ -41,19 +44,78 @@ internal class GrammarRulesInliner
 
             while ( rulesToInlineQueue.Any() )
             {
-                InlineFirstSymbolsPresentedInHashSet(
+                hasChanges |= InlineFirstSymbolsPresentedInHashSet(
                     rulesToInlineQueue.DequeueFirst(),
                     unitableGroup.Headings,
                     grammar );
             }
         }
+
+        return hasChanges;
     }
 
-    private void InlineFirstSymbolsPresentedInHashSet(
+    private bool InlineRule( RuleName ruleToInline, CommonGrammar grammar )
+    {
+        List<RuleDefinition> ruleToInlineDefinitions = grammar.Rules[ruleToInline].Definitions.ToList();
+        
+        bool hasReferenceToSelf = grammar.Rules[ruleToInline].Has( ruleToInline );
+        bool canBeRemoved = !hasReferenceToSelf && grammar.StartRule != ruleToInline;
+        if ( !canBeRemoved )
+        {
+            return false;
+        }
+        
+        grammar.Rules.Remove( ruleToInline );
+        
+        bool hasChanges = false;
+        foreach ( GrammarRule rule in grammar.Rules.Values )
+        {
+            var newDefinitions = new List<RuleDefinition>();
+            var definitionsToRemove = new List<RuleDefinition>();
+            
+            foreach ( RuleDefinition definition in rule.Definitions )
+            {
+                for ( var index = 0; index < definition.Symbols.Count; index++ )
+                {
+                    RuleSymbol symbol = definition.Symbols[index];
+                    if ( symbol.Type != RuleSymbolType.NonTerminalSymbol )
+                    {
+                        continue;
+                    }
+
+                    if ( symbol.RuleName != ruleToInline )
+                    {
+                        continue;
+                    }
+
+                    foreach ( RuleDefinition ruleToInlineDefinition in ruleToInlineDefinitions )
+                    {
+                        var newDefinition = definition.Symbols.ToList();
+                        newDefinition.RemoveAt( index );
+                        newDefinition.InsertRange( index, ruleToInlineDefinition.Symbols );
+                        newDefinitions.Add( new RuleDefinition( newDefinition ) );
+                    }
+                    
+                    definitionsToRemove.Add( definition );
+                }
+            }
+
+            hasChanges = newDefinitions.Any();
+
+            rule.Definitions = rule.Definitions.Where( x => !definitionsToRemove.Contains( x ) ).ToList();
+            rule.Definitions.AddRange( newDefinitions );
+        }
+        
+        return hasChanges;
+    }
+
+    private bool InlineFirstSymbolsPresentedInHashSet(
         RuleName ruleToInlineName,
         HashSet<RuleSymbol> symbolsToInline,
         CommonGrammar grammar )
     {
+        var hasChanges = false;
+        
         GrammarRule ruleToInline = grammar.Rules[ruleToInlineName];
 
         var ruleUsers = FindRuleUsers( ruleToInlineName, grammar );
@@ -64,6 +126,7 @@ internal class GrammarRulesInliner
 
         bool hasDefinitionWithoutCommonHeading = definitionsWithCommonHeadings.Count != ruleToInline.Definitions.Count;
 
+        var definitionsWhereToRemoveStartSymbols = new List<int>();
         for ( var index = 0; index < ruleToInline.Definitions.Count; index++ )
         {
             RuleDefinition ruleDefinitionWhereToExtract = ruleToInline.Definitions[index];
@@ -71,6 +134,8 @@ internal class GrammarRulesInliner
             {
                 continue;
             }
+            
+            hasChanges = true;
 
             RuleSymbol symbolToExtract = ruleDefinitionWhereToExtract.FirstSymbol();
             if ( symbolToExtract.Type == RuleSymbolType.NonTerminalSymbol )
@@ -88,24 +153,32 @@ internal class GrammarRulesInliner
                 definitionWithReplaced.Insert( ruleUser.RuleToReplaceIndex, symbolToExtract );
                 ruleWhereToInline.Definitions.Add( new RuleDefinition( definitionWithReplaced ) );
             }
+            
+            definitionsWhereToRemoveStartSymbols.Add( index );
+        }
 
-            ruleToInline.Definitions[index] = RemoveStartSymbol( ruleDefinitionWhereToExtract );
+        foreach ( int definitionsWhereToRemoveStartSymbol in definitionsWhereToRemoveStartSymbols )
+        {
+            RuleDefinition definition = ruleToInline.Definitions[definitionsWhereToRemoveStartSymbol];
+            ruleToInline.Definitions[definitionsWhereToRemoveStartSymbol] = RemoveStartSymbol( definition );
         }
 
         if ( !hasDefinitionWithoutCommonHeading )
         {
-            var definitionsToRemove = ruleUsers
-                .Select( ruleUser => grammar.Rules[ruleUser.DefinitionOwner].Definitions[ruleUser.DefinitionIndex] )
+            List<(RuleName RuleName, RuleDefinition Definition)> definitionsToRemove = ruleUsers
+                .Select( ruleUser => (RuleName: ruleUser.DefinitionOwner, Definition: grammar.Rules[ruleUser.DefinitionOwner].Definitions[ruleUser.DefinitionIndex] ) )
                 .ToList();
 
-            foreach ( (RuleName DefinitionOwner, int DefinitionIndex, int RuleToReplaceIndex) ruleUser in ruleUsers )
+            foreach ( (RuleName RuleName, RuleDefinition Definition) ruleToDefinitionToRemove in definitionsToRemove )
             {
-                GrammarRule ruleWhereToInline = grammar.Rules[ruleUser.DefinitionOwner];
-                ruleWhereToInline.Definitions = ruleWhereToInline.Definitions
-                    .Where( definition => !definitionsToRemove.Contains( definition ) )
+                GrammarRule rule = grammar.Rules[ruleToDefinitionToRemove.RuleName];
+                rule.Definitions = rule.Definitions
+                    .Where( definition => !definition.Equals( ruleToDefinitionToRemove.Definition ) )
                     .ToList();
             }
         }
+        
+        return hasChanges;
     }
 
     private static RuleDefinition RemoveStartSymbol( RuleDefinition definitionWhereToRemove )
@@ -167,70 +240,12 @@ internal class GrammarRulesInliner
 
             if ( startingNonTerminals.Any( rule => result.Contains( rule ) ) )
             {
-                throw new ArgumentException( "Left factorization can not be performed at a grammar with left recursion" );
+                continue;
             }
 
             rulesToCheckQueue.EnqueueRange( startingNonTerminals );
         }
 
         return result;
-    }
-
-    private bool OptimizeRule( RuleName name, CommonGrammar grammar )
-    {
-        foreach ( RuleDefinition definition in grammar.Rules[name].Definitions )
-        {
-            foreach ( RuleSymbol symbol in definition.Symbols )
-            {
-                if ( symbol.Type != RuleSymbolType.TerminalSymbol )
-                {
-                    return false;
-                }
-            }
-        }
-
-        bool hasChanges = false;
-        foreach ( GrammarRule rule in grammar.Rules.Values )
-        {
-            if ( rule.Name == name )
-            {
-                continue;
-            }
-
-            var processedDefinitions = new List<RuleDefinition>();
-            for ( var definitionIndex = 0; definitionIndex < rule.Definitions.Count; definitionIndex++ )
-            {
-                RuleDefinition definition = rule.Definitions[definitionIndex];
-
-                for ( var symbolIndex = 0; symbolIndex < definition.Symbols.Count; symbolIndex++ )
-                {
-                    RuleSymbol symbol = definition.Symbols[symbolIndex];
-                    if ( symbol.Type != RuleSymbolType.NonTerminalSymbol || symbol.RuleName! != name )
-                    {
-                        continue;
-                    }
-
-                    foreach ( RuleDefinition? targetRuleDefinition in grammar.Rules[name].Definitions )
-                    {
-                        var newDefinition = definition.Symbols.ToListExcept( symbolIndex );
-
-                        if ( !targetRuleDefinition.Has( TerminalSymbolType.EmptySymbol ) )
-                        {
-                            newDefinition.InsertRange( symbolIndex, targetRuleDefinition.Symbols );
-                        }
-
-                        rule.Definitions.Add( new RuleDefinition( newDefinition ) );
-                        hasChanges = true;
-                    }
-
-                    processedDefinitions.Add( definition );
-                }
-            }
-
-            rule.Definitions = rule.Definitions.Where( def => !processedDefinitions.Contains( def ) ).ToList();
-            grammar.Rules.Remove( name );
-        }
-        
-        return hasChanges;
     }
 }

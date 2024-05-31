@@ -130,6 +130,11 @@ public static class GrammarFirstSetExtensions
 
     private static List<ConcreteDefinition> BuildConcreteDefinitions( CommonGrammar grammar, RuleName ruleName, List<RuleDefinition> definitionsToUse )
     {
+        if ( definitionsToUse.Any( x => x.Has( ruleName ) ) )
+        {
+            definitionsToUse = grammar.Rules[ruleName].Definitions.ToList();
+        }
+        
         var result = new List<ConcreteDefinition>();
         
         foreach ( GrammarRule rule in grammar.Rules.Values )

@@ -15,19 +15,15 @@ public class GuidingSymbolsSet
         GuidingSymbols = guidingSymbols.ToImmutableHashSet();
     }
 
+    public GuidingSymbolsSet Exclude( RuleSymbol ruleSymbol ) => new( Rule, GuidingSymbols.Where( x => !x.Equals( ruleSymbol ) ) );
+
     public bool Has( RuleSymbol symbol ) => GuidingSymbols.Contains( symbol );
 
     public bool Has( TerminalSymbolType terminalSymbolType ) => GuidingSymbols.Any( s => 
         s.Type == RuleSymbolType.TerminalSymbol && 
         s.Symbol!.Type == terminalSymbolType );
 
-    public bool HasIntersections( GuidingSymbolsSet other )
-    {
-        return GuidingSymbols.Intersect( other.GuidingSymbols ).Any();
-    }
+    public bool HasIntersections( GuidingSymbolsSet other ) => GuidingSymbols.Intersect( other.GuidingSymbols ).Any();
 
-    public bool HasIntersections( HashSet<RuleSymbol> unitableGroupHeadings )
-    {
-        return GuidingSymbols.Intersect( unitableGroupHeadings ).Any();
-    }
+    public bool HasIntersections( HashSet<RuleSymbol> unitableGroupHeadings ) => GuidingSymbols.Intersect( unitableGroupHeadings ).Any();
 }

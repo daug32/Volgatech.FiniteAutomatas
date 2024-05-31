@@ -24,19 +24,24 @@ internal class LeftFactorizationHandler
 
     public CommonGrammar Factorize()
     {
-        _grammarRulesInliner.InlineRulesWithOnlyTerminals( _grammar );
+        _grammarRulesInliner.InlineRules( _grammar );
 
         HashSet<RuleName> ambiguousRules = GetAmbiguousRules();
         while ( ambiguousRules.Any() )
         {
             List<RuleName> rulesToProcess = ambiguousRules.ToList();
-            
+
             foreach ( RuleName ruleName in rulesToProcess )
             {
                 GrammarRule rule = _grammar.Rules[ruleName];
 
                 List<UnitableDefinitionsGroups> definitionsGroupsToUnite = _unitableGroupsSearcher.Search( rule.Name, _grammar );
-                _grammarRulesInliner.InlineFirstSymbolsFromNonTerminals( definitionsGroupsToUnite, _grammar );
+
+                var hadInlining = _grammarRulesInliner.InlineFirstSymbolsFromNonTerminals( definitionsGroupsToUnite, _grammar );
+                if ( hadInlining )
+                {
+                    break;
+                }
 
                 foreach ( UnitableDefinitionsGroups definitionsGroup in definitionsGroupsToUnite )
                 {
@@ -68,6 +73,12 @@ internal class LeftFactorizationHandler
 
         foreach ( RuleDefinition oldDefinitionToMigrate in unitableGroup.Definitions )
         {
+            RuleSymbol firstSymbol = oldDefinitionToMigrate.FirstSymbol();
+            if ( firstSymbol.Type == RuleSymbolType.NonTerminalSymbol )
+            {
+                throw new ArgumentException( "ХУЙЦА САСНИ" );
+            }
+            
             var migratedDefinition = oldDefinitionToMigrate.Symbols.ToList().WithoutFirst();
             if ( !migratedDefinition.Any() )
             {
@@ -88,13 +99,22 @@ internal class LeftFactorizationHandler
         
         foreach ( GrammarRule rule in _grammar.Rules.Values )
         {
+            if ( rule.Definitions.Count < 2 )
+            {
+                continue;
+            }
+            
             var definitionToFirstSet = rule.Definitions.ToDictionary(
                 def => def,
-                def => _grammar.GetFirstSet( rule.Name, def ) );
+                def => _grammar.GetFirstSet( rule.Name, def ).Exclude( RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ) ) );
 
             for ( int mainI = 0; mainI < rule.Definitions.Count; mainI++ )
             {
                 RuleDefinition mainDef = rule.Definitions[mainI];
+                if ( mainDef.Has( TerminalSymbolType.EmptySymbol ) )
+                {
+                    continue;
+                }
 
                 bool hasAmbiguousReferences = false;
                 for ( int secondI = mainI + 1; secondI < rule.Definitions.Count; secondI++ )
