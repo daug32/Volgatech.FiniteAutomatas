@@ -17,6 +17,7 @@ public class NonDeterminedFiniteAutomata<T> : BaseAutomata<T>
         return Move( from, argument );
     }
 
+    // ReSharper disable once MethodOverloadWithOptionalParameter
     public HashSet<StateId> Move( StateId from, Argument<T> argument, HashSet<StateId>? epsClosures = null )
     {
         epsClosures ??= EpsClosure( from ).ToHashSet();

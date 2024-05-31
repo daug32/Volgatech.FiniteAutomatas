@@ -43,5 +43,6 @@ public class Program
                 System.Console.WriteLine( ex );
             }
         }
+// ReSharper disable once FunctionNeverReturns
     }
 }

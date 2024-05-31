@@ -23,7 +23,6 @@ public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
             .Convert( new RemoveEpsilonsConvertor() )
             .Convert( new LeftRecursionRemoverConvertor() )
             .Convert( new LeftFactorizationConvertor() )
-            // .Convert( new InlineNonTerminalsConvertor() )
             .Convert( new RenameRuleNamesConvertor() );
 
         SanitizeEndSymbols( normalizedGrammar );

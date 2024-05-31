@@ -1,6 +1,5 @@
 ﻿using ConsoleTables;
 using Grammars.Common.Grammars.Extensions;
-using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.RuleNames;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using Grammars.LL.Models;
