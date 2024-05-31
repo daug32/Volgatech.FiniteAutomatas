@@ -23,15 +23,14 @@ public class RenameRuleNamesConvertor : IGrammarConvertor
     public CommonGrammar Convert( CommonGrammar grammar )
     {
         var oldNameToNewName = new Dictionary<RuleName, RuleName>();
-        
-        int index = 1;
+
+        var index = 0;
         foreach ( RuleName ruleName in grammar.Rules.Keys )
         {
-            oldNameToNewName[ruleName] = 
+            oldNameToNewName[ruleName] =
                 _options.RenameOnlyUnreadableRules && Int64.TryParse( ruleName.Value, out _ )
-                ? new RuleName( index.ToString() )
-                : ruleName;
-            index++;
+                    ? new RuleName( ( index++ ).ToString() )
+                    : ruleName;
         }
 
         var newRules = new List<GrammarRule>();
@@ -46,10 +45,10 @@ public class RenameRuleNamesConvertor : IGrammarConvertor
                 foreach ( RuleSymbol symbol in definition.Symbols )
                 {
                     symbols.Add( symbol.Type == RuleSymbolType.NonTerminalSymbol
-                        ? RuleSymbol.NonTerminalSymbol( oldNameToNewName[symbol.RuleName!] ) 
+                        ? RuleSymbol.NonTerminalSymbol( oldNameToNewName[symbol.RuleName!] )
                         : symbol );
-                } 
-                
+                }
+
                 newDefinitions.Add( new RuleDefinition( symbols ) );
             }
 
