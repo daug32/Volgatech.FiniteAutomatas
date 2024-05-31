@@ -13,7 +13,7 @@ internal class DfaMinimizer<T>
     {
         _finiteAutomata = finiteAutomata;
 
-        _transitions = _finiteAutomata.AllStates.ToDictionary( x => x.Id, x => new Dictionary<Argument<T>, StateId>() );
+        _transitions = _finiteAutomata.AllStates.ToDictionary( x => x.Id, _ => new Dictionary<Argument<T>, StateId>() );
         foreach ( Transition<T> transition in _finiteAutomata.Transitions )
         {
             if ( !_transitions.ContainsKey( transition.From ) )

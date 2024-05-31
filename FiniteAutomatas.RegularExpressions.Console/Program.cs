@@ -43,8 +43,5 @@ public class Program
                 System.Console.WriteLine( ex );
             }
         }
-        
-        System.Console.WriteLine( "Press any key..." );
-        System.Console.ReadKey();
     }
 }

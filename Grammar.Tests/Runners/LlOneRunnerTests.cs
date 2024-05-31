@@ -116,6 +116,7 @@ public class LlOneRunnerTests
                 new RunnerInputTestData( "a s", true ),
                 new RunnerInputTestData( "s", true ),
             } ) )
+        .Cast<object>()
         .ToArray();
 
     [SetUp]

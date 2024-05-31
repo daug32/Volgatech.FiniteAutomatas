@@ -17,7 +17,7 @@ public static class IEnumerableExtensions
 
     public static List<T> ToListExcept<T>( this IEnumerable<T> items, int indexToExclude )
     {
-        var result = new List<T>( items.Count() - 1 );
+        var result = new List<T>();
 
         int index = 0;
         foreach ( T item in items )

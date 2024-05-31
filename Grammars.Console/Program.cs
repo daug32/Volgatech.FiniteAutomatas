@@ -60,7 +60,7 @@ public class Program
                 System.Console.WriteLine( "Sentence is invalid." );
                 System.Console.WriteLine( $"Sentence: {result.Sentence}" );
 
-                if ( result.Error.InvalidSymbolIndex != null )
+                if ( result.Error!.InvalidSymbolIndex != null )
                 {
                     System.Console.WriteLine( $"Location: {result.Error!.InvalidSymbolIndex}" );
                 }

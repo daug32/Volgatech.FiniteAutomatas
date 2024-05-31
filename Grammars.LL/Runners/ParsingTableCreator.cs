@@ -30,7 +30,7 @@ public class ParsingTableCreator
             RuleSymbol firstSymbol = definition.Definition.FirstSymbol();
 
             if ( firstSymbol.Type == RuleSymbolType.TerminalSymbol &&
-                 firstSymbol.Symbol.Type == TerminalSymbolType.EmptySymbol )
+                 firstSymbol.Symbol!.Type == TerminalSymbolType.EmptySymbol )
             {
                 foreach ( RuleSymbol followSymbol in follows[definition.RuleName].GuidingSymbols )
                 {
@@ -70,7 +70,7 @@ public class ParsingTableCreator
                         continue;
                     }
 
-                    if ( symbol.Symbol.Type == TerminalSymbolType.EmptySymbol )
+                    if ( symbol.Symbol!.Type == TerminalSymbolType.EmptySymbol )
                     {
                         continue;
                     }

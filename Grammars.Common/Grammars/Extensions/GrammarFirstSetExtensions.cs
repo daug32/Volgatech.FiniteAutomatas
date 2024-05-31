@@ -17,15 +17,15 @@ public static class GrammarFirstSetExtensions
 
     public static GuidingSymbolsSet GetFirstSet( this CommonGrammar grammar, RuleName ruleName, RuleDefinition definition )
     {
-        return grammar.GetFirstSet( ruleName, new[] { definition } )[ruleName];
+        return grammar.GetFirstSet( ruleName, new List<RuleDefinition> { definition } )[ruleName];
     }
 
-    private static Dictionary<RuleName, GuidingSymbolsSet> GetFirstSet( this CommonGrammar grammar, RuleName ruleNameToGetFirstSet, IEnumerable<RuleDefinition> definitions )
+    private static Dictionary<RuleName, GuidingSymbolsSet> GetFirstSet( this CommonGrammar grammar, RuleName ruleNameToGetFirstSet, List<RuleDefinition> definitions )
     {
         List<ConcreteDefinition> concreteDefinitions = BuildConcreteDefinitions( grammar, ruleNameToGetFirstSet, definitions );
         
-        var result = grammar.Rules.Keys.ToDictionary( x => x, x => new HashSet<RuleSymbol>() );
-        var relations = grammar.Rules.Keys.ToDictionary( x => x, x => new List<(ConcreteDefinition Definition, int Index)>() );
+        var result = grammar.Rules.Keys.ToDictionary( x => x, _ => new HashSet<RuleSymbol>() );
+        var relations = grammar.Rules.Keys.ToDictionary( x => x, _ => new List<(ConcreteDefinition Definition, int Index)>() );
 
         InitializeResultAndRelationsTables( concreteDefinitions, relations, result );
         
@@ -77,7 +77,7 @@ public static class GrammarFirstSetExtensions
                         }
 
                         relations[ruleName].Add( ( toFirst.Definition, i ) );
-                        result[ruleName].AddRange( result[symbol.RuleName!].Where( x => x.Symbol.Type != TerminalSymbolType.EmptySymbol ) );
+                        result[ruleName].AddRange( result[symbol.RuleName!].Where( x => x.Symbol!.Type != TerminalSymbolType.EmptySymbol ) );
                     }
                 }
 
@@ -128,7 +128,7 @@ public static class GrammarFirstSetExtensions
         }
     }
 
-    private static List<ConcreteDefinition> BuildConcreteDefinitions( CommonGrammar grammar, RuleName ruleName, IEnumerable<RuleDefinition> definitionsToUse )
+    private static List<ConcreteDefinition> BuildConcreteDefinitions( CommonGrammar grammar, RuleName ruleName, List<RuleDefinition> definitionsToUse )
     {
         var result = new List<ConcreteDefinition>();
         
@@ -147,7 +147,7 @@ public static class GrammarFirstSetExtensions
                     {
                         newDefinition.Add( symbol );
 
-                        if ( symbol.Symbol.Type == TerminalSymbolType.EmptySymbol )
+                        if ( symbol.Symbol!.Type == TerminalSymbolType.EmptySymbol )
                         {
                             continue;
                         }

@@ -16,8 +16,8 @@ public static class GrammarFollowSetExtensions
 
     public static Dictionary<RuleName, GuidingSymbolsSet> GetFollowSet( this CommonGrammar grammar )
     {
-        var result = grammar.Rules.Keys.ToDictionary( x => x, x => new HashSet<RuleSymbol>() );
-        var relations = grammar.Rules.Keys.ToDictionary( x => x, x => (Follows: new HashSet<RuleName>(), Firsts: new HashSet<RuleName>()) );
+        var result = grammar.Rules.Keys.ToDictionary( x => x, _ => new HashSet<RuleSymbol>() );
+        var relations = grammar.Rules.Keys.ToDictionary( x => x, _ => (Follows: new HashSet<RuleName>(), Firsts: new HashSet<RuleName>()) );
 
         InitializeResultAndRelationsTables( grammar, relations, result );
         

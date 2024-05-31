@@ -60,10 +60,10 @@ internal class InlinableDefinition
         foreach ( RuleDefinition definitionToProcess in definitionsToProcess )
         {
             IEnumerable<RuleDefinition> newDefinitions = definitionToInline.Definitions
-                .Select( definitionToInline =>
+                .Select( definition =>
                 {
-                    var symbols = new List<RuleSymbol>( definitionToProcess.Symbols.Count + definitionToInline.Symbols.Count );
-                    symbols.AddRange( definitionToInline.Symbols );
+                    var symbols = new List<RuleSymbol>( definitionToProcess.Symbols.Count + definition.Symbols.Count );
+                    symbols.AddRange( definition.Symbols );
                     symbols.AddRange( definitionToProcess.Symbols.ToList().WithoutFirst() );
 
                     return new RuleDefinition( symbols );

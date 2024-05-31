@@ -41,7 +41,7 @@ public class LlOneGrammarRunner
                 }
                 
                 foreach ( RuleSymbol ruleSymbol in _table[word][currentStackItem.RuleName!].Symbols
-                             .Where( x => x.Type != RuleSymbolType.TerminalSymbol || x.Symbol.Type != TerminalSymbolType.End )
+                             .Where( x => x.Type != RuleSymbolType.TerminalSymbol || x.Symbol!.Type != TerminalSymbolType.End )
                              .Reverse() )
                 {
                     stack.Push( ruleSymbol );

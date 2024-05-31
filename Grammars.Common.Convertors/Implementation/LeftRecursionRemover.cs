@@ -131,8 +131,8 @@ internal class LeftRecursionRemover
         (List<RuleDefinition> WithLeftRecursion, List<RuleDefinition> WithoutLeftRecursion) 
         GroupRuleDefinitionsByLeftRecursionUsage( RuleName targetRuleName, CommonGrammar grammar )
     {
-        var withLR = new List<RuleDefinition>();
-        var withoutLR = new List<RuleDefinition>();
+        var withLr = new List<RuleDefinition>();
+        var withoutLr = new List<RuleDefinition>();
         
         GrammarRule targetRule = grammar.Rules[targetRuleName];
 
@@ -141,19 +141,19 @@ internal class LeftRecursionRemover
             RuleSymbol targetRuleDefinitionStartSymbol = targetRuleDefinition.Symbols.First();
             if ( targetRuleDefinitionStartSymbol.Type == RuleSymbolType.TerminalSymbol )
             {
-                withoutLR.Add( targetRuleDefinition );
+                withoutLr.Add( targetRuleDefinition );
                 continue;
             }
 
             if ( targetRuleDefinitionStartSymbol.RuleName == targetRule.Name )
             {
-                withLR.Add( targetRuleDefinition );
+                withLr.Add( targetRuleDefinition );
                 continue;
             }
             
-            withoutLR.Add( targetRuleDefinition );
+            withoutLr.Add( targetRuleDefinition );
         }
 
-        return (withLR, withoutLR);
+        return (withLr, withoutLr);
     }
 }

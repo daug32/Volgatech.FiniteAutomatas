@@ -11,6 +11,7 @@ public static class Visualizer
         VisualizationOptions? options = null )
         where TAutomata : IAutomata<TAutomataType>
     {
+        options ??= new VisualizationOptions();
         Task task = new FiniteAutomataImageVisualizer<TAutomataType>( automata ).ToImage( path, options );
         task.Wait();
 

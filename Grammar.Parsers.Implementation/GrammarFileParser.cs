@@ -49,7 +49,7 @@ public class GrammarFileParser : IGrammarParser
             {
                 if ( lastRule is not null )
                 {
-                    rules.Add( lastRule! );
+                    rules.Add( lastRule );
                 }
 
                 lastRule = newRule;

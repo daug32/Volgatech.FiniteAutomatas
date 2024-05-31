@@ -2,7 +2,7 @@
 
 internal class StateIdIncrementer
 {
-    private int _lastId = 0;
+    private int _lastId;
 
     public StateIdIncrementer( IEnumerable<State> states )
     {

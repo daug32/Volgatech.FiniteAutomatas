@@ -2,8 +2,6 @@
 
 public class Argument<T> : IComparable
 {
-    public static readonly Dictionary<Type, IComparable> Comparers = new();  
-        
     public readonly T? Value;
 
     public static Argument<T> Epsilon => new( default );
@@ -15,23 +13,12 @@ public class Argument<T> : IComparable
 
     public override bool Equals( object? obj )
     {
-        return obj is Argument<T> other && Equals( other );
+        return obj is Argument<T> other && other.Value!.Equals( Value );
     }
 
-    public bool Equals( Argument<T> other )
-    {
-        return Value.Equals( other.Value );
-    }
+    public override int GetHashCode() => Value!.GetHashCode();
 
-    public override int GetHashCode()
-    {
-        return Value.GetHashCode();
-    }
-
-    public override string ToString()
-    {
-        return Value.ToString();
-    }
+    public override string ToString() => Value!.ToString()!;
 
     public int CompareTo( object? obj )
     {
@@ -52,6 +39,4 @@ public class Argument<T> : IComparable
     {
         return !a.Equals( b );
     }
-
-    public Argument<T> Copy() => new Argument<T>( Value );
 }

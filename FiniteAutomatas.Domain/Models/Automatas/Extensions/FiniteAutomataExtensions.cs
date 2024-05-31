@@ -1,5 +1,4 @@
 ﻿using FiniteAutomatas.Domain.Models.ValueObjects;
-using FiniteAutomatas.Domain.Models.ValueObjects.Implementation;
 
 namespace FiniteAutomatas.Domain.Models.Automatas.Extensions;
 
@@ -36,43 +35,5 @@ public static class FiniteAutomataExtensions
         }
 
         return FiniteAutomataRunResult.FinishedOnIntermediate;
-    }
-
-    private static void StandardizeIds<T>( this IAutomata<T> automata )
-    {
-        var states = automata.AllStates.ToList();
-        states.Sort( ( a, b ) =>
-        {
-            if ( a.IsStart )
-            {
-                return -1;
-            }
-
-            if ( b.IsStart )
-            {
-                return 1;
-            }
-
-            return a.Id.CompareTo( b.Id );
-        } );
-
-        var stateOldIdToNewId = new Dictionary<StateId, StateId>();
-        
-        var stateIdIncrementor = new StateIdIncrementer( new StateId( 0 ) );
-        foreach ( State state in states )
-        {
-            stateOldIdToNewId[state.Id] = stateIdIncrementor.Next();
-        }
-
-        foreach ( State state in automata.AllStates )
-        {
-            state.Id = stateOldIdToNewId[state.Id];
-        }
-        
-        foreach ( Transition<T> transition in automata.Transitions )
-        {
-            transition.From = stateOldIdToNewId[transition.From];
-            transition.To = stateOldIdToNewId[transition.To];
-        }
     }
 }

@@ -20,7 +20,8 @@ public static class ConsolePrinter
             Columns = columns,
             EnableCount = false
         } );
-        foreach ( string[] row in rows )
+        
+        foreach ( object[] row in rows )
         {
             consoleTable.AddRow( row );
         }

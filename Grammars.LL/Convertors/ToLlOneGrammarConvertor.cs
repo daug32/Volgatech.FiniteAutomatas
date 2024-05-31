@@ -38,7 +38,7 @@ public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
         bool hasEndSymbol = grammar.Rules.Values.Any( rule =>
             rule.Definitions.Any( definition =>
                 definition.Symbols.Any( symbol =>
-                    symbol.Type == RuleSymbolType.TerminalSymbol && symbol.Symbol.Type == TerminalSymbolType.End ) ) );
+                    symbol.Type == RuleSymbolType.TerminalSymbol && symbol.Symbol!.Type == TerminalSymbolType.End ) ) );
 
         if ( hasEndSymbol )
         {

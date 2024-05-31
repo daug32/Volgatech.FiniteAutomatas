@@ -24,11 +24,11 @@ public static class ConsolePrinter
                     .Select( definition =>
                     {
                         var serializedSymbols = definition.Symbols
-                            .Where( s => s.Type != RuleSymbolType.TerminalSymbol || s.Symbol.Type != TerminalSymbolType.WhiteSpace )
+                            .Where( s => s.Type != RuleSymbolType.TerminalSymbol || s.Symbol!.Type != TerminalSymbolType.WhiteSpace )
                             .Select( s => 
                                 s.Type == RuleSymbolType.NonTerminalSymbol 
                                     ? $"<{s.RuleName}>"
-                                    : s.Symbol.ToString() );
+                                    : s.Symbol!.ToString() );
                         return String.Join( " ", serializedSymbols );
                     } )
                     .OrderByDescending( x => x.Length )
