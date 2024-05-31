@@ -13,14 +13,14 @@ public static class ConsolePrinter
     public static ParsingTable ToConsole( this ParsingTable table, LlOneGrammar grammar )
     {
         string[] columns = BuildColumns( table ).ToArray();
-        IEnumerable<string[]> rows = BuildRows( table, grammar );
+        var rows = BuildRows( table, grammar );
 
         var consoleTable = new ConsoleTable( new ConsoleTableOptions()
         {
             Columns = columns,
             EnableCount = false
         } );
-        
+
         foreach ( object[] row in rows )
         {
             consoleTable.AddRow( row );
@@ -33,9 +33,9 @@ public static class ConsolePrinter
 
     private static IEnumerable<string[]> BuildRows( ParsingTable table, LlOneGrammar grammar )
     {
-        List<RuleName> rules = OrderRules( table );
-        
-        List<TerminalSymbol> orderTerminalSymbols = OrderTerminalSymbols( table.Keys );
+        var rules = OrderRules( table );
+
+        var orderTerminalSymbols = OrderTerminalSymbols( table.Keys );
 
         foreach ( RuleName rule in rules )
         {
@@ -46,18 +46,18 @@ public static class ConsolePrinter
 
             foreach ( TerminalSymbol terminalSymbol in orderTerminalSymbols )
             {
-                Dictionary<RuleName, RuleDefinition> ruleToDefinition = table[terminalSymbol];
+                var ruleToDefinition = table[terminalSymbol];
                 if ( !ruleToDefinition.ContainsKey( rule ) )
                 {
                     values.Add( String.Empty );
                     continue;
                 }
-                
+
                 values.Add( String.Join( " ", ruleToDefinition[rule].Symbols ) );
             }
-            
+
             values.Add( String.Join( ",", grammar.GetFirstSet( rule ).GuidingSymbols ) );
-            
+
             values.Add( String.Join( ",", grammar.GetFollowSet( rule ).GuidingSymbols ) );
 
             yield return values.ToArray();
@@ -67,7 +67,7 @@ public static class ConsolePrinter
     private static IEnumerable<string> BuildColumns( ParsingTable table )
     {
         yield return "S/T";
-        
+
         foreach ( TerminalSymbol x in OrderTerminalSymbols( table.Keys ) )
         {
             yield return x.ToString();
@@ -105,12 +105,12 @@ public static class ConsolePrinter
                 {
                     return 3;
                 }
-                
+
                 if ( x.Type == TerminalSymbolType.EmptySymbol )
                 {
                     return 2;
                 }
-                    
+
                 if ( x.Type == TerminalSymbolType.End )
                 {
                     return 1;
