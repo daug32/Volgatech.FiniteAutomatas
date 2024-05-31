@@ -18,18 +18,6 @@ public class LlOneGrammar : CommonGrammar
         ValidateAmbiguousRuleDefinitionsOrThrow( this );
     }
 
-    public RunResult Run( string sentence )
-    {
-        try
-        {
-            return new LlOneGrammarRunner( this ).Run( sentence );
-        }
-        catch ( Exception )
-        {
-            return RunResult.Fail( sentence, RunError.NotLl() );
-        }
-    }
-
     private void ValidateAmbiguousRuleDefinitionsOrThrow( CommonGrammar grammar )
     {
         foreach ( GrammarRule rule in grammar.Rules.Values )

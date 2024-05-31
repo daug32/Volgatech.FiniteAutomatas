@@ -6,6 +6,7 @@ using Grammars.Common.Convertors.Convertors;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using Grammars.LL.Convertors;
 using Grammars.LL.Models;
+using Grammars.LL.Runners;
 using Grammars.LL.Runners.Results;
 using LinqExtensions;
 
@@ -142,8 +143,10 @@ public class LlOneRunnerTests
             .Convert( new RemoveWhitespacesConvertor() )
             .Convert( new ToLlOneGrammarConvertor() );
 
+        var runner = new LlOneGrammarRunner( grammar );
+
         // Act
-        RunResult runResult = grammar.Run( testData.Input.Value );
+        RunResult runResult = runner.Run( testData.Input.Value );
 
         // Assert
         string serializedLlGrammar = String.Join( 

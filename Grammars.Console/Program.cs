@@ -22,11 +22,12 @@ public class Program
     public static void Main()
     {
         LlOneGrammar grammar = BuildGrammar();
+        var runner = new LlOneGrammarRunner( grammar );
         
         ParsingTable table = new ParsingTableCreator().Create( grammar );
         table.ToConsole( grammar );
         
-        AskForSentences( grammar );
+        AskForSentences( runner );
     }
 
     private static LlOneGrammar BuildGrammar()
@@ -41,7 +42,7 @@ public class Program
         return grammar;
     }
 
-    private static void AskForSentences( LlOneGrammar grammar )
+    private static void AskForSentences( LlOneGrammarRunner runner )
     {
         while ( true )
         {
@@ -54,7 +55,7 @@ public class Program
                 return;
             }
 
-            RunResult result = grammar.Run( command );
+            RunResult result = runner.Run( command );
             if ( result.RunResultType == RunResultType.Error )
             {
                 System.Console.WriteLine( "Sentence is invalid." );

@@ -16,6 +16,18 @@ public class LlOneGrammarRunner
 
     public RunResult Run( string sentence )
     {
+        try
+        {
+            return RunInternal( sentence );
+        }
+        catch ( Exception )
+        {
+            return RunResult.Fail( sentence, RunError.NotLl() );
+        }
+    }
+
+    private RunResult RunInternal( string sentence )
+    {
         var wordsQueue = ParseSentence( sentence );
         
         var stack = new Stack<RuleSymbol>();
