@@ -51,12 +51,12 @@ public class RuleSymbol
             return false;
         }
 
-        if ( Symbol != null )
+        if ( Symbol is not null )
         {
             return Symbol.Equals( other.Symbol );
         }
 
-        if ( RuleName != null )
+        if ( RuleName is not null )
         {
             return RuleName.Equals( other.RuleName );
         }

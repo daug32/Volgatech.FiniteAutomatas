@@ -19,22 +19,19 @@ public class TerminalSymbol
         Type = type;
     }
     
-    public override bool Equals( object? obj ) =>
-        obj is TerminalSymbol other &&
-        other.Type == Type &&
-        other.Value == Value;
+    public override bool Equals( object? obj )
+    {
+        if ( obj is not TerminalSymbol other )
+        {
+            return false;
+        }
+        
+        return other.Type == Type && other.Value == Value;
+    }
 
     public override int GetHashCode() => HashCode.Combine( ( int )Type, Value );
 
-    public static bool operator ==( TerminalSymbol? a, TerminalSymbol? b )
-    {
-        if ( a is null )
-        {
-            return b is null;
-        }
-        
-        return a.Equals( b );
-    }
+    public static bool operator ==( TerminalSymbol? a, TerminalSymbol? b ) => a?.Equals( b ) ?? b is null;
 
     public static bool operator !=( TerminalSymbol? a, TerminalSymbol? b ) => !( a == b );
 

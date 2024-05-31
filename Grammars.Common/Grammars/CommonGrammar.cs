@@ -21,12 +21,7 @@ public class CommonGrammar
         Validate();
     }
 
-    public CommonGrammar Copy()
-    {
-        return new(
-            StartRule,
-            Rules.Values.Select( grammarRule => grammarRule.Copy() ) );
-    }
+    public CommonGrammar Copy() => new CommonGrammar( StartRule, Rules.Values.Select( grammarRule => grammarRule.Copy() ) );
 
     public void Validate()
     {

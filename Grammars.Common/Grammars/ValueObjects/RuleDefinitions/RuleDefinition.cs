@@ -21,20 +21,15 @@ public class RuleDefinition
             : new[] { RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ) };
     }
 
-    public RuleSymbol FirstSymbol() => Symbols.First();
-    public RuleSymbolType FirstSymbolType() => FirstSymbol().Type;
-
     public RuleDefinition Copy() => new( Symbols );
 
-    public override bool Equals( object? obj ) => obj is RuleDefinition other && Equals( other );
-
-    public override int GetHashCode()
+    public override bool Equals( object? obj )
     {
-        return Symbols.GetHashCode();
-    }
-
-    public bool Equals( RuleDefinition other )
-    {
+        if ( obj is not RuleDefinition other )
+        {
+            return false;
+        }
+        
         if ( other.Symbols.Count != Symbols.Count )
         {
             return false;
@@ -53,6 +48,8 @@ public class RuleDefinition
 
         return true;
     }
+
+    public override int GetHashCode() => Symbols.GetHashCode();
 
     public static bool operator == ( RuleDefinition a, RuleDefinition b ) => a.Equals( b );
 
