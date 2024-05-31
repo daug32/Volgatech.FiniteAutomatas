@@ -29,19 +29,18 @@ internal class LeftFactorizationHandler
         HashSet<RuleName> ambiguousRules = GetAmbiguousRules();
         while ( ambiguousRules.Any() )
         {
-            var rulesToProcess = ambiguousRules.ToList();
+            List<RuleName> rulesToProcess = ambiguousRules.ToList();
             
-            for ( var index = 0; index < rulesToProcess.Count; index++ )
+            foreach ( RuleName ruleName in rulesToProcess )
             {
-                GrammarRule rule = _grammar.Rules[rulesToProcess[index]];
+                GrammarRule rule = _grammar.Rules[ruleName];
 
-                List<UnitableDefinitionsGroups> unitableGroups = _unitableGroupsSearcher.Search( rule.Name, _grammar );
-                _grammarRulesInliner.InlineFirstSymbolsFromNonTerminals( unitableGroups, _grammar );
+                List<UnitableDefinitionsGroups> definitionsGroupsToUnite = _unitableGroupsSearcher.Search( rule.Name, _grammar );
+                _grammarRulesInliner.InlineFirstSymbolsFromNonTerminals( definitionsGroupsToUnite, _grammar );
 
-                foreach ( UnitableDefinitionsGroups unitableGroup in unitableGroups )
+                foreach ( UnitableDefinitionsGroups definitionsGroup in definitionsGroupsToUnite )
                 {
-                    RuleName newRuleName = UniteDefinitions( unitableGroup );
-                    rulesToProcess.Add( newRuleName );
+                    UniteDefinitions( definitionsGroup );
                 }
             }
 
@@ -51,7 +50,7 @@ internal class LeftFactorizationHandler
         return _grammar;
     }
 
-    private RuleName UniteDefinitions( UnitableDefinitionsGroups unitableGroup )
+    private void UniteDefinitions( UnitableDefinitionsGroups unitableGroup )
     {
         var newRule = new GrammarRule( _ruleNameGenerator.Next(), new List<RuleDefinition>() );
 
@@ -81,8 +80,6 @@ internal class LeftFactorizationHandler
         }
 
         _grammar.Rules.Add( newRule.Name, new GrammarRule( newRule.Name, newRule.Definitions ) );
-
-        return newRule.Name;
     }
 
     private HashSet<RuleName> GetAmbiguousRules()
