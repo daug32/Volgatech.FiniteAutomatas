@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Net;
 using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.Extensions;
 using Grammars.Common.Grammars.ValueObjects;
@@ -12,76 +13,79 @@ namespace Grammars.Common.Convertors.Implementation.Factorization;
 internal class LeftFactorizationHandler
 {
     private int _number = 0;
+
     public CommonGrammar Factorize( CommonGrammar grammar )
     {
-        Queue<RuleName> processedRules = new Queue<RuleName>();
-        Queue<RuleName> rulesToProcess = new Queue<RuleName>().EnqueueRange( grammar.Rules.Keys );
-
-        while ( rulesToProcess.Any() )
+        var hasChanges = true;
+        while ( hasChanges )
         {
-            RuleName ruleToProcessName = rulesToProcess.Dequeue();
-            if ( processedRules.Contains( ruleToProcessName ) )
+            hasChanges = false;
+            List<RuleName> grammarRules = grammar.Rules.Keys.ToList();
+
+            for ( var index = 0; index < grammarRules.Count; index++ )
             {
-                continue;
-            }
+                GrammarRule rule = grammar.Rules[grammarRules[index]];
 
-            if ( !grammar.Rules.ContainsKey( ruleToProcessName ) )
-            {
-                continue;
-            }
+                var unitableGroups = UnitableDefinitionsGroups.Create( rule.Name, grammar );
 
-            GrammarRule rule = grammar.Rules[ruleToProcessName];
-            List<UnitableDefinitionsGroups> unitableGroups = UnitableDefinitionsGroups.Create( rule.Name, grammar);
-
-            if ( InlineFirstSymbolsFromNonTerminals( unitableGroups, grammar ) )
-            {
-                rulesToProcess.Enqueue(ruleToProcessName);
-                continue;
-            }
-
-            processedRules.Enqueue( ruleToProcessName );
-
-            var currentRuleDefinitions = rule.Definitions.ToList();
-            foreach ( UnitableDefinitionsGroups unitableGroup in unitableGroups )
-            {
-                var newRule = new GrammarRule( new RuleName( $"{_number++}" ), new List<RuleDefinition>() );
-
-                RuleSymbol heading = unitableGroup.Headings.First();
-
-                currentRuleDefinitions = currentRuleDefinitions
-                    .Where( definition => !NeedToBeRemoved( definition, unitableGroup.Definitions ) )
-                    .ToList()
-                    .With( new RuleDefinition( new[]
-                    {
-                        heading,
-                        RuleSymbol.NonTerminalSymbol( newRule.Name ),
-                    } ) );
-
-                foreach ( RuleDefinition oldDefinitionToMigrate in unitableGroup.Definitions )
+                bool hadInlining = InlineFirstSymbolsFromNonTerminals( unitableGroups, grammar );
+                hasChanges |= hadInlining;
+                hasChanges |= OptimizeRule( rule.Name, grammar );
+                if ( !grammar.Rules.ContainsKey( rule.Name ) )
                 {
-                    RuleSymbol firstSymbol = oldDefinitionToMigrate.Symbols.First();
-                    if ( firstSymbol.Type == RuleSymbolType.NonTerminalSymbol )
-                    {
-                        newRule.Definitions.Add( oldDefinitionToMigrate.Copy() );
-                        continue;
-                    }
-
-                    var migratedDefinition = oldDefinitionToMigrate.Symbols.ToList().WithoutFirst();
-                    if ( firstSymbol.Type == RuleSymbolType.TerminalSymbol && !migratedDefinition.Any() )
-                    {
-                        migratedDefinition.Add(
-                            RuleSymbol.TerminalSymbol(
-                                TerminalSymbol.EmptySymbol() ) );
-                    }
-
-                    newRule.Definitions.Add( new RuleDefinition( migratedDefinition ) );
+                    grammarRules.Remove( rule.Name );
+                    index--;
+                    continue;
                 }
 
-                grammar.Rules.Add( newRule.Name, new GrammarRule( newRule.Name, newRule.Definitions ) );
-                rulesToProcess.Enqueue( newRule.Name );
-            }
+                if ( hadInlining )
+                {
+                    continue;
+                }
 
-            grammar.Rules[rule.Name] = new GrammarRule( rule.Name, currentRuleDefinitions );
+                var currentRuleDefinitions = rule.Definitions.ToList();
+                foreach ( UnitableDefinitionsGroups unitableGroup in unitableGroups )
+                {
+                    var newRule = new GrammarRule( new RuleName( $"{_number++}" ), new List<RuleDefinition>() );
+
+                    RuleSymbol heading = unitableGroup.Headings.First();
+
+                    currentRuleDefinitions = currentRuleDefinitions
+                        .Where( definition => !NeedToBeRemoved( definition, unitableGroup.Definitions ) )
+                        .ToList()
+                        .With( new RuleDefinition( new[]
+                        {
+                            heading,
+                            RuleSymbol.NonTerminalSymbol( newRule.Name )
+                        } ) );
+
+                    foreach ( RuleDefinition oldDefinitionToMigrate in unitableGroup.Definitions )
+                    {
+                        RuleSymbol firstSymbol = oldDefinitionToMigrate.Symbols.First();
+                        if ( firstSymbol.Type == RuleSymbolType.NonTerminalSymbol )
+                        {
+                            newRule.Definitions.Add( oldDefinitionToMigrate.Copy() );
+                            continue;
+                        }
+
+                        var migratedDefinition = oldDefinitionToMigrate.Symbols.ToList().WithoutFirst();
+                        if ( firstSymbol.Type == RuleSymbolType.TerminalSymbol && !migratedDefinition.Any() )
+                        {
+                            migratedDefinition.Add(
+                                RuleSymbol.TerminalSymbol(
+                                    TerminalSymbol.EmptySymbol() ) );
+                        }
+
+                        newRule.Definitions.Add( new RuleDefinition( migratedDefinition ) );
+                    }
+
+                    grammar.Rules.Add( newRule.Name, new GrammarRule( newRule.Name, newRule.Definitions ) );
+                    grammarRules.Add( newRule.Name );
+                    hasChanges = true;
+                }
+
+                grammar.Rules[rule.Name] = new GrammarRule( rule.Name, currentRuleDefinitions );
+            }
         }
 
         grammar.RemoveAllDuplicateDefinitions();
@@ -94,19 +98,19 @@ internal class LeftFactorizationHandler
         List<UnitableDefinitionsGroups> unitableGroups,
         CommonGrammar grammar )
     {
-        bool hasChanges = false;
+        var hasChanges = false;
         foreach ( UnitableDefinitionsGroups unitableGroup in unitableGroups )
         {
             if ( unitableGroup.Definitions.Count < 2 )
             {
                 continue;
             }
-            
-            LinkedList<RuleName> rulesToInlineQueue = BuildRuleQueue( unitableGroup, grammar );
+
+            var rulesToInlineQueue = BuildRuleQueue( unitableGroup, grammar );
 
             while ( rulesToInlineQueue.Any() )
             {
-                hasChanges |= InlineFirstSymbolsPresentedInHashSet( 
+                hasChanges |= InlineFirstSymbolsPresentedInHashSet(
                     rulesToInlineQueue.DequeueFirst(),
                     unitableGroup.Headings,
                     grammar );
@@ -118,18 +122,19 @@ internal class LeftFactorizationHandler
 
     private bool InlineFirstSymbolsPresentedInHashSet(
         RuleName ruleToInlineName,
-        HashSet<RuleSymbol> symbolsToInline, 
+        HashSet<RuleSymbol> symbolsToInline,
         CommonGrammar grammar )
     {
-        bool hasChanges = false;
-        
-        GrammarRule ruleToInline = grammar.Rules[ruleToInlineName];
-        
-        List<(RuleName DefinitionOwner, int DefinitionIndex, int RuleToReplaceIndex)> ruleUsers = FindRuleUsers( ruleToInlineName, grammar );
+        var hasChanges = false;
 
-        List<RuleDefinition> definitionsWithCommonHeadings = ruleToInline.Definitions
+        GrammarRule ruleToInline = grammar.Rules[ruleToInlineName];
+
+        var ruleUsers = FindRuleUsers( ruleToInlineName, grammar );
+
+        var definitionsWithCommonHeadings = ruleToInline.Definitions
             .Where( definition => grammar.GetFirstSet( ruleToInline.Name, definition ).HasIntersections( symbolsToInline ) )
             .ToList();
+
         bool hasDefinitionWithoutCommonHeading = definitionsWithCommonHeadings.Count != ruleToInline.Definitions.Count;
 
         for ( var index = 0; index < ruleToInline.Definitions.Count; index++ )
@@ -139,9 +144,9 @@ internal class LeftFactorizationHandler
             {
                 continue;
             }
-            
+
             hasChanges = true;
-                    
+
             RuleSymbol symbolToExtract = ruleDefinitionWhereToExtract.FirstSymbol();
             if ( symbolToExtract.Type == RuleSymbolType.NonTerminalSymbol )
             {
@@ -153,12 +158,12 @@ internal class LeftFactorizationHandler
             {
                 GrammarRule ruleWhereToInline = grammar.Rules[ruleUser.DefinitionOwner];
                 RuleDefinition definitionWhereToInline = ruleWhereToInline.Definitions[ruleUser.DefinitionIndex];
-                
+
                 var definitionWithReplaced = definitionWhereToInline.Symbols.ToList();
                 definitionWithReplaced.Insert( ruleUser.RuleToReplaceIndex, symbolToExtract );
-                ruleWhereToInline.Definitions.Add( new RuleDefinition( definitionWithReplaced ) );                
+                ruleWhereToInline.Definitions.Add( new RuleDefinition( definitionWithReplaced ) );
             }
-                    
+
             ruleToInline.Definitions[index] = RemoveStartSymbol( ruleDefinitionWhereToExtract );
         }
 
@@ -167,7 +172,7 @@ internal class LeftFactorizationHandler
             var definitionsToRemove = ruleUsers
                 .Select( ruleUser => grammar.Rules[ruleUser.DefinitionOwner].Definitions[ruleUser.DefinitionIndex] )
                 .ToList();
-            
+
             foreach ( (RuleName DefinitionOwner, int DefinitionIndex, int RuleToReplaceIndex) ruleUser in ruleUsers )
             {
                 GrammarRule ruleWhereToInline = grammar.Rules[ruleUser.DefinitionOwner];
@@ -177,26 +182,39 @@ internal class LeftFactorizationHandler
             }
         }
 
-        OptimizeRule( ruleToInline.Name, grammar );
-
         return hasChanges;
     }
 
-    private void OptimizeRule( RuleName name, CommonGrammar grammar )
+    private bool OptimizeRule( RuleName name, CommonGrammar grammar )
     {
+        var hasNonTerminals = false;
+        var hasNonEpsilonProductions = false;
+
         foreach ( RuleDefinition definition in grammar.Rules[name].Definitions )
         {
             foreach ( RuleSymbol symbol in definition.Symbols )
             {
                 if ( symbol.Type != RuleSymbolType.TerminalSymbol )
                 {
-                    return;
+                    hasNonTerminals = true;
+                    break;
                 }
+
+                if ( symbol.Symbol!.Type == TerminalSymbolType.EmptySymbol )
+                {
+                    continue;
+                }
+
+                hasNonEpsilonProductions = true;
             }
         }
 
-        bool hasNonEpsilonProductions = grammar.Rules[name].Definitions.Any( def => def.FirstSymbol().Symbol!.Type != TerminalSymbolType.EmptySymbol ); 
+        if ( hasNonTerminals || hasNonEpsilonProductions )
+        {
+            return false;
+        }
 
+        bool hasChanges = false;
         foreach ( GrammarRule rule in grammar.Rules.Values )
         {
             if ( rule.Name == name )
@@ -217,25 +235,28 @@ internal class LeftFactorizationHandler
                         continue;
                     }
 
-                    List<RuleSymbol> newDefinition = definition.Symbols.ToListExcept( symbolIndex );
-                    if ( !newDefinition.Any() )
+                    foreach ( RuleDefinition? targetRuleDefinition in grammar.Rules[name].Definitions )
                     {
-                        newDefinition.Add( RuleSymbol.TerminalSymbol( TerminalSymbol.EmptySymbol() ) );
+                        var newDefinition = definition.Symbols.ToListExcept( symbolIndex );
+
+                        if ( !targetRuleDefinition.Has( TerminalSymbolType.EmptySymbol ) )
+                        {
+                            newDefinition.InsertRange( symbolIndex, targetRuleDefinition.Symbols );
+                        }
+
+                        rule.Definitions.Add( new RuleDefinition( newDefinition ) );
+                        hasChanges = true;
                     }
 
-                    rule.Definitions.Add( new RuleDefinition( newDefinition ) );
                     processedDefinitions.Add( definition );
                 }
             }
 
-            if ( !hasNonEpsilonProductions )
-            {
-                rule.Definitions = rule.Definitions.Where( def => !processedDefinitions.Contains( def ) ).ToList();
-
-                grammar.Rules.Remove( name );
-            }
+            rule.Definitions = rule.Definitions.Where( def => !processedDefinitions.Contains( def ) ).ToList();
+            grammar.Rules.Remove( name );
         }
         
+        return hasChanges;
     }
 
     private static RuleDefinition RemoveStartSymbol( RuleDefinition definitionWhereToRemove )
@@ -263,8 +284,7 @@ internal class LeftFactorizationHandler
                 for ( var symbolIndex = 0; symbolIndex < definition.Symbols.Count; symbolIndex++ )
                 {
                     RuleSymbol symbol = definition.Symbols[symbolIndex];
-                    if ( symbol.Type == RuleSymbolType.NonTerminalSymbol && 
-                         symbol.RuleName! == ruleToSearchName )
+                    if ( symbol.Type == RuleSymbolType.NonTerminalSymbol && symbol.RuleName! == ruleToSearchName )
                     {
                         result.Add( ( rule.Name, definitionIndex, symbolIndex ) );
                     }

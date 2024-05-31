@@ -14,4 +14,6 @@ public class GrammarRule
     }
     
     public GrammarRule Copy() => new( Name, Definitions.Select( x => x.Copy() ) );
+
+    public override string ToString() => $"{Name}";
 }
