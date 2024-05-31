@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 
-namespace Grammars.Common.Grammars.ValueObjects;
+namespace Grammars.Common.Grammars.ValueObjects.RuleNames;
 
 public class RuleName
 {
@@ -8,8 +8,6 @@ public class RuleName
     public const char RuleNameCloseSymbol = '>';
     
     public readonly string Value;
-
-    public static RuleName Random() => new( DateTime.Now.Ticks.ToString() );
 
     public RuleName( string value )
     {

@@ -4,6 +4,8 @@ using Grammar.Tests.Extensions.Containers;
 using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.Extensions;
 using Grammars.Common.Grammars.ValueObjects;
+using Grammars.Common.Grammars.ValueObjects.GrammarRules;
+using Grammars.Common.Grammars.ValueObjects.RuleNames;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using LinqExtensions;
 

@@ -1,5 +1,6 @@
 ﻿using Grammars.Common.Grammars.ValueObjects;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
+using RuleName = Grammars.Common.Grammars.ValueObjects.RuleNames.RuleName;
 
 namespace Grammars.Common.Grammars.Extensions;
 

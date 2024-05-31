@@ -3,6 +3,7 @@ using Grammars.Common.Grammars.Extensions;
 using Grammars.Common.Grammars.ValueObjects;
 using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
+using Grammars.Common.Grammars.ValueObjects.RuleNames;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using LinqExtensions;
 
@@ -10,52 +11,60 @@ namespace Grammars.Common.Convertors.Implementation.Factorization;
 
 internal class LeftFactorizationHandler
 {
-    private int _number = 0;
     private readonly UnitableDefinitionGroupsSearcher _unitableGroupsSearcher = new();
     private readonly GrammarRulesInliner _grammarRulesInliner = new();
+    private readonly RuleNameGenerator _ruleNameGenerator;
+    private readonly CommonGrammar _grammar;
 
-    public CommonGrammar Factorize( CommonGrammar grammar )
+    public LeftFactorizationHandler( CommonGrammar grammar )
     {
-        _grammarRulesInliner.InlineRulesWithOnlyTerminals( grammar );
+        _grammar = grammar;
+        _ruleNameGenerator = new RuleNameGenerator( grammar );
+    }
+
+    public CommonGrammar Factorize()
+    {
+        _grammarRulesInliner.InlineRulesWithOnlyTerminals( _grammar );
 
         var hasChanges = true;
         while ( hasChanges )
         {
             hasChanges = false;
-            
-            List<RuleName> grammarRules = grammar.Rules.Keys.ToList();
+
+            var grammarRules = _grammar.Rules.Keys.ToList();
             for ( var index = 0; index < grammarRules.Count; index++ )
             {
-                GrammarRule rule = grammar.Rules[grammarRules[index]];
+                GrammarRule rule = _grammar.Rules[grammarRules[index]];
 
-                var unitableGroups = _unitableGroupsSearcher.Search( rule.Name, grammar );
+                var unitableGroups = _unitableGroupsSearcher.Search( rule.Name, _grammar );
 
-                hasChanges |= _grammarRulesInliner.InlineFirstSymbolsFromNonTerminals( unitableGroups, grammar );
+                hasChanges |= _grammarRulesInliner.InlineFirstSymbolsFromNonTerminals( unitableGroups, _grammar );
 
                 foreach ( UnitableDefinitionsGroups unitableGroup in unitableGroups )
                 {
                     hasChanges = true;
 
-                    RuleName newRuleName = UniteDefinitions( grammar, unitableGroup );
+                    RuleName newRuleName = UniteDefinitions( _grammar, unitableGroup );
                     grammarRules.Add( newRuleName );
                 }
             }
         }
 
-        grammar.RemoveAllDuplicateDefinitions();
+        _grammar.RemoveAllDuplicateDefinitions();
 
-        return grammar;
+        return _grammar;
     }
 
     private RuleName UniteDefinitions(
         CommonGrammar grammar,
         UnitableDefinitionsGroups unitableGroup )
     {
-        var newRule = new GrammarRule( new RuleName( $"{_number++}" ), new List<RuleDefinition>() );
+        var newRule = new GrammarRule( _ruleNameGenerator.Next(), new List<RuleDefinition>() );
 
         RuleSymbol heading = unitableGroup.Headings.First();
 
-        grammar.Rules[unitableGroup.RuleName].Definitions = grammar.Rules[unitableGroup.RuleName].Definitions
+        grammar.Rules[unitableGroup.RuleName].Definitions = grammar.Rules[unitableGroup.RuleName]
+            .Definitions
             .Where( definition => !unitableGroup.Definitions.Contains( definition ) )
             .ToList()
             .With( new RuleDefinition( new[]
@@ -81,5 +90,4 @@ internal class LeftFactorizationHandler
 
         return newRule.Name;
     }
-
 }

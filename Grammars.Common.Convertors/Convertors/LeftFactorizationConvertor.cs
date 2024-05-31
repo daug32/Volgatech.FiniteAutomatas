@@ -7,6 +7,6 @@ public class LeftFactorizationConvertor : IGrammarConvertor
 {
     public CommonGrammar Convert( CommonGrammar grammar )
     {
-        return new LeftFactorizationHandler().Factorize( grammar );
+        return new LeftFactorizationHandler( grammar ).Factorize();
     }
 }

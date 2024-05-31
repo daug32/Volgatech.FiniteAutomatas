@@ -1,4 +1,6 @@
 ﻿using System.Collections.Immutable;
+using Grammars.Common.Grammars.ValueObjects.GrammarRules;
+using Grammars.Common.Grammars.ValueObjects.RuleNames;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 
 namespace Grammars.Common.Grammars.ValueObjects;

@@ -3,7 +3,7 @@ using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 
-namespace Grammars.Common.Convertors.Convertors;
+namespace Grammars.Common.Convertors.Implementation;
 
 internal class WhitespacesRemover
 {

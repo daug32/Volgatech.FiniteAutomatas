@@ -2,24 +2,34 @@
 using Grammars.Common.Grammars.ValueObjects;
 using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
+using Grammars.Common.Grammars.ValueObjects.RuleNames;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using LinqExtensions;
 
-namespace Grammars.Common.Convertors.Implementation.Recursions;
+namespace Grammars.Common.Convertors.Implementation;
 
 internal class LeftRecursionRemover
 {
     // See https://www.youtube.com/watch?v=SV3RgUsmPcU&lc=UgwHTljtg7Pwy0xqAJF4AaABAg
     // for better algorithm description
-    
-    public CommonGrammar RemoveLeftRecursion( CommonGrammar grammar )
+
+    private readonly CommonGrammar _grammar;
+    private readonly RuleNameGenerator _ruleNameGenerator;
+
+    public LeftRecursionRemover( CommonGrammar grammar )
     {
-        List<RuleName> allRules = grammar.Rules.Keys.ToList();
+        _grammar = grammar;
+        _ruleNameGenerator = new RuleNameGenerator( grammar );
+    }
+
+    public CommonGrammar RemoveLeftRecursion()
+    {
+        List<RuleName> allRules = _grammar.Rules.Keys.ToList();
 
         int mainIterator = 0;
         while ( true )
         {
-            ReplaceLeftRecursionByNewRule( allRules[mainIterator], grammar );
+            ReplaceLeftRecursionByNewRule( allRules[mainIterator], _grammar );
             
             if ( mainIterator == allRules.Count - 1 )
             {
@@ -30,14 +40,14 @@ internal class LeftRecursionRemover
 
             for ( int secondIterator = 0; secondIterator < mainIterator; secondIterator++ )
             {
-                GrammarRule mainRule = grammar.Rules[allRules[mainIterator]];
-                GrammarRule secondRule = grammar.Rules[allRules[secondIterator]];
+                GrammarRule mainRule = _grammar.Rules[allRules[mainIterator]];
+                GrammarRule secondRule = _grammar.Rules[allRules[secondIterator]];
 
-                grammar.Rules[mainRule.Name] = new GrammarRule( mainRule.Name, ReplaceHeadingRules( mainRule, secondRule ) );
+                _grammar.Rules[mainRule.Name] = new GrammarRule( mainRule.Name, ReplaceHeadingRules( mainRule, secondRule ) );
             }
         }
 
-        return grammar;
+        return _grammar;
     }
 
     private static List<RuleDefinition> ReplaceHeadingRules( GrammarRule mainRule, GrammarRule secondRule )
@@ -87,7 +97,7 @@ internal class LeftRecursionRemover
             targetRuleName,
             new List<RuleDefinition>() );
         var newRule = new GrammarRule( 
-            RuleName.Random(), 
+            _ruleNameGenerator.Next(), 
             new List<RuleDefinition>() );
 
         foreach ( RuleDefinition definition in groupedDefinitions.WithoutLeftRecursion )

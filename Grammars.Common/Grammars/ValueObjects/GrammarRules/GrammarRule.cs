@@ -1,4 +1,5 @@
 ﻿using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
+using Grammars.Common.Grammars.ValueObjects.RuleNames;
 
 namespace Grammars.Common.Grammars.ValueObjects.GrammarRules;
 
