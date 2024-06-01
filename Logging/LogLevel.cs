@@ -2,5 +2,8 @@ namespace Logging;
 
 public enum LogLevel
 {
-    Warning
+    Debug,
+    Warning,
+    Error,
+    None
 }

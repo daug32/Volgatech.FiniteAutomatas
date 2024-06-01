@@ -2,15 +2,18 @@
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using Grammars.LL.Models;
 using Grammars.LL.Runners.Results;
+using Logging;
 
 namespace Grammars.LL.Runners;
 
 public class LlOneGrammarRunner
 {
     private readonly ParsingTable _table;
+    private readonly ILogger? _logger;
 
-    public LlOneGrammarRunner( LlOneGrammar grammar )
+    public LlOneGrammarRunner( LlOneGrammar grammar, ILogger? logger = null )
     {
+        _logger = logger;
         _table = new ParsingTableCreator().Create( grammar );
     }
 
@@ -20,8 +23,9 @@ public class LlOneGrammarRunner
         {
             return RunInternal( sentence );
         }
-        catch ( Exception )
+        catch ( Exception ex )
         {
+            _logger?.Write( LogLevel.Error, ex.ToString() );
             return RunResult.Fail( sentence, RunError.NotLl() );
         }
     }
@@ -44,6 +48,7 @@ public class LlOneGrammarRunner
             }
 
             RuleSymbol currentStackItem = stack.Pop();
+            _logger?.Write( LogLevel.Debug, $"Popping from stack {currentStackItem}" );
             
             if ( currentStackItem.Type == RuleSymbolType.NonTerminalSymbol )
             {
@@ -57,6 +62,7 @@ public class LlOneGrammarRunner
                              .Reverse() )
                 {
                     stack.Push( ruleSymbol );
+                    _logger?.Write( LogLevel.Debug, $"Pushing to stack {ruleSymbol}" );
                 }
 
                 continue;
@@ -64,6 +70,7 @@ public class LlOneGrammarRunner
 
             if ( currentStackItem.Symbol!.Type == TerminalSymbolType.EmptySymbol )
             {
+                _logger?.Write( LogLevel.Debug, "Found epsilon" );
                 continue;
             }
 
@@ -73,6 +80,7 @@ public class LlOneGrammarRunner
             }
             
             wordsQueue.RemoveFirst();
+            _logger?.Write( LogLevel.Debug, $"Removing from words queue: {word}" );
             i += word.ToString().Length;
         }
 

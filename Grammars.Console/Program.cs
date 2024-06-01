@@ -15,14 +15,17 @@ namespace Grammars.Console;
 
 public class Program
 {
-    private static readonly ILogger _logger = new ConsoleLogger();
+    private static readonly ILogger _logger = new ConsoleLogger()
+    {
+        MinimalLogLevel = LogLevel.None
+    };
 
     private static readonly string _exitCommand = "exit";
 
     public static void Main()
     {
         LlOneGrammar grammar = BuildGrammar();
-        var runner = new LlOneGrammarRunner( grammar );
+        var runner = new LlOneGrammarRunner( grammar, _logger );
         
         ParsingTable table = new ParsingTableCreator().Create( grammar );
         table.ToConsole( grammar );
