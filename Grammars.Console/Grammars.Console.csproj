@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PackageId>Grammars.Console</PackageId>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Grammar.Parsers.Implementation\Grammar.Parsers.Implementation.csproj" />
+      <ProjectReference Include="..\Grammar.Parsers\Grammar.Parsers.csproj" />
+      <ProjectReference Include="..\FluentAssertions\FluentAssertions.csproj" />
+      <ProjectReference Include="..\Grammars.Common.Convertors\Grammars.Common.Convertors.csproj" />
+      <ProjectReference Include="..\Grammars.LL.Visualizations\Grammars.LL.Visualizations.csproj" />
+      <ProjectReference Include="..\Grammars.LL\Grammars.LL.csproj" />
+      <ProjectReference Include="..\Grammars.Visualization\Grammars.Visualization.csproj" />
+      <ProjectReference Include="..\LinqExtensions\LinqExtensions.csproj" />
+      <ProjectReference Include="..\Logging.Implementation\Logging.Implementation.csproj" />
+    </ItemGroup>
+
+</Project>

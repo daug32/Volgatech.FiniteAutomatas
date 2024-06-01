@@ -24,7 +24,7 @@ internal class FiniteAutomataConsoleVisualizer<T>
         var table = new ConsoleTable( columns );
         foreach ( var row in rows )
         {
-            table.AddRow( row.ToArray() );
+            table.AddRow( row.Cast<object>().ToArray() );
         }
 
         table.Write();

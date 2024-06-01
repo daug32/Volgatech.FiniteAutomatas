@@ -71,11 +71,11 @@ internal static class MinimizationGroupsConvertor
 
         var alphabet = new HashSet<Argument<T>>();
         var transitions = new HashSet<Transition<T>>();
-        foreach ( Transition<T> transition in oldTransitions )
+        foreach ( Transition<T> oldTransition in oldTransitions )
         {
-            State from = states[oldStateNameToNewStateName[transition.From]];
-            State to = states[oldStateNameToNewStateName[transition.To]];
-            Argument<T> argument = transition.Argument;
+            State from = states[oldStateNameToNewStateName[oldTransition.From]];
+            State to = states[oldStateNameToNewStateName[oldTransition.To]];
+            Argument<T> argument = oldTransition.Argument;
 
             bool hasThisTransition = transitions.Any( transition =>
                 transition.From == from.Id && 

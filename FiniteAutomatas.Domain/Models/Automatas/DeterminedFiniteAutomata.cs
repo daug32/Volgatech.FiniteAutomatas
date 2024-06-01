@@ -12,7 +12,7 @@ public class DeterminedFiniteAutomata<T> : BaseAutomata<T>
     {
         var statesTransitions = AllStates.ToDictionary(
             x => x.Id,
-            x => Alphabet.ToHashSet() );
+            _ => Alphabet.ToHashSet() );
         
         foreach ( var transition in Transitions )
         {
