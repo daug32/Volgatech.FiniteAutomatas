@@ -1,7 +1,7 @@
-﻿using Grammars.Common.Convertors.Implementation.Factorization;
+﻿using Grammars.Common.Convertors.Convertors.Factorization.Implementation;
 using Grammars.Common.Grammars;
 
-namespace Grammars.Common.Convertors.Convertors;
+namespace Grammars.Common.Convertors.Convertors.Factorization;
 
 public class LeftFactorizationConvertor : IGrammarConvertor
 {

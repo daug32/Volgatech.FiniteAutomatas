@@ -1,7 +1,7 @@
 ﻿using Grammar.Parsers;
 using Grammar.Parsers.Implementation;
 using Grammars.Common.Convertors;
-using Grammars.Common.Convertors.Convertors;
+using Grammars.Common.Convertors.Convertors.Whitespaces;
 using Grammars.LL.Convertors;
 using Grammars.LL.Models;
 using Grammars.LL.Runners;

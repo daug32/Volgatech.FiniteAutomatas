@@ -3,9 +3,9 @@ using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 
-namespace Grammars.Common.Convertors.Implementation;
+namespace Grammars.Common.Convertors.Convertors.Whitespaces.Implementation;
 
-internal class WhitespacesRemover
+internal class RemoveWhitespacesHandler
 {
     public CommonGrammar RemoveWhitespaces( CommonGrammar grammar )
     {

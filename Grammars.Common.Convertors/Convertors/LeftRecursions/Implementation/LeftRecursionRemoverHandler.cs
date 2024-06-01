@@ -5,9 +5,9 @@ using Grammars.Common.Grammars.ValueObjects.RuleNames;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using LinqExtensions;
 
-namespace Grammars.Common.Convertors.Implementation;
+namespace Grammars.Common.Convertors.Convertors.LeftRecursions.Implementation;
 
-internal class LeftRecursionRemover
+internal class LeftRecursionRemoverHandler
 {
     // See https://www.youtube.com/watch?v=SV3RgUsmPcU&lc=UgwHTljtg7Pwy0xqAJF4AaABAg
     // for better algorithm description
@@ -15,7 +15,7 @@ internal class LeftRecursionRemover
     private readonly CommonGrammar _grammar;
     private readonly RuleNameGenerator _ruleNameGenerator;
 
-    public LeftRecursionRemover( CommonGrammar grammar )
+    public LeftRecursionRemoverHandler( CommonGrammar grammar )
     {
         _grammar = grammar;
         _ruleNameGenerator = new RuleNameGenerator( grammar );

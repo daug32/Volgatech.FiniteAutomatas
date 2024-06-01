@@ -1,5 +1,8 @@
 ﻿using Grammars.Common.Convertors;
-using Grammars.Common.Convertors.Convertors;
+using Grammars.Common.Convertors.Convertors.Epsilons;
+using Grammars.Common.Convertors.Convertors.Factorization;
+using Grammars.Common.Convertors.Convertors.LeftRecursions;
+using Grammars.Common.Convertors.Convertors.Renaming;
 using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;

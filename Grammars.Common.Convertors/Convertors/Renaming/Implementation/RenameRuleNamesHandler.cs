@@ -4,23 +4,18 @@ using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.RuleNames;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 
-namespace Grammars.Common.Convertors.Convertors;
+namespace Grammars.Common.Convertors.Convertors.Renaming.Implementation;
 
-public class RenameRuleNamesConvertor : IGrammarConvertor
+internal class RenameRuleNamesHandler
 {
-    public class Options
+    private readonly RenameRuleNamesOptions _options;
+
+    public RenameRuleNamesHandler( RenameRuleNamesOptions? options = null )
     {
-        public bool RenameOnlyUnreadableRules = true;
+        _options = options ?? new RenameRuleNamesOptions();
     }
-
-    private readonly Options _options;
-
-    public RenameRuleNamesConvertor( Options? options = null )
-    {
-        _options = options ?? new Options();
-    }
-
-    public CommonGrammar Convert( CommonGrammar grammar )
+    
+    public CommonGrammar StandardizeNaming( CommonGrammar grammar )
     {
         var oldNameToNewName = new Dictionary<RuleName, RuleName>();
 

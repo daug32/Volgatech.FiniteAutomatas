@@ -6,9 +6,9 @@ using Grammars.Common.Grammars.ValueObjects.RuleNames;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
 using LinqExtensions;
 
-namespace Grammars.Common.Convertors.Implementation;
+namespace Grammars.Common.Convertors.Convertors.Epsilons.Implementation;
 
-internal class EpsilonRemover
+internal class RemoveEpsilonsHandler
 {
     public CommonGrammar RemoveEpsilons( CommonGrammar grammar )
     {
