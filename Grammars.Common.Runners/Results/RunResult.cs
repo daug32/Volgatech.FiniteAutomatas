@@ -1,4 +1,4 @@
-﻿namespace Grammars.LL.Runners.Results;
+﻿namespace Grammars.Common.Runners.Results;
 
 public class RunResult
 {

@@ -2,10 +2,10 @@
 using Grammar.Parsers.Implementation;
 using Grammars.Common.Convertors;
 using Grammars.Common.Convertors.Convertors.Whitespaces;
+using Grammars.Common.Runners.Results;
 using Grammars.LL.Convertors;
 using Grammars.LL.Models;
 using Grammars.LL.Runners;
-using Grammars.LL.Runners.Results;
 using Grammars.Visualization;
 using Logging;
 using Grammars.LL.Visualizations;
@@ -69,9 +69,9 @@ public class Program
                     System.Console.WriteLine( $"Location: {result.Error!.InvalidSymbolIndex}" );
                 }
 
-                if ( result.Error.IsNotLlGrammar )
+                if ( result.Error.Exception is not null )
                 {
-                    System.Console.WriteLine( "Not LL grammar" );
+                    System.Console.WriteLine( $"Unhandled exception. Message: {result.Error.Exception.Message}" );
                 }
 
                 continue;

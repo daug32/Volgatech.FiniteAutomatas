@@ -1,12 +1,13 @@
 ﻿using System.Diagnostics;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
+using Grammars.Common.Runners;
+using Grammars.Common.Runners.Results;
 using Grammars.LL.Models;
-using Grammars.LL.Runners.Results;
 using Logging;
 
 namespace Grammars.LL.Runners;
 
-public class LlOneGrammarRunner
+public class LlOneGrammarRunner : IGrammarRunner
 {
     private readonly ParsingTable _table;
     private readonly ILogger? _logger;
@@ -26,7 +27,7 @@ public class LlOneGrammarRunner
         catch ( Exception ex )
         {
             _logger?.Write( LogLevel.Error, ex.ToString() );
-            return RunResult.Fail( sentence, RunError.NotLl() );
+            return RunResult.Fail( sentence, RunError.UnhandledException( ex ) );
         }
     }
 

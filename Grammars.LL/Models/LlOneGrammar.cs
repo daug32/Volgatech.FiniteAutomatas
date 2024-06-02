@@ -13,10 +13,10 @@ public class LlOneGrammar : CommonGrammar
     public LlOneGrammar( RuleName startRule, IEnumerable<GrammarRule> rules )
         : base( startRule, rules )
     {
-        ValidateAmbiguousRuleDefinitionsOrThrow( this );
+        AssumeRulesDoesntHaveAmbiguousDefinitions( this );
     }
 
-    private void ValidateAmbiguousRuleDefinitionsOrThrow( CommonGrammar grammar )
+    private void AssumeRulesDoesntHaveAmbiguousDefinitions( CommonGrammar grammar )
     {
         foreach ( GrammarRule rule in grammar.Rules.Values )
         {

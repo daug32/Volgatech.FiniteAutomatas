@@ -1,40 +1,38 @@
 ﻿using Grammars.Common.Convertors;
 using Grammars.Common.Convertors.Convertors.Epsilons;
-using Grammars.Common.Convertors.Convertors.Factorization;
-using Grammars.Common.Convertors.Convertors.LeftRecursions;
 using Grammars.Common.Convertors.Convertors.Renaming;
 using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
-using Grammars.LL.Models;
+using Grammars.SLR.Convertors.Implementation;
+using Grammars.SLR.Models;
 using Logging;
 
-namespace Grammars.LL.Convertors;
+namespace Grammars.SLR.Convertors;
 
-public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
+public class ToSlrOneGrammarConvertor : IGrammarConvertor<SlrOneGrammar>
 {
     private readonly ILogger? _logger;
 
-    public ToLlOneGrammarConvertor( ILogger? logger = null )
+    public ToSlrOneGrammarConvertor( ILogger? logger = null )
     {
         _logger = logger;
     }
 
-    public LlOneGrammar Convert( CommonGrammar grammar )
+    public SlrOneGrammar Convert( CommonGrammar grammar )
     {
         CommonGrammar normalizedGrammar = grammar
+            .Convert( new RemoveReferencesToStartRuleConvertor() )
             .Convert( new RemoveEmptySymbolConvertor() )
-            .Convert( new LeftRecursionRemoverConvertor() )
-            .Convert( new LeftFactorizationConvertor() )
             .Convert( new RenameRuleNamesConvertor() );
-
+        
         SanitizeEndSymbols( normalizedGrammar );
 
-        return new LlOneGrammar( 
+        return new SlrOneGrammar(
             normalizedGrammar.StartRule,
             normalizedGrammar.Rules.Values );
     }
-
+    
     private void SanitizeEndSymbols( CommonGrammar grammar )
     {
         bool hasEndSymbol = grammar.Rules.Values.Any( rule =>

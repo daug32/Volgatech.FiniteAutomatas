@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Grammars.Common.Grammars.Extensions.Implementation;
 using Grammars.Common.Grammars.ValueObjects;
 using Grammars.Common.Grammars.ValueObjects.GrammarRules;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
@@ -130,11 +131,6 @@ public static class GrammarFirstSetExtensions
 
     private static List<ConcreteDefinition> BuildConcreteDefinitions( CommonGrammar grammar, RuleName ruleName, List<RuleDefinition> definitionsToUse )
     {
-        // if ( definitionsToUse.Any( x => x.Has( ruleName ) ) )
-        // {
-        //     definitionsToUse = grammar.Rules[ruleName].Definitions.ToList();
-        // }
-        
         var result = new List<ConcreteDefinition>();
         
         foreach ( GrammarRule rule in grammar.Rules.Values )

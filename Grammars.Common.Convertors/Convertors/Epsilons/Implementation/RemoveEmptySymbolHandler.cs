@@ -8,7 +8,7 @@ using LinqExtensions;
 
 namespace Grammars.Common.Convertors.Convertors.Epsilons.Implementation;
 
-internal class RemoveEpsilonsHandler
+internal class RemoveEmptySymbolHandler
 {
     public CommonGrammar RemoveEpsilons( CommonGrammar grammar )
     {

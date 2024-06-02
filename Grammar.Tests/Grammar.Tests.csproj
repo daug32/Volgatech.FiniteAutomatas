@@ -25,6 +25,7 @@
       <ProjectReference Include="..\Grammar.Parsers.Implementation\Grammar.Parsers.Implementation.csproj" />
       <ProjectReference Include="..\Grammars.Common.Convertors\Grammars.Common.Convertors.csproj" />
       <ProjectReference Include="..\Grammars.LL\Grammars.LL.csproj" />
+      <ProjectReference Include="..\Grammars.SLR\Grammars.SLR.csproj" />
       <ProjectReference Include="..\Logging\Logging.csproj" />
     </ItemGroup>
 

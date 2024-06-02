@@ -4,10 +4,10 @@ using Grammar.Tests.Runners.Containers;
 using Grammars.Common.Convertors;
 using Grammars.Common.Convertors.Convertors.Whitespaces;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
+using Grammars.Common.Runners.Results;
 using Grammars.LL.Convertors;
 using Grammars.LL.Models;
 using Grammars.LL.Runners;
-using Grammars.LL.Runners.Results;
 using LinqExtensions;
 
 namespace Grammar.Tests.Runners;
