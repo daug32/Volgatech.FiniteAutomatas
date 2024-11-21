@@ -23,13 +23,13 @@ public class ToSlrOneGrammarConvertor : IGrammarConvertor<SlrOneGrammar>
     public SlrOneGrammar Convert( CommonGrammar grammar )
     {
         CommonGrammar normalizedGrammar = grammar
-            // Remove terminals that defines whitespace symbols (like regex "\s+")
+            // Optional. Should be removed. Remove terminals that defines whitespace symbols (like regex "\s+")
            .Convert( new RemoveWhitespacesConvertor() )
-            // There can be only one start rule
+            // Required. There can be only one start rule
             .Convert( new RemoveReferencesToStartRuleConvertor() )
-            // SLR requires no epsilon production in grammar
+            // Required. SLR requires no epsilon production in grammar
             .Convert( new RemoveEmptySymbolConvertor() )
-            // Just to make it better to see
+            // Optional. Just to make it better to see
             .Convert( new RenameRuleNamesConvertor() );
         
         SanitizeEndSymbols( normalizedGrammar );
