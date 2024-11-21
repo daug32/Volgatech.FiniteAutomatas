@@ -1,5 +1,4 @@
-﻿<S> -> type <F> $
-<F> -> <I> = <T> | <I> = <T> ; <F>
-<T> -> int | record <G> end
-<G> -> <I> : <T> | <I> : <T> ; <G>
-<I> -> a | b | c
+﻿<S> -> <A> <B> <C> 
+<A> -> <A> a | ε 
+<B> -> <B> b | ε 
+<C> -> <C> c | ε

@@ -1,8 +1,8 @@
 ﻿using Grammars.Common.Convertors;
-using Grammars.Common.Convertors.Convertors.Epsilons;
 using Grammars.Common.Convertors.Convertors.Factorization;
 using Grammars.Common.Convertors.Convertors.LeftRecursions;
 using Grammars.Common.Convertors.Convertors.Renaming;
+using Grammars.Common.Convertors.Convertors.Whitespaces;
 using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
@@ -23,9 +23,13 @@ public class ToLlOneGrammarConvertor : IGrammarConvertor<LlOneGrammar>
     public LlOneGrammar Convert( CommonGrammar grammar )
     {
         CommonGrammar normalizedGrammar = grammar
-            .Convert( new RemoveEmptySymbolConvertor() )
+            // Remove terminals that defines whitespace symbols (like regex "\s+")
+           .Convert( new RemoveWhitespacesConvertor() )
+            // LL one grammar requires no left recursion rules 
             .Convert( new LeftRecursionRemoverConvertor() )
+            // LL one grammar requires no ambiguous references
             .Convert( new LeftFactorizationConvertor() )
+            // Just to make it better to see
             .Convert( new RenameRuleNamesConvertor() );
 
         SanitizeEndSymbols( normalizedGrammar );

@@ -15,6 +15,7 @@
       <ProjectReference Include="..\Grammars.Common.Convertors\Grammars.Common.Convertors.csproj" />
       <ProjectReference Include="..\Grammars.LL.Visualizations\Grammars.LL.Visualizations.csproj" />
       <ProjectReference Include="..\Grammars.LL\Grammars.LL.csproj" />
+      <ProjectReference Include="..\Grammars.SLR\Grammars.SLR.csproj" />
       <ProjectReference Include="..\Grammars.Visualization\Grammars.Visualization.csproj" />
       <ProjectReference Include="..\LinqExtensions\LinqExtensions.csproj" />
       <ProjectReference Include="..\Logging.Implementation\Logging.Implementation.csproj" />

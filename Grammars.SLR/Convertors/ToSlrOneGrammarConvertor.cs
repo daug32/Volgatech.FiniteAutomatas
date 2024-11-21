@@ -1,6 +1,7 @@
 ﻿using Grammars.Common.Convertors;
 using Grammars.Common.Convertors.Convertors.Epsilons;
 using Grammars.Common.Convertors.Convertors.Renaming;
+using Grammars.Common.Convertors.Convertors.Whitespaces;
 using Grammars.Common.Grammars;
 using Grammars.Common.Grammars.ValueObjects.RuleDefinitions;
 using Grammars.Common.Grammars.ValueObjects.Symbols;
@@ -22,8 +23,13 @@ public class ToSlrOneGrammarConvertor : IGrammarConvertor<SlrOneGrammar>
     public SlrOneGrammar Convert( CommonGrammar grammar )
     {
         CommonGrammar normalizedGrammar = grammar
+            // Remove terminals that defines whitespace symbols (like regex "\s+")
+           .Convert( new RemoveWhitespacesConvertor() )
+            // There can be only one start rule
             .Convert( new RemoveReferencesToStartRuleConvertor() )
+            // SLR requires no epsilon production in grammar
             .Convert( new RemoveEmptySymbolConvertor() )
+            // Just to make it better to see
             .Convert( new RenameRuleNamesConvertor() );
         
         SanitizeEndSymbols( normalizedGrammar );

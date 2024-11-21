@@ -1,7 +1,6 @@
 ﻿using Grammar.Parsers;
 using Grammar.Parsers.Implementation;
 using Grammars.Common.Convertors;
-using Grammars.Common.Convertors.Convertors.Whitespaces;
 using Grammars.Common.Runners.Results;
 using Grammars.LL.Convertors;
 using Grammars.LL.Models;
@@ -37,7 +36,6 @@ public class Program
     {
         LlOneGrammar grammar = new GrammarFileParser( @"../../../Grammars/common.txt", new ParsingSettings() )
             .Parse()
-            .Convert( new RemoveWhitespacesConvertor() )
             .ToConsole( "Original grammar" )
             .Convert( new ToLlOneGrammarConvertor( _logger ) )
             .ToConsole( "LL one grammar" );
